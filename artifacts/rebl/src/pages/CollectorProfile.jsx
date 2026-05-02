@@ -231,7 +231,7 @@ function ItemCard({ item, onClick }) {
       {/* Image */}
       <div style={{ aspectRatio: '1/1', backgroundColor: 'rgba(99,44,180,0.15)', position: 'relative', overflow: 'hidden' }}>
         {item.image_url ? (
-          <img src={item.image_url} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }}
+          <img src={item.image_url} alt={item.name}
             style={{ width: '100%', height: '100%', objectFit: 'cover', transform: hovered ? 'scale(1.05)' : 'scale(1)', transition: 'transform 0.3s' }}
           />
         ) : (
