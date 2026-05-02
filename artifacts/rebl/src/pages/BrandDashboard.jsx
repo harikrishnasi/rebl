@@ -1285,120 +1285,394 @@ function MLabel({ children }) {
 /* ══════════════════════════════════════════
    TAB: CAMPAIGNS
 ══════════════════════════════════════════ */
-function TabCampaigns({ brand, lang }) {
+const CAMP_TEMPLATES = [
+  { id: 'drop_announcement', icon: '⚡', label: 'Drop Announcement',  desc: 'Announce your next drop to all collectors',     type: 'drop_alert',    defaultTiers: ['all'],              subject: 'Something big is dropping. This is your heads up.',    body: 'We\'ve been working on something you won\'t want to miss. Our next drop is almost here — and it\'s exactly what you\'ve been waiting for.\n\nStay close. Details dropping soon.' },
+  { id: 'early_access',      icon: '🔑', label: 'Early Access Invite', desc: 'Exclusive first look for top-tier collectors',   type: 'early_access',  defaultTiers: ['insider','legend'], subject: 'You\'re getting in first.',                              body: 'Because you\'ve been here from the start — you get access before anyone else.\n\nThis is your 24-hour early window. Don\'t miss it.' },
+  { id: 'backstage_invite',  icon: '🎭', label: 'Backstage Invite',    desc: 'Private access for your Legend tier',            type: 'announcement',  defaultTiers: ['legend'],           subject: 'Backstage is open. Just for you.',                      body: 'Legends only. You\'ve earned your place here.\n\nHead to the Backstage section to see what we\'ve been building behind the scenes.' },
+  { id: 'story_nudge',       icon: '✍️', label: 'Story Nudge',         desc: 'Buyers who haven\'t written their story yet',    type: 'announcement',  defaultTiers: ['all'],              subject: 'Your piece deserves a story.',                          body: 'You own one of ours. But your story with it hasn\'t been written yet.\n\nHead to your collection and tell us what it means to you. It takes 2 minutes — and it lives on your profile forever.' },
+  { id: 'loyalty_reward',    icon: '🎁', label: 'Loyalty Reward',      desc: 'Reward a specific tier',                         type: 'reward',        defaultTiers: ['all'],              subject: 'A gift from us, for being you.',                        body: 'We don\'t take loyalty for granted.\n\nAs a thank you for being part of this community, we\'ve got something for you. Check your Rebl account for your reward.' },
+  { id: 're_engagement',     icon: '🔄', label: 'Re-engagement',       desc: 'Collectors inactive 60+ days',                  type: 'announcement',  defaultTiers: ['all'],              subject: 'It\'s been a while. We\'ve been busy.',                 body: 'We noticed you\'ve been away. A lot has happened here.\n\nCome back and see what\'s new. There\'s a drop coming up you might actually care about.' },
+  { id: 'custom',            icon: '✏️', label: 'Custom Message',       desc: 'Blank canvas — write your own',                 type: 'announcement',  defaultTiers: ['all'],              subject: '',                                                      body: '' },
+]
+
+const TYPE_META = {
+  drop_alert:   { label: '⚡ Drop Alert',    color: C.accent,  bg: 'rgba(230,57,70,0.12)' },
+  early_access: { label: '🔑 Early Access',  color: C.gold,    bg: 'rgba(255,183,3,0.12)' },
+  announcement: { label: '📣 Announcement',  color: C.muted,   bg: 'rgba(141,153,174,0.1)' },
+  reward:       { label: '🎁 Reward',        color: '#22c55e', bg: 'rgba(34,197,94,0.12)' },
+}
+
+function TabCampaigns({ brand, lang, tiers, customers }) {
   const [campaigns, setCampaigns] = useState([])
   const [loaded, setLoaded] = useState(false)
-  const [showCreate, setShowCreate] = useState(false)
-  const [form, setForm] = useState({ title: '', message: '', type: 'announcement', tier_target: 'all' })
-  const [saving, setSaving] = useState(false)
+  const [composer, setComposer] = useState(null) // null = list view, template obj = composer
 
   useEffect(() => {
     supabase.from('campaigns').select('*').eq('brand_id', brand.id).order('created_at', { ascending: false })
       .then(({ data }) => { setCampaigns(data || []); setLoaded(true) })
   }, [])
 
-  async function handleCreate(e) {
-    e.preventDefault()
-    if (!form.title || !form.message) { toast.error('Title and message required'); return }
-    setSaving(true)
-    try {
-      const { data, error } = await supabase.from('campaigns').insert({ brand_id: brand.id, ...form }).select().single()
-      if (error) throw error
-      setCampaigns(prev => [data, ...prev])
-      setShowCreate(false)
-      setForm({ title: '', message: '', type: 'announcement', tier_target: 'all' })
-      toast.success('Campaign created!')
-    } catch (err) { toast.error(err.message) }
-    finally { setSaving(false) }
+  function openComposer(template) {
+    setComposer({
+      templateId:    template.id,
+      name:          '',
+      subject:       template.subject,
+      body:          template.body,
+      type:          template.type,
+      targetTiers:   template.defaultTiers,
+      sendInApp:     true,
+      sendEmail:     false,
+      scheduleMode:  'now',
+      scheduleAt:    '',
+      preview:       false,
+    })
+  }
+
+  function onSent(campaign) {
+    setCampaigns(prev => [campaign, ...prev])
+    setComposer(null)
+    toast.success('Campaign sent!')
   }
 
   if (!loaded) return <FullLoader small />
 
+  if (composer) {
+    return (
+      <CampaignComposer
+        composer={composer} setComposer={setComposer}
+        brand={brand} lang={lang} tiers={tiers} customers={customers}
+        onBack={() => setComposer(null)} onSent={onSent}
+      />
+    )
+  }
+
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-        <div>
-          <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 4 }}>Campaigns</h1>
-          <p style={{ color: C.muted, fontSize: 14 }}>Communicate with your {lang.community.toLowerCase()}</p>
-        </div>
-        <RedBtn onClick={() => setShowCreate(true)}>+ New Campaign</RedBtn>
+      <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 4 }}>Campaigns</h1>
+      <p style={{ color: C.muted, fontSize: 14, marginBottom: 32 }}>
+        One-click templates — choose a type and we'll pre-fill the rest
+      </p>
+
+      {/* ── Template grid ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12, marginBottom: 44 }}>
+        {CAMP_TEMPLATES.map(tmpl => (
+          <button key={tmpl.id} onClick={() => openComposer(tmpl)}
+            style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: '20px 18px', cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s, transform 0.15s' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.transform = 'translateY(-2px)' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.transform = 'none' }}>
+            <div style={{ fontSize: 28, marginBottom: 10 }}>{tmpl.icon}</div>
+            <div style={{ fontWeight: 700, fontSize: 14, color: C.cream, marginBottom: 5 }}>{tmpl.label}</div>
+            <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.4 }}>{tmpl.desc}</div>
+            {tmpl.id !== 'custom' && (
+              <div style={{ marginTop: 12, fontSize: 11, color: C.accent, fontWeight: 700 }}>
+                {(TYPE_META[tmpl.type] || TYPE_META.announcement).label}
+              </div>
+            )}
+          </button>
+        ))}
       </div>
 
-      {showCreate && (
-        <div style={{ backgroundColor: C.card, borderRadius: 16, border: `1px solid ${C.border}`, padding: 24, marginBottom: 24 }}>
-          <h3 style={{ fontWeight: 800, marginBottom: 20 }}>New Campaign</h3>
-          <form onSubmit={handleCreate}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 16 }}>
-              <div>
-                <label style={{ display: 'block', fontSize: 12, color: C.muted, fontWeight: 600, marginBottom: 6 }}>Title *</label>
-                <input value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))} placeholder="e.g. Exclusive early access for Legends" style={IS} />
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: 12, color: C.muted, fontWeight: 600, marginBottom: 6 }}>Type</label>
-                  <select value={form.type} onChange={e => setForm(p => ({ ...p, type: e.target.value }))} style={{ ...IS, appearance: 'none' }}>
-                    <option value="announcement">Announcement</option>
-                    <option value="drop_alert">Drop Alert</option>
-                    <option value="early_access">Early Access</option>
-                    <option value="reward">Reward</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: 12, color: C.muted, fontWeight: 600, marginBottom: 6 }}>Target Tier</label>
-                  <select value={form.tier_target} onChange={e => setForm(p => ({ ...p, tier_target: e.target.value }))} style={{ ...IS, appearance: 'none' }}>
-                    <option value="all">All {lang.community}</option>
-                    <option value="insider">Insider +</option>
-                    <option value="legend">Legend Only</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: 12, color: C.muted, fontWeight: 600, marginBottom: 6 }}>Message *</label>
-                <textarea value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
-                  placeholder="Your message to the community…" rows={4}
-                  style={{ ...IS, resize: 'none', lineHeight: 1.6 }} />
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 10 }}>
-              <button type="submit" disabled={saving} style={{ backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '11px 22px', fontWeight: 700, cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
-                {saving ? 'Saving…' : 'Create Campaign'}
-              </button>
-              <button type="button" onClick={() => setShowCreate(false)} style={{ backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '11px 20px', cursor: 'pointer' }}>
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
+      {/* ── History ── */}
+      <SectionHead label="H" title="Campaign History" />
       {campaigns.length === 0
-        ? <EmptyState icon="📣" title="No campaigns yet" desc={`Send announcements, drop alerts, and rewards to your ${lang.community.toLowerCase()}`} />
+        ? <EmptyState icon="📣" title="No campaigns sent yet" desc="Pick a template above to get started" />
         : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {campaigns.map(camp => (
-              <div key={camp.id} style={{ backgroundColor: C.card, borderRadius: 14, border: `1px solid ${C.border}`, padding: '18px 20px' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10, marginBottom: 10 }}>
-                  <div style={{ fontWeight: 700, fontSize: 15 }}>{camp.title}</div>
-                  <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-                    <TypePill type={camp.type} />
-                    {camp.tier_target !== 'all' && (
-                      <span style={{ padding: '3px 8px', borderRadius: 6, backgroundColor: 'rgba(255,183,3,0.12)', color: C.gold, fontSize: 11, fontWeight: 700, textTransform: 'capitalize' }}>
-                        {camp.tier_target}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.6, margin: 0 }}>{camp.message}</p>
-                <div style={{ fontSize: 12, color: 'rgba(141,153,174,0.5)', marginTop: 10 }}>
-                  {new Date(camp.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                </div>
-              </div>
-            ))}
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 560 }}>
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${C.border}` }}>
+                  {['Name', 'Type', 'Sent To', 'Date', 'Open Rate', 'Status'].map(h => (
+                    <th key={h} style={{ padding: '10px 12px', textAlign: 'left', color: C.muted, fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.6 }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {campaigns.map((c, i) => {
+                  const meta = TYPE_META[c.type] || TYPE_META.announcement
+                  return (
+                    <tr key={c.id || i} style={{ borderBottom: `1px solid rgba(255,255,255,0.04)` }}
+                      onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'}
+                      onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}>
+                      <td style={{ padding: '12px 12px', fontWeight: 600, color: C.cream, maxWidth: 180 }}>
+                        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.title || c.name || '—'}</div>
+                        {c.subject && <div style={{ fontSize: 11, color: C.muted, marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.subject}</div>}
+                      </td>
+                      <td style={{ padding: '12px 12px' }}>
+                        <span style={{ padding: '3px 8px', borderRadius: 6, backgroundColor: meta.bg, color: meta.color, fontSize: 11, fontWeight: 700 }}>{meta.label}</span>
+                      </td>
+                      <td style={{ padding: '12px 12px', color: C.muted, fontSize: 12 }}>
+                        {Array.isArray(c.tier_target) ? c.tier_target.join(', ') : (c.tier_target || 'All')}
+                        {c.recipient_count > 0 && <span style={{ display: 'block', color: C.cream, fontWeight: 600 }}>{c.recipient_count} recipients</span>}
+                      </td>
+                      <td style={{ padding: '12px 12px', color: C.muted, fontSize: 12, whiteSpace: 'nowrap' }}>
+                        {c.sent_at
+                          ? new Date(c.sent_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                          : c.scheduled_at
+                            ? <span style={{ color: C.gold }}>⏳ {new Date(c.scheduled_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
+                            : new Date(c.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                        }
+                      </td>
+                      <td style={{ padding: '12px 12px' }}>
+                        {c.open_rate != null
+                          ? <span style={{ fontWeight: 700, color: c.open_rate >= 0.3 ? '#22c55e' : C.muted }}>{Math.round(c.open_rate * 100)}%</span>
+                          : <span style={{ color: C.muted }}>—</span>
+                        }
+                      </td>
+                      <td style={{ padding: '12px 12px' }}>
+                        <StatusBadge status={c.status || 'sent'} />
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
         )
       }
     </div>
   )
+}
+
+/* ── CAMPAIGN COMPOSER ── */
+function CampaignComposer({ composer, setComposer, brand, lang, tiers, customers, onBack, onSent }) {
+  const [c, setC] = useState(composer)
+  const [improving, setImproving] = useState(false)
+  const [sending, setSending] = useState(false)
+  const set = (k, v) => setC(prev => ({ ...prev, [k]: v }))
+
+  const ALL_TIER_OPTIONS = [
+    { value: 'all', label: `All ${lang.community}`, color: C.muted },
+    ...tiers.map(t => ({ value: t.name.toLowerCase(), label: t.name, color: `#${t.color}` })),
+  ]
+
+  const recipientCount = useMemo(() => {
+    if (c.targetTiers.includes('all')) return customers.length
+    return customers.filter(cu => {
+      const tierName = tiers.find(t => t.level === cu.tier_level)?.name?.toLowerCase()
+      return c.targetTiers.includes(tierName)
+    }).length
+  }, [c.targetTiers, customers, tiers])
+
+  function toggleTier(val) {
+    if (val === 'all') { set('targetTiers', ['all']); return }
+    const next = c.targetTiers.filter(t => t !== 'all')
+    set('targetTiers', next.includes(val) ? next.filter(t => t !== val) : [...next, val])
+  }
+
+  async function improveWithAI() {
+    if (!c.body.trim()) { toast.error('Write a message first'); return }
+    setImproving(true)
+    const primaryCat = brand.brand_categories?.find(x => x.is_primary)?.category || 'other'
+    const targetLabel = c.targetTiers.includes('all') ? `all ${lang.community.toLowerCase()}` : c.targetTiers.join(' & ')
+    const sys = `You write authentic campaign messages for collector brands. Never corporate. Never generic. Match the brand's editorial voice exactly.`
+    const prompt = `Rewrite this campaign message for:
+Brand: ${brand.name} (${primaryCat})
+Brand description: ${brand.description || ''}
+Target audience: ${targetLabel}
+Campaign type: ${c.type}
+
+Original message:
+"${c.body}"
+
+Rewrite it: same intent, same length, but in a sharper, more collector-grade editorial voice. No emojis. No bullet points. Just 2-3 tight paragraphs. Return ONLY the rewritten message, nothing else.`
+    try {
+      const improved = await callGeminiAPI(prompt, sys)
+      set('body', improved.trim())
+      toast.success('Message improved!')
+    } catch { toast.error('AI improvement failed') }
+    finally { setImproving(false) }
+  }
+
+  async function handleSend() {
+    if (!c.name.trim()) { toast.error('Campaign name required'); return }
+    if (!c.body.trim()) { toast.error('Message body required'); return }
+    setSending(true)
+    try {
+      const payload = {
+        brand_id: brand.id,
+        name: c.name,
+        title: c.name,
+        subject: c.subject,
+        message: c.body,
+        type: c.type,
+        tier_target: c.targetTiers,
+        recipient_count: recipientCount,
+        send_in_app: c.sendInApp,
+        send_email: c.sendEmail,
+        status: c.scheduleMode === 'now' ? 'sent' : 'scheduled',
+        sent_at:      c.scheduleMode === 'now' ? new Date().toISOString() : null,
+        scheduled_at: c.scheduleMode === 'schedule' ? c.scheduleAt : null,
+      }
+      const { data, error } = await supabase.from('campaigns').insert(payload).select().single()
+      if (error) throw error
+      onSent(data)
+    } catch (err) { toast.error(err.message) }
+    finally { setSending(false) }
+  }
+
+  if (c.preview) {
+    return (
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 28 }}>
+          <button onClick={() => set('preview', false)} style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontSize: 14, padding: 0 }}>← Back to editor</button>
+          <span style={{ color: C.muted }}>·</span>
+          <span style={{ fontSize: 14, color: C.muted }}>Collector Preview</span>
+        </div>
+        <div style={{ maxWidth: 480 }}>
+          <div style={{ backgroundColor: C.card, borderRadius: 18, border: `1px solid ${C.border}`, overflow: 'hidden' }}>
+            {/* Email-style header */}
+            <div style={{ padding: '18px 22px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', gap: 12 }}>
+              {brand.logo_url
+                ? <img src={brand.logo_url} style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} />
+                : <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: C.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 15 }}>{brand.name[0]}</div>
+              }
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 14 }}>{brand.name}</div>
+                <div style={{ fontSize: 12, color: C.muted }}>via Rebl</div>
+              </div>
+              <div style={{ marginLeft: 'auto' }}>
+                <TypePill type={c.type} />
+              </div>
+            </div>
+            <div style={{ padding: '24px 24px 28px' }}>
+              {c.subject && <h2 style={{ fontSize: 20, fontWeight: 900, lineHeight: 1.25, marginBottom: 18 }}>{c.subject}</h2>}
+              <div style={{ fontSize: 15, lineHeight: 1.8, color: C.cream, whiteSpace: 'pre-wrap' }}>{c.body || <span style={{ color: C.muted, fontStyle: 'italic' }}>No message written yet</span>}</div>
+              <div style={{ marginTop: 24, padding: '14px 18px', backgroundColor: 'rgba(230,57,70,0.08)', border: `1px solid rgba(230,57,70,0.2)`, borderRadius: 10, fontSize: 13, color: C.muted }}>
+                This message will be sent to <span style={{ color: C.cream, fontWeight: 700 }}>{recipientCount} {lang.community.toLowerCase()}</span>
+              </div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+            <button onClick={() => set('preview', false)} style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '12px', cursor: 'pointer', fontWeight: 600 }}>
+              Edit
+            </button>
+            <button onClick={handleSend} disabled={sending} style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '12px', fontWeight: 700, cursor: 'pointer', opacity: sending ? 0.7 : 1 }}>
+              {sending ? 'Sending…' : c.scheduleMode === 'now' ? 'Send Now' : 'Schedule'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ maxWidth: 640 }}>
+      {/* Top nav */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 28 }}>
+        <button onClick={onBack} style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontSize: 14, padding: 0 }}>← Templates</button>
+        <span style={{ color: C.muted }}>·</span>
+        <span style={{ fontSize: 14, fontWeight: 700, color: C.cream }}>
+          {CAMP_TEMPLATES.find(t => t.id === c.templateId)?.label || 'Campaign Composer'}
+        </span>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
+        {/* Name */}
+        <div>
+          <CLabel>Campaign Name (internal)</CLabel>
+          <input value={c.name} onChange={e => set('name', e.target.value)} placeholder="e.g. Summer Drop — Early Access Wave 1" style={IS} />
+        </div>
+
+        {/* Target tiers */}
+        <div>
+          <CLabel>Target Audience</CLabel>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+            {ALL_TIER_OPTIONS.map(opt => {
+              const active = c.targetTiers.includes(opt.value)
+              return (
+                <button key={opt.value} onClick={() => toggleTier(opt.value)}
+                  style={{ padding: '6px 14px', borderRadius: 20, border: `1px solid ${active ? opt.color : 'rgba(255,255,255,0.12)'}`, backgroundColor: active ? `${opt.color}20` : 'transparent', color: active ? opt.color : C.muted, fontSize: 13, fontWeight: active ? 700 : 400, cursor: 'pointer', transition: 'all 0.15s' }}>
+                  {opt.label}
+                </button>
+              )
+            })}
+          </div>
+          <div style={{ fontSize: 13, color: C.muted }}>
+            → <span style={{ color: C.cream, fontWeight: 700 }}>{recipientCount} {lang.community.toLowerCase()}</span> will receive this
+          </div>
+        </div>
+
+        {/* Subject */}
+        <div>
+          <CLabel>Subject Line</CLabel>
+          <input value={c.subject} onChange={e => set('subject', e.target.value)} placeholder="The hook that makes them open it" style={IS} />
+        </div>
+
+        {/* Body + AI */}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 7 }}>
+            <CLabel style={{ marginBottom: 0 }}>Message Body</CLabel>
+            <button onClick={improveWithAI} disabled={improving}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, backgroundColor: 'transparent', color: improving ? C.muted : C.accent, border: `1px solid ${improving ? C.border : 'rgba(230,57,70,0.35)'}`, borderRadius: 8, padding: '5px 12px', fontSize: 12, fontWeight: 700, cursor: improving ? 'not-allowed' : 'pointer' }}>
+              {improving ? <><Spinner size={12} /> Improving…</> : <>✦ Improve with AI</>}
+            </button>
+          </div>
+          <textarea value={c.body} onChange={e => set('body', e.target.value)}
+            rows={7} placeholder="Write your message to the community…"
+            style={{ ...IS, resize: 'vertical', lineHeight: 1.7, fontSize: 14 }} />
+        </div>
+
+        {/* Send via */}
+        <div>
+          <CLabel>Send Via</CLabel>
+          <div style={{ display: 'flex', gap: 12 }}>
+            {[
+              { key: 'sendInApp', label: '📱 In-App' },
+              { key: 'sendEmail', label: '✉️ Email' },
+            ].map(ch => (
+              <button key={ch.key} onClick={() => set(ch.key, !c[ch.key])}
+                style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 18px', borderRadius: 10, cursor: 'pointer', border: `1px solid ${c[ch.key] ? C.accent : C.border}`, backgroundColor: c[ch.key] ? 'rgba(230,57,70,0.1)' : 'transparent', transition: 'all 0.15s' }}>
+                <div style={{ width: 18, height: 18, borderRadius: 4, backgroundColor: c[ch.key] ? C.accent : 'transparent', border: `2px solid ${c[ch.key] ? C.accent : 'rgba(255,255,255,0.25)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: C.cream, flexShrink: 0 }}>
+                  {c[ch.key] && '✓'}
+                </div>
+                <span style={{ fontSize: 14, fontWeight: c[ch.key] ? 700 : 400, color: c[ch.key] ? C.cream : C.muted }}>{ch.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Schedule */}
+        <div>
+          <CLabel>Schedule</CLabel>
+          <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
+            {[['now', 'Send Now'], ['schedule', 'Schedule for later']].map(([val, label]) => (
+              <button key={val} onClick={() => set('scheduleMode', val)}
+                style={{ flex: 1, padding: '10px', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 13, border: `1px solid ${c.scheduleMode === val ? C.accent : C.border}`, backgroundColor: c.scheduleMode === val ? 'rgba(230,57,70,0.12)' : 'transparent', color: c.scheduleMode === val ? C.accent : C.muted, transition: 'all 0.15s' }}>
+                {label}
+              </button>
+            ))}
+          </div>
+          {c.scheduleMode === 'schedule' && (
+            <input type="datetime-local" value={c.scheduleAt} onChange={e => set('scheduleAt', e.target.value)} style={IS} />
+          )}
+        </div>
+
+        {/* Actions */}
+        <div style={{ display: 'flex', gap: 10, paddingTop: 4 }}>
+          <button onClick={() => set('preview', true)}
+            style={{ flex: 1, backgroundColor: 'transparent', color: C.cream, border: `1px solid rgba(255,255,255,0.2)`, borderRadius: 10, padding: '13px', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
+            👁 Preview
+          </button>
+          <button onClick={handleSend} disabled={sending}
+            style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '13px', fontWeight: 700, fontSize: 14, cursor: sending ? 'not-allowed' : 'pointer', opacity: sending ? 0.7 : 1 }}>
+            {sending ? 'Sending…' : c.scheduleMode === 'now' ? '⚡ Send Now' : '⏰ Schedule'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── Campaign label ── */
+function CLabel({ children }) {
+  return <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: 0.6, marginBottom: 7 }}>{children}</div>
+}
+
+/* ── Status badge ── */
+function StatusBadge({ status }) {
+  const map = { sent: ['#22c55e', 'rgba(34,197,94,0.12)', 'Sent'], scheduled: [C.gold, 'rgba(255,183,3,0.12)', 'Scheduled'], draft: [C.muted, 'rgba(255,255,255,0.06)', 'Draft'], failed: [C.accent, 'rgba(230,57,70,0.12)', 'Failed'] }
+  const [color, bg, label] = map[status] || map.draft
+  return <span style={{ padding: '3px 8px', borderRadius: 6, backgroundColor: bg, color, fontSize: 11, fontWeight: 700 }}>{label}</span>
 }
 
 /* ══════════════════════════════════════════
