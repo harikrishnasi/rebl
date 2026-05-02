@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import toast from 'react-hot-toast'
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { supabase } from '@/lib/supabase'
 import { callGeminiAPI } from '@/lib/gemini'
 
@@ -717,56 +718,568 @@ function Spinner({ size = 20 }) {
 /* ══════════════════════════════════════════
    TAB: CUSTOMERS
 ══════════════════════════════════════════ */
-function TabCustomers({ brand, lang, tiers, customers }) {
-  const [filter, setFilter] = useState('all')
-  const filtered = filter === 'all' ? customers : customers.filter(c => c.tier_level === Number(filter))
+function TabCustomers({ brand, lang, tiers: initTiers, customers }) {
+  const [tiers, setTiers] = useState(initTiers)
+  const [editingTier, setEditingTier] = useState(null)
+  const [filterTier, setFilterTier] = useState('all')
+  const [sort, setSort] = useState({ key: 'total_spent', dir: -1 })
+  const [profilePanel, setProfilePanel] = useState(null)
+  const [msgTarget, setMsgTarget] = useState(null)
+
+  /* ── sorted + filtered customers ── */
+  const displayed = useMemo(() => {
+    let list = filterTier === 'all' ? customers : customers.filter(c => String(c.tier_level) === filterTier)
+    return [...list].sort((a, b) => {
+      const av = a[sort.key] ?? -1, bv = b[sort.key] ?? -1
+      return sort.dir * (av < bv ? -1 : av > bv ? 1 : 0)
+    })
+  }, [customers, filterTier, sort])
+
+  /* ── tier analytics ── */
+  const tierCounts = useMemo(() =>
+    tiers.map(t => ({
+      name: t.name,
+      value: customers.filter(c => c.tier_level === t.level).length,
+      color: `#${t.color}`,
+    })), [tiers, customers])
+
+  const tierAvgSpend = useMemo(() =>
+    tiers.map(t => ({
+      name: t.name,
+      avg: (() => {
+        const group = customers.filter(c => c.tier_level === t.level && c.total_spent)
+        return group.length ? Math.round(group.reduce((s, c) => s + (c.total_spent || 0), 0) / group.length) : 0
+      })(),
+      color: `#${t.color}`,
+    })), [tiers, customers])
+
+  function toggleSort(key) {
+    setSort(prev => prev.key === key ? { key, dir: -prev.dir } : { key, dir: -1 })
+  }
+
+  function SortIcon({ col }) {
+    if (sort.key !== col) return <span style={{ color: 'rgba(255,255,255,0.2)', marginLeft: 4 }}>⇅</span>
+    return <span style={{ color: C.accent, marginLeft: 4 }}>{sort.dir === -1 ? '↓' : '↑'}</span>
+  }
 
   return (
     <div>
       <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 4 }}>Customers</h1>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 20 }}>{customers.length} {lang.community.toLowerCase()} in your community</p>
+      <p style={{ color: C.muted, fontSize: 14, marginBottom: 32 }}>
+        {customers.length} {lang.community.toLowerCase()} across {tiers.length} tiers
+      </p>
 
-      {/* Tier filter pills */}
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
-        <FilterPill label="All" active={filter === 'all'} onClick={() => setFilter('all')} />
+      {/* ── SECTION A: TIER CARDS ── */}
+      <SectionHead label="A" title="Tier Configuration" />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 14, marginBottom: 40 }}>
+        {tiers.map(tier => {
+          const count = customers.filter(c => c.tier_level === tier.level).length
+          const perks = Array.isArray(tier.perks) ? tier.perks : (tier.perks || '').split('\n').filter(Boolean)
+          return (
+            <div key={tier.id} style={{ backgroundColor: C.card, borderRadius: 16, border: `1px solid ${C.border}`, padding: '20px 18px', position: 'relative' }}>
+              {/* Color band */}
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, borderRadius: '16px 16px 0 0', backgroundColor: `#${tier.color}` }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, marginTop: 8 }}>
+                <div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: `#${tier.color}`, flexShrink: 0 }} />
+                <span style={{ fontWeight: 800, fontSize: 16 }}>{tier.name}</span>
+                {tier.has_backstage_access && <span style={{ fontSize: 10, backgroundColor: 'rgba(255,183,3,0.15)', color: C.gold, border: `1px solid rgba(255,183,3,0.3)`, borderRadius: 4, padding: '2px 6px', fontWeight: 700 }}>🎭 BACKSTAGE</span>}
+              </div>
+              <div style={{ fontSize: 28, fontWeight: 900, color: `#${tier.color}`, marginBottom: 4 }}>{count}</div>
+              <div style={{ fontSize: 12, color: C.muted, marginBottom: 14 }}>{lang.community.toLowerCase()}</div>
+
+              {/* Thresholds */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 16 }}>
+                {tier.min_spend      > 0 && <ThresholdRow label="Min spend"     val={`₹${tier.min_spend.toLocaleString('en-IN')}`} />}
+                {tier.min_purchases  > 0 && <ThresholdRow label="Min purchases" val={tier.min_purchases} />}
+                {tier.min_score      > 0 && <ThresholdRow label="Min score"     val={tier.min_score} />}
+                {tier.min_stories    > 0 && <ThresholdRow label="Min stories"   val={tier.min_stories} />}
+                {tier.min_actions    > 0 && <ThresholdRow label="Min actions"   val={tier.min_actions} />}
+                {[tier.min_spend, tier.min_purchases, tier.min_score, tier.min_stories, tier.min_actions].every(v => !v) &&
+                  <span style={{ fontSize: 12, color: C.muted }}>No thresholds — open to all</span>}
+              </div>
+
+              {perks.length > 0 && (
+                <div style={{ marginBottom: 14 }}>
+                  {perks.slice(0, 3).map((p, i) => (
+                    <div key={i} style={{ fontSize: 12, color: C.muted, display: 'flex', gap: 6, alignItems: 'flex-start', marginBottom: 3 }}>
+                      <span style={{ color: `#${tier.color}`, flexShrink: 0 }}>✓</span>{p}
+                    </div>
+                  ))}
+                  {perks.length > 3 && <div style={{ fontSize: 11, color: C.muted }}>+{perks.length - 3} more</div>}
+                </div>
+              )}
+
+              <div style={{ display: 'flex', gap: 6, alignItems: 'center', fontSize: 11, color: C.muted, marginBottom: 14 }}>
+                <span style={{ fontWeight: 700, color: C.cream }}>{tier.qualify_logic === 'all' ? 'ALL' : 'ANY'}</span>
+                <span>threshold required</span>
+              </div>
+
+              <button onClick={() => setEditingTier({ ...tier, perks: perks.join('\n') })}
+                style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.06)', border: `1px solid ${C.border}`, color: C.cream, borderRadius: 8, padding: '8px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                Edit Tier
+              </button>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* ── SECTION B: COLLECTOR TABLE ── */}
+      <SectionHead label="B" title="Collector List" />
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
+        <FilterPill label="All" active={filterTier === 'all'} onClick={() => setFilterTier('all')} />
         {tiers.map(t => (
-          <FilterPill key={t.id} label={t.name} active={filter === String(t.level)} onClick={() => setFilter(String(t.level))} color={`#${t.color}`} />
+          <FilterPill key={t.id} label={t.name} active={filterTier === String(t.level)} onClick={() => setFilterTier(String(t.level))} color={`#${t.color}`} />
         ))}
       </div>
 
-      {filtered.length === 0
+      {displayed.length === 0
         ? <EmptyState icon="👥" title="No customers yet" desc="Your community will appear here once people join" />
         : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {filtered.map((c, i) => {
-              const prof = c.profiles
-              const tier = tiers.find(t => t.level === c.tier_level)
-              return (
-                <div key={c.id || i} style={{ backgroundColor: C.card, borderRadius: 12, border: `1px solid ${C.border}`, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
-                  <div style={{ width: 38, height: 38, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.08)', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 700 }}>
-                    {prof?.avatar_url ? <img src={prof.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (prof?.display_name?.[0] || '?')}
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 600, fontSize: 14 }}>{prof?.display_name || 'Anonymous'}</div>
-                    {prof?.username && <div style={{ color: C.muted, fontSize: 12, marginTop: 2 }}>@{prof.username}</div>}
-                  </div>
-                  {tier && (
-                    <div style={{ padding: '4px 10px', borderRadius: 20, backgroundColor: `${tierBg(tier.color)}`, border: `1px solid #${tier.color}40`, fontSize: 12, fontWeight: 700, color: `#${tier.color}`, flexShrink: 0 }}>
-                      {tier.name}
-                    </div>
-                  )}
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    {c.total_purchases != null && <div style={{ fontSize: 13, fontWeight: 600 }}>{c.total_purchases} {c.total_purchases === 1 ? lang.product.toLowerCase() : `${lang.product.toLowerCase()}s`}</div>}
-                    {c.total_spent != null && <div style={{ fontSize: 12, color: C.muted }}>₹{c.total_spent?.toLocaleString('en-IN')}</div>}
-                  </div>
-                </div>
-              )
-            })}
+          <div style={{ overflowX: 'auto', marginBottom: 40 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 640 }}>
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${C.border}` }}>
+                  {[
+                    { key: 'username',        label: 'Username' },
+                    { key: 'tier_level',      label: 'Tier' },
+                    { key: 'total_spent',     label: 'Total Spend' },
+                    { key: 'total_purchases', label: 'Purchases' },
+                    { key: 'collector_score', label: 'Score' },
+                    { key: 'stories_written', label: 'Stories' },
+                    { key: 'last_active',     label: 'Last Active' },
+                    { key: null,              label: 'Actions' },
+                  ].map(col => (
+                    <th key={col.label}
+                      onClick={col.key ? () => toggleSort(col.key) : undefined}
+                      style={{ padding: '10px 12px', textAlign: 'left', color: C.muted, fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.6, cursor: col.key ? 'pointer' : 'default', userSelect: 'none', whiteSpace: 'nowrap' }}>
+                      {col.label}{col.key && <SortIcon col={col.key} />}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {displayed.map((c, i) => {
+                  const prof = c.profiles
+                  const tier = tiers.find(t => t.level === c.tier_level)
+                  return (
+                    <tr key={c.id || i} style={{ borderBottom: `1px solid rgba(255,255,255,0.04)`, transition: 'background 0.1s' }}
+                      onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'}
+                      onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}>
+                      <td style={{ padding: '12px 12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div style={{ width: 30, height: 30, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.07)', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>
+                            {prof?.avatar_url ? <img src={prof.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (prof?.display_name?.[0] || '?')}
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: 600, color: C.cream }}>{prof?.display_name || '—'}</div>
+                            {prof?.username && <div style={{ color: C.muted, fontSize: 11 }}>@{prof.username}</div>}
+                          </div>
+                        </div>
+                      </td>
+                      <td style={{ padding: '12px 12px' }}>
+                        {tier && <TierBadge tier={tier} />}
+                      </td>
+                      <td style={{ padding: '12px 12px', fontWeight: 600 }}>
+                        {c.total_spent != null ? `₹${Number(c.total_spent).toLocaleString('en-IN')}` : '—'}
+                      </td>
+                      <td style={{ padding: '12px 12px', color: C.muted }}>{c.total_purchases ?? '—'}</td>
+                      <td style={{ padding: '12px 12px', color: C.muted }}>{c.collector_score ?? '—'}</td>
+                      <td style={{ padding: '12px 12px', color: C.muted }}>{c.stories_written ?? '—'}</td>
+                      <td style={{ padding: '12px 12px', color: C.muted, fontSize: 12 }}>
+                        {c.last_active ? new Date(c.last_active).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : '—'}
+                      </td>
+                      <td style={{ padding: '12px 12px' }}>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <ActionBtn onClick={() => setProfilePanel(c)}>View</ActionBtn>
+                          <ActionBtn onClick={() => setMsgTarget(c)} accent>Message</ActionBtn>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
         )
       }
+
+      {/* ── SECTION C: ANALYTICS ── */}
+      <SectionHead label="C" title="Tier Analytics" />
+      {customers.length === 0
+        ? <EmptyState icon="📊" title="No data yet" desc="Analytics will appear once you have customers" />
+        : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 32 }}>
+            {/* Donut chart */}
+            <div style={{ backgroundColor: C.card, borderRadius: 16, border: `1px solid ${C.border}`, padding: '24px 20px' }}>
+              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 16 }}>Collectors per Tier</div>
+              <ResponsiveContainer width="100%" height={180}>
+                <PieChart>
+                  <Pie data={tierCounts} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="value">
+                    {tierCounts.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip contentStyle={{ backgroundColor: C.card, border: `1px solid ${C.border}`, borderRadius: 8, fontSize: 13 }} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 16px', marginTop: 8 }}>
+                {tierCounts.map((t, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: t.color }} />
+                    <span style={{ color: C.muted }}>{t.name}</span>
+                    <span style={{ fontWeight: 700, color: C.cream }}>{t.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Bar chart */}
+            <div style={{ backgroundColor: C.card, borderRadius: 16, border: `1px solid ${C.border}`, padding: '24px 20px' }}>
+              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 16 }}>Avg. Spend per Tier (₹)</div>
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={tierAvgSpend} barSize={28}>
+                  <XAxis dataKey="name" tick={{ fill: C.muted, fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: C.muted, fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: C.card, border: `1px solid ${C.border}`, borderRadius: 8, fontSize: 13 }}
+                    formatter={v => [`₹${Number(v).toLocaleString('en-IN')}`, 'Avg spend']}
+                  />
+                  <Bar dataKey="avg" radius={[6, 6, 0, 0]}>
+                    {tierAvgSpend.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Upgrade metric */}
+            <div style={{ backgroundColor: C.card, borderRadius: 16, border: `1px solid ${C.border}`, padding: '24px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 20 }}>This Month</div>
+              <div style={{ fontSize: 44, fontWeight: 900, color: C.gold, lineHeight: 1 }}>
+                {customers.filter(c => {
+                  const ua = c.tier_upgraded_at
+                  if (!ua) return false
+                  const d = new Date(ua)
+                  const now = new Date()
+                  return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+                }).length}
+              </div>
+              <div style={{ color: C.muted, fontSize: 14, marginTop: 8 }}>collectors upgraded tier</div>
+              <div style={{ marginTop: 20, borderTop: `1px solid ${C.border}`, paddingTop: 16 }}>
+                <div style={{ fontSize: 22, fontWeight: 900, color: C.cream }}>{customers.length}</div>
+                <div style={{ color: C.muted, fontSize: 13, marginTop: 4 }}>total {lang.community.toLowerCase()}</div>
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {/* ── EDIT TIER MODAL ── */}
+      {editingTier && (
+        <TierEditModal
+          tier={editingTier}
+          onClose={() => setEditingTier(null)}
+          onSave={updated => setTiers(prev => prev.map(t => t.id === updated.id ? updated : t))}
+        />
+      )}
+
+      {/* ── PROFILE SIDE PANEL ── */}
+      {profilePanel && (
+        <ProfileSidePanel customer={profilePanel} tiers={tiers} lang={lang} onClose={() => setProfilePanel(null)} />
+      )}
+
+      {/* ── MESSAGE COMPOSER ── */}
+      {msgTarget && (
+        <MessageComposer customer={msgTarget} brand={brand} onClose={() => setMsgTarget(null)} />
+      )}
     </div>
   )
+}
+
+/* ── Tier threshold row ── */
+function ThresholdRow({ label, val }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+      <span style={{ color: C.muted }}>{label}</span>
+      <span style={{ fontWeight: 600, color: C.cream }}>{val}</span>
+    </div>
+  )
+}
+
+/* ── Tier badge ── */
+function TierBadge({ tier }) {
+  return (
+    <span style={{ padding: '3px 9px', borderRadius: 20, backgroundColor: tierBg(tier.color), border: `1px solid #${tier.color}40`, fontSize: 11, fontWeight: 700, color: `#${tier.color}`, whiteSpace: 'nowrap' }}>
+      {tier.name}
+    </span>
+  )
+}
+
+/* ── Small action button ── */
+function ActionBtn({ children, onClick, accent }) {
+  return (
+    <button onClick={onClick} style={{ padding: '5px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer', border: accent ? 'none' : `1px solid ${C.border}`, backgroundColor: accent ? C.accent : 'transparent', color: accent ? C.cream : C.muted }}>
+      {children}
+    </button>
+  )
+}
+
+/* ── Section heading A/B/C ── */
+function SectionHead({ label, title }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+      <div style={{ width: 26, height: 26, borderRadius: '50%', backgroundColor: C.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900, color: C.cream, flexShrink: 0 }}>{label}</div>
+      <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>{title}</h2>
+      <div style={{ flex: 1, height: 1, backgroundColor: C.border }} />
+    </div>
+  )
+}
+
+/* ── TIER EDIT MODAL ── */
+function TierEditModal({ tier, onClose, onSave }) {
+  const [form, setForm] = useState({
+    name:             tier.name || '',
+    color:            `#${tier.color || '888888'}`,
+    perks:            Array.isArray(tier.perks) ? tier.perks.join('\n') : (tier.perks || ''),
+    min_spend:        tier.min_spend || '',
+    min_purchases:    tier.min_purchases || '',
+    min_score:        tier.min_score || '',
+    min_stories:      tier.min_stories || '',
+    min_actions:      tier.min_actions || '',
+    qualify_logic:    tier.qualify_logic || 'any',
+    has_backstage:    tier.has_backstage_access || false,
+  })
+  const [saving, setSaving] = useState(false)
+
+  function set(k, v) { setForm(p => ({ ...p, [k]: v })) }
+
+  async function handleSave() {
+    setSaving(true)
+    const hex = form.color.replace('#', '')
+    const payload = {
+      name: form.name,
+      color: hex,
+      perks: form.perks.split('\n').map(s => s.trim()).filter(Boolean),
+      min_spend:     form.min_spend     ? Number(form.min_spend)     : null,
+      min_purchases: form.min_purchases ? Number(form.min_purchases) : null,
+      min_score:     form.min_score     ? Number(form.min_score)     : null,
+      min_stories:   form.min_stories   ? Number(form.min_stories)   : null,
+      min_actions:   form.min_actions   ? Number(form.min_actions)   : null,
+      qualify_logic: form.qualify_logic,
+      has_backstage_access: form.has_backstage,
+    }
+    const { error } = await supabase.from('customer_tiers').update(payload).eq('id', tier.id)
+    if (error) { toast.error(error.message); setSaving(false); return }
+    toast.success('Tier updated!')
+    onSave({ ...tier, ...payload })
+    onClose()
+    setSaving(false)
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
+      onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 520, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
+        {/* Header */}
+        <div style={{ padding: '18px 24px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ fontWeight: 800, fontSize: 16 }}>Edit Tier — {tier.name}</div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: C.muted, fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>×</button>
+        </div>
+
+        <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+          {/* Name + Color */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 14, alignItems: 'end' }}>
+            <div>
+              <MLabel>Tier Name</MLabel>
+              <input value={form.name} onChange={e => set('name', e.target.value)} style={IS} />
+            </div>
+            <div>
+              <MLabel>Badge Color</MLabel>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <input type="color" value={form.color} onChange={e => set('color', e.target.value)}
+                  style={{ width: 48, height: 40, border: 'none', backgroundColor: 'transparent', cursor: 'pointer', padding: 0 }} />
+                <div style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: form.color, border: `1px solid ${C.border}` }} />
+              </div>
+            </div>
+          </div>
+
+          {/* Perks */}
+          <div>
+            <MLabel>Perks (one per line)</MLabel>
+            <textarea value={form.perks} onChange={e => set('perks', e.target.value)}
+              rows={4} placeholder={"Early access to drops\nExclusive Discord role\nFree shipping"}
+              style={{ ...IS, resize: 'vertical', lineHeight: 1.6, fontSize: 13 }} />
+          </div>
+
+          {/* Thresholds grid */}
+          <div>
+            <MLabel>Qualification Thresholds</MLabel>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              {[
+                { key: 'min_spend',     label: 'Min total spend (₹)' },
+                { key: 'min_purchases', label: 'Min purchases' },
+                { key: 'min_score',     label: 'Min Rebl Collector Score' },
+                { key: 'min_stories',   label: 'Min stories written' },
+                { key: 'min_actions',   label: 'Min community actions' },
+              ].map(f => (
+                <div key={f.key}>
+                  <div style={{ fontSize: 11, color: C.muted, fontWeight: 600, marginBottom: 5 }}>{f.label}</div>
+                  <input type="number" min={0} value={form[f.key]} onChange={e => set(f.key, e.target.value)} placeholder="0" style={{ ...IS, fontSize: 13 }} />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Logic toggle */}
+          <div>
+            <MLabel>Qualification Logic</MLabel>
+            <div style={{ display: 'flex', gap: 10 }}>
+              {['any', 'all'].map(v => (
+                <button key={v} onClick={() => set('qualify_logic', v)}
+                  style={{ flex: 1, padding: '10px', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 13, border: `1px solid ${form.qualify_logic === v ? C.accent : C.border}`, backgroundColor: form.qualify_logic === v ? 'rgba(230,57,70,0.12)' : 'transparent', color: form.qualify_logic === v ? C.accent : C.muted, transition: 'all 0.15s' }}>
+                  {v === 'any' ? 'ANY one threshold' : 'ALL thresholds'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Backstage toggle */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', backgroundColor: 'rgba(255,183,3,0.06)', borderRadius: 10, border: `1px solid rgba(255,183,3,0.15)` }}>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 14 }}>🎭 Backstage Access</div>
+              <div style={{ color: C.muted, fontSize: 12, marginTop: 2 }}>Can view exclusive brand posts</div>
+            </div>
+            <Toggle on={form.has_backstage} onChange={v => set('has_backstage', v)} />
+          </div>
+
+          {/* Actions */}
+          <div style={{ display: 'flex', gap: 10, paddingTop: 4 }}>
+            <button onClick={handleSave} disabled={saving}
+              style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '13px', fontWeight: 700, fontSize: 14, cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
+              {saving ? 'Saving…' : 'Save Tier'}
+            </button>
+            <button onClick={onClose}
+              style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '13px', cursor: 'pointer' }}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── PROFILE SIDE PANEL ── */
+function ProfileSidePanel({ customer, tiers, lang, onClose }) {
+  const prof = customer.profiles
+  const tier = tiers.find(t => t.level === customer.tier_level)
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', justifyContent: 'flex-end' }}
+      onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={{ width: '100%', maxWidth: 360, backgroundColor: C.card, borderLeft: `1px solid ${C.border}`, overflowY: 'auto', padding: '28px 24px', display: 'flex', flexDirection: 'column', gap: 20, animation: 'slideIn 0.25s ease' }}>
+        <style>{`@keyframes slideIn{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}`}</style>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ fontWeight: 800, fontSize: 16 }}>Collector Profile</div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: C.muted, fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>×</button>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{ width: 56, height: 56, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.08)', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 700 }}>
+            {prof?.avatar_url ? <img src={prof.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (prof?.display_name?.[0] || '?')}
+          </div>
+          <div>
+            <div style={{ fontWeight: 800, fontSize: 17 }}>{prof?.display_name || 'Anonymous'}</div>
+            {prof?.username && <div style={{ color: C.muted, fontSize: 13 }}>@{prof.username}</div>}
+          </div>
+        </div>
+
+        {tier && <TierBadge tier={tier} />}
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {[
+            { label: 'Total Spend',  val: customer.total_spent != null ? `₹${Number(customer.total_spent).toLocaleString('en-IN')}` : '—' },
+            { label: 'Purchases',    val: customer.total_purchases ?? '—' },
+            { label: 'Score',        val: customer.collector_score ?? '—' },
+            { label: 'Stories',      val: customer.stories_written ?? '—' },
+          ].map((m, i) => (
+            <div key={i} style={{ backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '12px 14px' }}>
+              <div style={{ fontSize: 11, color: C.muted, fontWeight: 600, marginBottom: 4 }}>{m.label}</div>
+              <div style={{ fontWeight: 800, fontSize: 18 }}>{m.val}</div>
+            </div>
+          ))}
+        </div>
+
+        {prof?.username && (
+          <a href={`/profile/${prof.username}`} target="_blank" rel="noreferrer"
+            style={{ display: 'block', textAlign: 'center', padding: '12px', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 10, color: C.cream, fontSize: 14, fontWeight: 600, textDecoration: 'none', border: `1px solid ${C.border}` }}>
+            View Public Profile ↗
+          </a>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/* ── MESSAGE COMPOSER ── */
+function MessageComposer({ customer, brand, onClose }) {
+  const prof = customer.profiles
+  const [msg, setMsg] = useState('')
+  const [sending, setSending] = useState(false)
+
+  async function handleSend() {
+    if (!msg.trim()) return
+    setSending(true)
+    try {
+      const { error } = await supabase.from('brand_messages').insert({
+        brand_id: brand.id,
+        recipient_id: customer.profile_id || customer.id,
+        message: msg.trim(),
+      })
+      if (error) throw error
+      toast.success('Message sent!')
+      onClose()
+    } catch (err) { toast.error(err.message) }
+    finally { setSending(false) }
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
+      onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 460, width: '100%', padding: '28px 24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+          <div style={{ fontWeight: 800, fontSize: 16 }}>Message {prof?.display_name || 'Collector'}</div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: C.muted, fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>×</button>
+        </div>
+        <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '12px 14px', marginBottom: 16, fontSize: 13, color: C.muted }}>
+          From: <span style={{ color: C.cream, fontWeight: 600 }}>{brand.name}</span>
+          {prof?.username && <> → <span style={{ color: C.cream }}>@{prof.username}</span></>}
+        </div>
+        <textarea value={msg} onChange={e => setMsg(e.target.value)} rows={5}
+          placeholder="Write your message to this collector…"
+          style={{ ...IS, resize: 'none', lineHeight: 1.65, marginBottom: 16 }} />
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button onClick={handleSend} disabled={sending || !msg.trim()}
+            style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '13px', fontWeight: 700, fontSize: 14, cursor: 'pointer', opacity: (sending || !msg.trim()) ? 0.6 : 1 }}>
+            {sending ? 'Sending…' : 'Send Message'}
+          </button>
+          <button onClick={onClose} style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '13px', cursor: 'pointer' }}>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── Toggle switch ── */
+function Toggle({ on, onChange }) {
+  return (
+    <div onClick={() => onChange(!on)} style={{ width: 44, height: 24, borderRadius: 12, backgroundColor: on ? C.accent : 'rgba(255,255,255,0.15)', cursor: 'pointer', position: 'relative', transition: 'background-color 0.2s', flexShrink: 0 }}>
+      <div style={{ position: 'absolute', top: 3, left: on ? 23 : 3, width: 18, height: 18, borderRadius: '50%', backgroundColor: C.cream, transition: 'left 0.2s' }} />
+    </div>
+  )
+}
+
+/* ── Modal label ── */
+function MLabel({ children }) {
+  return <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: 0.6, marginBottom: 7 }}>{children}</div>
 }
 
 /* ══════════════════════════════════════════
