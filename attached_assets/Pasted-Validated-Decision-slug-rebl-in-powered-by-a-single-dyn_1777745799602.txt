@@ -1,0 +1,56 @@
+Validated Decision
+[slug].rebl.in powered by a single dynamic page
+✓ Shopify model — brands get a drop destination without building one. Every page says "Powered by Rebl" building platform recognition organically with every drop.
+⚠ Risk: brands want custom domains. Fix: Phase 1 is /s/:slug route. Phase 2 adds CNAME custom domain. Both in DB already.
+Build BrandSubdomainPage at src/pages/BrandSubdomainPage.jsx.
+Route: /s/:brandSlug  (simulates {slug}.rebl.in in production)
+
+Fetch: brand + brand_subdomains + active drops for this brand.
+
+THEMING: override all colors with brand's theme_primary + theme_accent.
+The page uses CSS variables injected via style attribute:
+  document.documentElement.style.setProperty('--page-primary', theme_primary)
+  document.documentElement.style.setProperty('--page-accent', theme_accent)
+
+Only Rebl branding: small 'Powered by Rebl ↗' badge in footer.
+
+SECTIONS
+
+1. HERO
+   Brand logo (centered, full-width section)
+   hero_headline (large) · hero_subheadline
+   CTA: 'See What's Dropping' (smooth scroll)
+
+2. DROPS (category-aware heading)
+   sneakers → 'The Drop'  |  concert_tickets → 'The Show'  |  art → 'The Collection'
+
+   LIVE DROPS — full-width hero card:
+     Large image (left 60%) + details (right 40%)
+     Countdown to drop close · Price · Units remaining
+     Access gate message if tier-gated
+     'Claim Yours' button (primary CTA)
+
+   UPCOMING — grid cards with countdown timers to open
+     'Notify When Live' → adds to waitlist (Rebl login required)
+
+3. PRODUCT STORY (if product_story.published = true)
+   Full-bleed editorial section. Magazine layout.
+   story.headline (large) · origin paragraph
+   Design intent as pull quote · Why limited in italics
+   Feels like reading Hypebeast or System Magazine.
+
+4. OWNER COMMUNITY TEASER
+   'Join {X} other collectors who own {Brand} pieces on Rebl'
+   5 real collector avatars (from purchases)
+   → links to /brand/{slug} on main platform
+
+5. FOOTER
+   Brand social links (placeholder) · 'Powered by Rebl ↗'
+
+BRAND SETTINGS (add to Dashboard Settings tab)
+  Subdomain: {slug}.rebl.in (read-only + copy)
+  Custom Domain: text input (save, no DNS in MVP)
+  Hero Headline · Hero Subheadline
+  Theme Primary Color (color picker)
+  Theme Accent Color (color picker)
+  'Preview My Page' → opens /s/{slug} in new tab

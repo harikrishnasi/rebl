@@ -2633,17 +2633,36 @@ function BSCreatePostModal({ brand, tiers, onClose, onCreate }) {
    TAB: SETTINGS
 ══════════════════════════════════════════ */
 function TabSettings({ brand, lang, setBrand }) {
-  const [form, setForm] = useState({ name: brand.name || '', description: brand.description || '', website: brand.website || '' })
+  const [form, setForm] = useState({
+    name:              brand.name              || '',
+    description:       brand.description       || '',
+    website:           brand.website           || '',
+    hero_headline:     brand.hero_headline     || '',
+    hero_subheadline:  brand.hero_subheadline  || '',
+    custom_domain:     brand.custom_domain     || '',
+    theme_primary:     brand.theme_primary     || '#0F0F1A',
+    theme_accent:      brand.theme_accent      || '#E63946',
+  })
   const [logoFile, setLogoFile] = useState(null)
   const [logoPreview, setLogoPreview] = useState(brand.logo_url || null)
   const [saving, setSaving] = useState(false)
+  const [copied, setCopied] = useState(false)
   const logoRef = useRef(null)
+  const subdomainUrl = `${window.location.origin}/s/${brand.slug}`
+
+  function set(k, v) { setForm(p => ({ ...p, [k]: v })) }
 
   function handleLogoChange(e) {
     const f = e.target.files[0]
     if (!f) return
     setLogoFile(f)
     setLogoPreview(URL.createObjectURL(f))
+  }
+
+  async function copySubdomain() {
+    await navigator.clipboard.writeText(subdomainUrl).catch(() => {})
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   async function handleSave() {
@@ -2657,7 +2676,8 @@ function TabSettings({ brand, lang, setBrand }) {
         const { data: urlData } = supabase.storage.from('item-images').getPublicUrl(path)
         logoUrl = urlData.publicUrl
       }
-      const { data, error } = await supabase.from('brands').update({ ...form, logo_url: logoUrl }).eq('id', brand.id).select().single()
+      const payload = { ...form, logo_url: logoUrl }
+      const { data, error } = await supabase.from('brands').update(payload).eq('id', brand.id).select().single()
       if (error) throw error
       setBrand(prev => ({ ...prev, ...data }))
       toast.success('Settings saved!')
@@ -2668,45 +2688,128 @@ function TabSettings({ brand, lang, setBrand }) {
   return (
     <div>
       <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 4 }}>Settings</h1>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 28 }}>Manage your brand profile</p>
+      <p style={{ color: C.muted, fontSize: 14, marginBottom: 32 }}>Manage your brand profile and public page</p>
 
-      <div style={{ maxWidth: 500, display: 'flex', flexDirection: 'column', gap: 22 }}>
-        {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-          <div onClick={() => logoRef.current?.click()} style={{ width: 88, height: 88, borderRadius: '50%', backgroundColor: C.card, border: `2px dashed ${logoPreview ? C.accent : 'rgba(255,255,255,0.15)'}`, cursor: 'pointer', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            {logoPreview ? <img src={logoPreview} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 28 }}>🏷</span>}
+      <div style={{ maxWidth: 540, display: 'flex', flexDirection: 'column', gap: 28 }}>
+
+        {/* ── BRAND PROFILE ── */}
+        <SettingsBlock title="Brand Profile">
+          {/* Logo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+            <div onClick={() => logoRef.current?.click()} style={{ width: 88, height: 88, borderRadius: '50%', backgroundColor: C.card, border: `2px dashed ${logoPreview ? C.accent : 'rgba(255,255,255,0.15)'}`, cursor: 'pointer', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              {logoPreview ? <img src={logoPreview} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 28 }}>🏷</span>}
+            </div>
+            <input ref={logoRef} type="file" accept="image/*" onChange={handleLogoChange} style={{ display: 'none' }} />
+            <div>
+              <div style={{ fontWeight: 600, fontSize: 14 }}>Brand Logo</div>
+              <div style={{ color: C.muted, fontSize: 13, marginTop: 4 }}>Tap to change</div>
+            </div>
           </div>
-          <input ref={logoRef} type="file" accept="image/*" onChange={handleLogoChange} style={{ display: 'none' }} />
+
+          {[
+            { key: 'name',    label: 'Brand Name' },
+            { key: 'website', label: 'Website URL', placeholder: 'https://yourbrand.com' },
+          ].map(f => (
+            <div key={f.key}>
+              <SLabel>{f.label}</SLabel>
+              <input value={form[f.key]} onChange={e => set(f.key, e.target.value)} placeholder={f.placeholder || ''} style={IS} />
+            </div>
+          ))}
+
           <div>
-            <div style={{ fontWeight: 600, fontSize: 14 }}>Brand Logo</div>
-            <div style={{ color: C.muted, fontSize: 13, marginTop: 4 }}>Tap to change</div>
+            <SLabel>Description ({form.description.length}/140)</SLabel>
+            <textarea value={form.description} onChange={e => set('description', e.target.value.slice(0, 140))} rows={3} style={{ ...IS, resize: 'none', lineHeight: 1.6 }} />
           </div>
-        </div>
+        </SettingsBlock>
 
-        {[
-          { key: 'name', label: 'Brand Name' },
-          { key: 'website', label: 'Website URL', placeholder: 'https://yourbrand.com' },
-        ].map(f => (
-          <div key={f.key}>
-            <label style={{ display: 'block', fontSize: 13, color: C.muted, fontWeight: 600, marginBottom: 7 }}>{f.label}</label>
-            <input value={form[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))} placeholder={f.placeholder || ''} style={IS} />
+        {/* ── PUBLIC PAGE ── */}
+        <SettingsBlock title="Public Page — {slug}.rebl.in">
+          <div>
+            <SLabel>Hero Headline</SLabel>
+            <input value={form.hero_headline} onChange={e => set('hero_headline', e.target.value)} placeholder={`e.g. Made for the few who know.`} style={IS} />
+            <div style={{ fontSize: 12, color: C.muted, marginTop: 5 }}>Large text at the top of your page. Defaults to your brand name.</div>
           </div>
-        ))}
+          <div>
+            <SLabel>Hero Subheadline</SLabel>
+            <input value={form.hero_subheadline} onChange={e => set('hero_subheadline', e.target.value)} placeholder="One sentence that says what you make and who it's for." style={IS} />
+          </div>
+        </SettingsBlock>
 
-        <div>
-          <label style={{ display: 'block', fontSize: 13, color: C.muted, fontWeight: 600, marginBottom: 7 }}>Description ({form.description.length}/140)</label>
-          <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value.slice(0, 140) }))} rows={3} style={{ ...IS, resize: 'none', lineHeight: 1.6 }} />
-        </div>
+        {/* ── THEME ── */}
+        <SettingsBlock title="Page Theme">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            {[
+              { key: 'theme_primary', label: 'Background Color' },
+              { key: 'theme_accent',  label: 'Accent / CTA Color' },
+            ].map(f => (
+              <div key={f.key}>
+                <SLabel>{f.label}</SLabel>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <input type="color" value={form[f.key]} onChange={e => set(f.key, e.target.value)}
+                    style={{ width: 44, height: 40, border: 'none', backgroundColor: 'transparent', cursor: 'pointer', padding: 0 }} />
+                  <div style={{ flex: 1, height: 40, borderRadius: 8, backgroundColor: form[f.key], border: `1px solid ${C.border}` }} />
+                  <input value={form[f.key]} onChange={e => set(f.key, e.target.value)} style={{ ...IS, width: 96, fontSize: 12, padding: '8px 10px' }} />
+                </div>
+              </div>
+            ))}
+          </div>
 
-        <div style={{ backgroundColor: C.card, borderRadius: 12, padding: '14px 18px', border: `1px solid ${C.border}` }}>
-          <div style={{ fontSize: 12, color: C.muted, fontWeight: 600, marginBottom: 4 }}>Brand Slug (read-only)</div>
-          <div style={{ fontWeight: 700 }}>{brand.slug}.rebl.in</div>
-        </div>
+          {/* Live preview swatch */}
+          <div style={{ borderRadius: 12, overflow: 'hidden', border: `1px solid ${C.border}` }}>
+            <div style={{ backgroundColor: form.theme_primary, padding: '20px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ color: '#F1FAEE', fontWeight: 700, fontSize: 14 }}>Preview</span>
+              <button style={{ backgroundColor: form.theme_accent, color: '#F1FAEE', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 700, fontSize: 13, cursor: 'default' }}>Claim Yours</button>
+            </div>
+          </div>
+        </SettingsBlock>
 
-        <RedBtn onClick={handleSave} disabled={saving}>{saving ? 'Saving…' : 'Save Changes'}</RedBtn>
+        {/* ── SUBDOMAIN ── */}
+        <SettingsBlock title="Subdomain">
+          <div>
+            <SLabel>Your Rebl URL (read-only)</SLabel>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <div style={{ ...IS, flex: 1, color: C.muted, fontSize: 13, cursor: 'default', userSelect: 'all' }}>
+                {brand.slug}.rebl.in
+              </div>
+              <button onClick={copySubdomain}
+                style={{ backgroundColor: copied ? 'rgba(34,197,94,0.12)' : 'rgba(255,255,255,0.06)', color: copied ? '#22c55e' : C.cream, border: `1px solid ${copied ? 'rgba(34,197,94,0.3)' : C.border}`, borderRadius: 10, padding: '0 16px', fontWeight: 700, fontSize: 12, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>
+                {copied ? '✓ Copied' : 'Copy'}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <SLabel>Custom Domain (Phase 2)</SLabel>
+            <input value={form.custom_domain} onChange={e => set('custom_domain', e.target.value)}
+              placeholder="drops.yourbrand.com" style={{ ...IS, color: C.muted }} />
+            <div style={{ fontSize: 12, color: C.muted, marginTop: 5 }}>CNAME setup coming in Phase 2 — save your domain now.</div>
+          </div>
+
+          <a href={`/s/${brand.slug}`} target="_blank" rel="noreferrer"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid ${C.border}`, color: C.cream, borderRadius: 10, padding: '12px', textDecoration: 'none', fontWeight: 700, fontSize: 14, transition: 'background 0.15s' }}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.09)'}
+            onMouseLeave={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}>
+            👁 Preview My Page ↗
+          </a>
+        </SettingsBlock>
+
+        <RedBtn onClick={handleSave} disabled={saving}>{saving ? 'Saving…' : 'Save All Changes'}</RedBtn>
       </div>
     </div>
   )
+}
+
+function SettingsBlock({ title, children }) {
+  return (
+    <div style={{ backgroundColor: C.card, borderRadius: 16, border: `1px solid ${C.border}`, padding: '22px 22px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: 'uppercase', letterSpacing: 1.2 }}>{title}</div>
+      {children}
+    </div>
+  )
+}
+
+function SLabel({ children }) {
+  return <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 7 }}>{children}</div>
 }
 
 /* ══════════════════════════════════════════

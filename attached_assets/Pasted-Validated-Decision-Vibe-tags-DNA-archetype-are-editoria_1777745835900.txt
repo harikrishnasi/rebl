@@ -1,0 +1,53 @@
+Validated Decision
+Vibe tags + DNA archetype are editorial, not playful
+✓ Serious collectors take their identity seriously. This must feel like a cultural statement, not a personality quiz. Design execution is everything here.
+⚠ Risk: feels gimmicky. Fix: typography-heavy, no emojis in the DNA output, treat it like a magazine feature on the collector.
+FEATURE 1 — VIBE TAGS (add to AddItem + item edit)
+
+In AddItem Step 1, below the form, add:
+Label: 'What does this piece say about you?'
+Pre-set chips (click to toggle, max 5 per item):
+
+Anti-mainstream · Grail Hunt · First Love · Trophy Piece · Daily Beater
+Investment · Gift · Memory · Found Object · Community Pick
+Collab Alert · One of a Kind · Heritage · Statement Piece · Underrated
+Future Classic · Sentimental · Daily Driver
+
+Custom tag input: text field + add button (20 chars max per tag)
+Save to items.vibe_tags array.
+
+Display on profile: small chip pills below each item card.
+Click a vibe tag chip → search: other collectors with items tagged the same.
+
+FEATURE 2 — COLLECTOR DNA (add to collector profile)
+
+Add 'My Collector DNA' section to CollectorProfile (own profile only).
+Button: 'Generate My Collector DNA'
+
+On click: call Anthropic API:
+──────────────────────────────────────────────
+System: You analyse collector personalities based on what they own.
+Be insightful, specific, and flattering — but honest.
+Return ONLY valid JSON. No markdown. No backticks. No extra text.
+
+User:
+Collector's items:
+{items.map(i => `${i.name} by ${i.brand} (${i.category}) tags: ${i.vibe_tags.join(', ')}`).join('\n')}
+
+Return this JSON structure:
+{
+  "archetype": "one of: The Grail Hunter | The Heritage Keeper | The Trend Prophet | The Anti-Mainstream | The Investment Collector | The Storyteller | The Community Builder | The Purist",
+  "description": "2 sentences about this collector in second person",
+  "top_categories": ["category1", "category2"],
+  "signature_phrase": "one punchy sentence capturing their collector identity"
+}
+──────────────────────────────────────────────
+
+DISPLAY:
+  Archetype name (large, bold, cream) with icon
+  Description paragraph
+  Signature phrase as large italic quote
+  Save to profiles: collector_archetype, archetype_description, signature_phrase
+
+Show on profile header below bio (other users can see this).
+Show on vault header.
