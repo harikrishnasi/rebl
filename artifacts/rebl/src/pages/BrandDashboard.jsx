@@ -86,6 +86,16 @@ export default function BrandDashboard() {
     <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: 'Inter, sans-serif', display: 'flex', flexDirection: 'column' }}>
       {showWelcome && <WelcomeModal brand={brand} lang={lang} onClose={() => setShowWelcome(false)} />}
 
+      {/* ── Floating Contact Buyers button ── */}
+      <button
+        onClick={() => { setActiveTab('customers') }}
+        style={{ position: 'fixed', bottom: 80, right: 24, zIndex: 200, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 28, padding: '12px 20px', fontWeight: 800, fontSize: 14, cursor: 'pointer', boxShadow: '0 4px 24px rgba(230,57,70,0.45)', display: 'flex', alignItems: 'center', gap: 8, transition: 'transform 0.15s' }}
+        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+      >
+        ✉ Contact Buyers
+      </button>
+
       {/* Top bar */}
       <div style={{
         padding: '14px 20px', borderBottom: `1px solid ${C.border}`,
@@ -971,6 +981,12 @@ function TabCustomers({ brand, lang, tiers: initTiers, customers }) {
         )
       }
 
+      {/* ── SECTION D: SMART CONTACT QUEUE ── */}
+      <SmartContactQueueSection brand={brand} lang={lang} tiers={tiers} customers={customers} />
+
+      {/* ── SECTION E: CONTACT LOG ── */}
+      <ContactLogSection brand={brand} lang={lang} />
+
       {/* ── EDIT TIER MODAL ── */}
       {editingTier && (
         <TierEditModal
@@ -1264,6 +1280,483 @@ function MessageComposer({ customer, brand, onClose }) {
           </button>
         </div>
       </div>
+    </div>
+  )
+}
+
+/* ══════════════════════════════════════════
+   SMART CONTACT QUEUE — Section D
+══════════════════════════════════════════ */
+const TRIGGER_META = {
+  story_not_written:    { dot: '🟡', color: '#FFB703', bg: 'rgba(255,183,3,0.12)',   label: 'Story Not Written',    subject: 'Your piece deserves a story.' },
+  community_not_joined: { dot: '🔴', color: C.accent,  bg: 'rgba(230,57,70,0.12)',   label: 'Community Not Joined', subject: 'Your community is waiting for you.' },
+  drop_anniversary:     { dot: '🟢', color: '#22c55e', bg: 'rgba(34,197,94,0.12)',   label: 'Drop Anniversary',     subject: 'One year ago today.' },
+  tier_upgrade:         { dot: '🔵', color: '#60a5fa', bg: 'rgba(96,165,250,0.12)',  label: 'Tier Upgraded',        subject: "You've moved up." },
+  manual:               { dot: '⚪', color: C.muted,   bg: 'rgba(255,255,255,0.07)', label: 'Manual',               subject: '' },
+}
+
+function computeTriggers(customers) {
+  const now = new Date()
+  const results = []
+  for (const c of customers) {
+    const purchaseDate = c.first_purchase_at ? new Date(c.first_purchase_at) : null
+    const daysSince = purchaseDate ? Math.floor((now - purchaseDate) / 86400000) : null
+    if (c.story_completed === false && daysSince !== null && daysSince >= 7)
+      results.push({ customer: c, type: 'story_not_written', daysSince })
+    if (c.community_joined === false && daysSince !== null && daysSince >= 14)
+      results.push({ customer: c, type: 'community_not_joined', daysSince })
+    if (purchaseDate) {
+      const anniv = new Date(purchaseDate); anniv.setFullYear(now.getFullYear())
+      if (Math.abs(Math.floor((now - anniv) / 86400000)) <= 2)
+        results.push({ customer: c, type: 'drop_anniversary', purchaseDate })
+    }
+    if (c.tier_upgraded_at) {
+      const d = Math.floor((now - new Date(c.tier_upgraded_at)) / 86400000)
+      if (d >= 0 && d <= 7) results.push({ customer: c, type: 'tier_upgrade' })
+    }
+  }
+  return results
+}
+
+async function generateContactMsg(triggerType, customer, brand, tiers) {
+  const prof = customer.profiles
+  const tier = tiers.find(t => t.level === customer.tier_level)
+  const ctx = {
+    story_not_written:    "The collector bought 7+ days ago but hasn't written their provenance story yet",
+    community_not_joined: "The collector bought but hasn't joined the brand community",
+    drop_anniversary:     "It's exactly 1 year since the collector's first purchase from this brand",
+    tier_upgrade:         "The collector just moved up to a new membership tier",
+  }
+  const prompt = `Write a 2-3 sentence personal message from brand "${brand.name}" (${brand.description || ''}) to a collector.
+Trigger: ${ctx[triggerType] || 'General outreach'}
+Collector: ${prof?.display_name || 'Collector'}${tier ? `, ${tier.name} member` : ''}
+Voice: Direct, warm, editorial. No emojis. No generic greetings. Start mid-thought.
+Return ONLY the message body.`
+  return await callGeminiAPI(prompt, 'You write personal, editorial messages from collector brands to their customers.')
+}
+
+function SmartContactQueueSection({ brand, lang, tiers, customers }) {
+  const triggers = useMemo(() => computeTriggers(customers), [customers])
+  const [contactedThisMonth, setContactedThisMonth] = useState(new Set())
+  const [composerRow, setComposerRow] = useState(null) // { trigger, prefillMsg, subject }
+  const [bulkConfirm, setBulkConfirm] = useState(null) // { type, rows }
+  const [bulkSending, setBulkSending] = useState(false)
+
+  useEffect(() => {
+    const now = new Date()
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+    supabase.from('brand_messages')
+      .select('recipient_id, created_at')
+      .eq('brand_id', brand.id)
+      .gte('created_at', monthStart)
+      .then(({ data }) => {
+        if (!data) return
+        const counts = {}
+        data.forEach(m => { counts[m.recipient_id] = (counts[m.recipient_id] || 0) + 1 })
+        const blocked = new Set(Object.entries(counts).filter(([, n]) => n >= 2).map(([id]) => id))
+        setContactedThisMonth(blocked)
+      })
+  }, [brand.id])
+
+  const eligible = triggers.filter(tr => {
+    const rid = tr.customer.profile_id || tr.customer.id
+    return !contactedThisMonth.has(rid)
+  })
+
+  const storyRows  = eligible.filter(t => t.type === 'story_not_written')
+  const anniversaryRows = eligible.filter(t => t.type === 'drop_anniversary')
+
+  async function handleBulkSend(rows) {
+    setBulkSending(true)
+    const meta = TRIGGER_META[rows[0]?.type] || TRIGGER_META.manual
+    let sent = 0
+    for (const tr of rows) {
+      const prof = tr.customer.profiles
+      const recipientId = tr.customer.profile_id || tr.customer.id
+      try {
+        await supabase.from('brand_messages').insert({
+          brand_id: brand.id,
+          recipient_id: recipientId,
+          subject: meta.subject,
+          message: `Hi ${prof?.display_name || 'Collector'}, ${meta.subject}`,
+          trigger_type: tr.type,
+        })
+        sent++
+      } catch {}
+    }
+    setBulkSending(false)
+    setBulkConfirm(null)
+    toast.success(`Sent ${sent} message${sent !== 1 ? 's' : ''}`)
+  }
+
+  async function openComposer(trigger) {
+    const subject = TRIGGER_META[trigger.type]?.subject || ''
+    setComposerRow({ trigger, subject, prefillMsg: '', generating: true })
+    try {
+      const msg = await generateContactMsg(trigger.type, trigger.customer, brand, tiers)
+      setComposerRow(prev => prev ? { ...prev, prefillMsg: msg, generating: false } : null)
+    } catch {
+      setComposerRow(prev => prev ? { ...prev, generating: false } : null)
+    }
+  }
+
+  return (
+    <div style={{ marginBottom: 40 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 26, height: 26, borderRadius: '50%', backgroundColor: C.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900, color: C.cream, flexShrink: 0 }}>D</div>
+          <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>Smart Contact Queue</h2>
+          {eligible.length > 0 && (
+            <span style={{ backgroundColor: C.accent, color: C.cream, borderRadius: 20, padding: '2px 10px', fontSize: 12, fontWeight: 800 }}>{eligible.length}</span>
+          )}
+          <div style={{ flex: 1, height: 1, backgroundColor: C.border, minWidth: 20 }} />
+        </div>
+
+        {/* Bulk action buttons */}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {storyRows.length > 0 && (
+            <button onClick={() => setBulkConfirm({ type: 'story_not_written', rows: storyRows })}
+              style={{ padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: `1px solid rgba(255,183,3,0.35)`, backgroundColor: 'rgba(255,183,3,0.08)', color: '#FFB703' }}>
+              🟡 Send All Story Nudges ({storyRows.length})
+            </button>
+          )}
+          {anniversaryRows.length > 0 && (
+            <button onClick={() => setBulkConfirm({ type: 'drop_anniversary', rows: anniversaryRows })}
+              style={{ padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: `1px solid rgba(34,197,94,0.35)`, backgroundColor: 'rgba(34,197,94,0.08)', color: '#22c55e' }}>
+              🟢 Send All Anniversaries ({anniversaryRows.length})
+            </button>
+          )}
+        </div>
+      </div>
+
+      {eligible.length === 0
+        ? (
+          <div style={{ backgroundColor: C.card, borderRadius: 14, border: `1px solid ${C.border}`, padding: '28px 24px', display: 'flex', alignItems: 'center', gap: 16 }}>
+            <span style={{ fontSize: 28 }}>✅</span>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Queue is clear</div>
+              <div style={{ color: C.muted, fontSize: 13 }}>No contact opportunities right now — Rebl will surface them automatically</div>
+            </div>
+          </div>
+        )
+        : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {/* Table header */}
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.2fr 1.4fr 1fr', gap: '0 12px', padding: '8px 16px', fontSize: 11, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: 0.6 }}>
+              <span>Collector</span><span>Item / Trigger</span><span>Suggested Message</span><span></span>
+            </div>
+            {eligible.map((tr, i) => (
+              <SmartContactRow
+                key={`${tr.customer.id}-${tr.type}-${i}`}
+                trigger={tr} brand={brand} tiers={tiers}
+                onSend={() => openComposer(tr)}
+              />
+            ))}
+          </div>
+        )
+      }
+
+      {/* Rate-limit note */}
+      <div style={{ fontSize: 12, color: C.muted, marginTop: 10 }}>
+        ⚑ Max 2 messages per collector per month — {contactedThisMonth.size} collectors capped this month
+      </div>
+
+      {/* ── BULK CONFIRM ── */}
+      {bulkConfirm && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
+          onClick={e => e.target === e.currentTarget && setBulkConfirm(null)}>
+          <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 440, width: '100%', padding: '28px 24px' }}>
+            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 8 }}>
+              {TRIGGER_META[bulkConfirm.type]?.dot} Send to {bulkConfirm.rows.length} collectors?
+            </div>
+            <div style={{ color: C.muted, fontSize: 13, lineHeight: 1.6, marginBottom: 20 }}>
+              A pre-filled message will be sent to all {bulkConfirm.rows.length} collectors matching this trigger.
+              Subject: <em style={{ color: C.cream }}>{TRIGGER_META[bulkConfirm.type]?.subject}</em>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 20, maxHeight: 160, overflowY: 'auto' }}>
+              {bulkConfirm.rows.map((tr, i) => {
+                const prof = tr.customer.profiles
+                return (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13 }}>
+                    <div style={{ width: 24, height: 24, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>
+                      {prof?.display_name?.[0] || '?'}
+                    </div>
+                    <span>{prof?.display_name || 'Anonymous'}</span>
+                    {prof?.username && <span style={{ color: C.muted }}>@{prof.username}</span>}
+                  </div>
+                )
+              })}
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={() => handleBulkSend(bulkConfirm.rows)} disabled={bulkSending}
+                style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '12px', fontWeight: 700, cursor: 'pointer', opacity: bulkSending ? 0.7 : 1 }}>
+                {bulkSending ? `Sending…` : `Send ${bulkConfirm.rows.length} Messages`}
+              </button>
+              <button onClick={() => setBulkConfirm(null)}
+                style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '12px', cursor: 'pointer' }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── INDIVIDUAL AI COMPOSER ── */}
+      {composerRow && (
+        <SmartComposerModal
+          trigger={composerRow.trigger}
+          prefillMsg={composerRow.prefillMsg}
+          subject={composerRow.subject}
+          generating={composerRow.generating}
+          brand={brand}
+          onClose={() => setComposerRow(null)}
+          onSent={() => {
+            setComposerRow(null)
+            setContactedThisMonth(prev => {
+              const next = new Set(prev)
+              next.add(composerRow.trigger.customer.profile_id || composerRow.trigger.customer.id)
+              return next
+            })
+          }}
+        />
+      )}
+    </div>
+  )
+}
+
+/* ── Smart Contact Row ── */
+function SmartContactRow({ trigger, tiers, onSend }) {
+  const { customer, type } = trigger
+  const prof = customer.profiles
+  const tier = tiers.find(t => t.level === customer.tier_level)
+  const meta = TRIGGER_META[type] || TRIGGER_META.manual
+
+  const snippets = {
+    story_not_written:    `Bought ${trigger.daysSince}d ago — story not written`,
+    community_not_joined: `Joined ${trigger.daysSince}d ago — never entered community`,
+    drop_anniversary:     `1 year since first purchase 🎉`,
+    tier_upgrade:         `Moved to ${tier?.name || 'new tier'} recently`,
+  }
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.2fr 1.4fr 1fr', gap: '0 12px', alignItems: 'center', padding: '12px 16px', backgroundColor: C.card, borderRadius: 10, border: `1px solid ${C.border}`, marginBottom: 4, transition: 'border-color 0.15s' }}
+      onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'}
+      onMouseLeave={e => e.currentTarget.style.borderColor = C.border}>
+
+      {/* Avatar + name */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+        <div style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.07)', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700 }}>
+          {prof?.avatar_url ? <img src={prof.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (prof?.display_name?.[0] || '?')}
+        </div>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontWeight: 600, fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{prof?.display_name || 'Anonymous'}</div>
+          {tier && <div style={{ fontSize: 11, color: `#${tier.color}`, fontWeight: 600 }}>{tier.name}</div>}
+        </div>
+      </div>
+
+      {/* Trigger chip */}
+      <div>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 20, backgroundColor: meta.bg, color: meta.color, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>
+          {meta.dot} {meta.label}
+        </span>
+        <div style={{ fontSize: 11, color: C.muted, marginTop: 4, lineHeight: 1.3 }}>{snippets[type] || ''}</div>
+      </div>
+
+      {/* Suggested message preview */}
+      <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.5, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+        "{TRIGGER_META[type]?.subject}"
+      </div>
+
+      {/* Send button */}
+      <div>
+        <button onClick={onSend}
+          style={{ padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none', backgroundColor: C.accent, color: C.cream, width: '100%', transition: 'opacity 0.15s' }}
+          onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
+          onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
+          Send ✉
+        </button>
+      </div>
+    </div>
+  )
+}
+
+/* ── Smart Composer Modal (AI pre-filled) ── */
+function SmartComposerModal({ trigger, prefillMsg, subject: initSubject, generating, brand, onClose, onSent }) {
+  const prof = trigger.customer.profiles
+  const [subject, setSubject] = useState(initSubject)
+  const [msg, setMsg] = useState(prefillMsg)
+  const [sending, setSending] = useState(false)
+
+  // Update msg when AI finishes generating
+  useEffect(() => { if (!generating) setMsg(prefillMsg) }, [generating, prefillMsg])
+
+  const meta = TRIGGER_META[trigger.type] || TRIGGER_META.manual
+
+  async function handleSend() {
+    if (!msg.trim()) return
+    setSending(true)
+    try {
+      const { error } = await supabase.from('brand_messages').insert({
+        brand_id: brand.id,
+        recipient_id: trigger.customer.profile_id || trigger.customer.id,
+        subject: subject,
+        message: msg.trim(),
+        trigger_type: trigger.type,
+      })
+      if (error) throw error
+      toast.success('Message sent!')
+      onSent()
+    } catch (err) { toast.error(err.message) }
+    finally { setSending(false) }
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.78)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
+      onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 500, width: '100%', padding: '28px 24px' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <span style={{ padding: '3px 9px', borderRadius: 20, backgroundColor: meta.bg, color: meta.color, fontSize: 11, fontWeight: 700 }}>
+                {meta.dot} {meta.label}
+              </span>
+            </div>
+            <div style={{ fontWeight: 800, fontSize: 16 }}>
+              Message {prof?.display_name || 'Collector'}
+            </div>
+            {prof?.username && <div style={{ color: C.muted, fontSize: 12, marginTop: 2 }}>@{prof.username}</div>}
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: C.muted, fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>×</button>
+        </div>
+
+        {/* Subject */}
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: 0.6, marginBottom: 6 }}>Subject</div>
+          <input value={subject} onChange={e => setSubject(e.target.value)} style={IS} />
+        </div>
+
+        {/* Body */}
+        <div style={{ marginBottom: 20, position: 'relative' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: 0.6 }}>Message</div>
+            {generating && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: C.accent }}>
+                <Spinner size={12} /> Generating with AI…
+              </div>
+            )}
+          </div>
+          <textarea
+            value={generating ? '' : msg}
+            onChange={e => setMsg(e.target.value)}
+            rows={5}
+            placeholder={generating ? 'Rebl AI is writing this for you…' : 'Message body'}
+            disabled={generating}
+            style={{ ...IS, resize: 'none', lineHeight: 1.65, opacity: generating ? 0.5 : 1 }}
+          />
+          {generating && (
+            <div style={{ position: 'absolute', inset: '28px 0 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+              <div style={{ fontSize: 12, color: C.muted, fontStyle: 'italic' }}>Writing in your brand's voice…</div>
+            </div>
+          )}
+        </div>
+
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button onClick={handleSend} disabled={sending || generating || !msg.trim()}
+            style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '13px', fontWeight: 700, fontSize: 14, cursor: 'pointer', opacity: (sending || generating || !msg.trim()) ? 0.6 : 1 }}>
+            {sending ? 'Sending…' : '✉ Send Message'}
+          </button>
+          <button onClick={onClose}
+            style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '13px', cursor: 'pointer' }}>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ══════════════════════════════════════════
+   CONTACT LOG — Section E
+══════════════════════════════════════════ */
+function ContactLogSection({ brand }) {
+  const [log, setLog] = useState([])
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    supabase
+      .from('brand_messages')
+      .select('*, profiles!recipient_id(display_name, username, avatar_url)')
+      .eq('brand_id', brand.id)
+      .order('created_at', { ascending: false })
+      .limit(50)
+      .then(({ data }) => { setLog(data || []); setLoaded(true) })
+  }, [brand.id])
+
+  return (
+    <div style={{ marginBottom: 40 }}>
+      <SectionHead label="E" title="Contact Log" />
+      {!loaded
+        ? <div style={{ color: C.muted, fontSize: 13 }}>Loading…</div>
+        : log.length === 0
+          ? <EmptyState icon="📋" title="No messages sent yet" desc="Contact history will appear here" />
+          : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 560 }}>
+                <thead>
+                  <tr style={{ borderBottom: `1px solid ${C.border}` }}>
+                    {['Collector', 'Trigger', 'Message', 'Opened', 'Date'].map(h => (
+                      <th key={h} style={{ padding: '10px 12px', textAlign: 'left', color: C.muted, fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.6 }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {log.map((m, i) => {
+                    const prof = m.profiles
+                    const trigMeta = TRIGGER_META[m.trigger_type] || TRIGGER_META.manual
+                    return (
+                      <tr key={m.id || i} style={{ borderBottom: `1px solid rgba(255,255,255,0.04)` }}
+                        onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'}
+                        onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}>
+                        <td style={{ padding: '11px 12px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div style={{ width: 26, height: 26, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.07)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, overflow: 'hidden' }}>
+                              {prof?.avatar_url ? <img src={prof.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (prof?.display_name?.[0] || '?')}
+                            </div>
+                            <div>
+                              <div style={{ fontWeight: 600 }}>{prof?.display_name || '—'}</div>
+                              {prof?.username && <div style={{ fontSize: 11, color: C.muted }}>@{prof.username}</div>}
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ padding: '11px 12px' }}>
+                          <span style={{ padding: '3px 8px', borderRadius: 20, backgroundColor: trigMeta.bg, color: trigMeta.color, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                            {trigMeta.dot} {trigMeta.label}
+                          </span>
+                        </td>
+                        <td style={{ padding: '11px 12px', color: C.muted, fontSize: 12, maxWidth: 200 }}>
+                          <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {m.subject && <span style={{ color: C.cream, fontWeight: 600 }}>{m.subject} — </span>}
+                            {m.message}
+                          </div>
+                        </td>
+                        <td style={{ padding: '11px 12px' }}>
+                          {m.opened_at
+                            ? <span style={{ color: '#22c55e', fontWeight: 700, fontSize: 12 }}>✓ Opened</span>
+                            : <span style={{ color: C.muted, fontSize: 12 }}>—</span>
+                          }
+                        </td>
+                        <td style={{ padding: '11px 12px', color: C.muted, fontSize: 12, whiteSpace: 'nowrap' }}>
+                          {new Date(m.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )
+      }
     </div>
   )
 }
