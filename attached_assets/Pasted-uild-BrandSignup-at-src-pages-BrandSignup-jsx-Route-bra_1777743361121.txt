@@ -1,0 +1,56 @@
+uild BrandSignup at src/pages/BrandSignup.jsx. Route: /brand/signup
+3-step wizard with progress indicator at top.
+
+STEP 1 — BRAND BASICS
+  Brand name · Slug (auto-from-name, editable)
+  Preview: 'Your drop page: {slug}.rebl.in'
+  Email · Password · Short description (140 chars)
+  Logo upload (circular preview)
+
+STEP 2 — WHAT DO YOU SELL?
+  Headline: 'What does your brand create?'
+  Grid of selectable category cards (3-col desktop, 2-col mobile):
+
+  👟 Sneakers & Footwear    [sneakers]
+  👕 Streetwear & Apparel   [streetwear]
+  💎 Luxury Fashion         [luxury_fashion]
+  ⌚ Watches & Horology     [watches]
+  🎨 Art & Prints           [art]
+  🎮 Electronics & Tech     [electronics]
+  🎵 Concerts & Events      [concert_tickets]
+  🏆 Sports Memorabilia     [sports_memorabilia]
+  🃏 Trading Cards          [trading_cards]
+  💿 Vinyl & Music          [vinyl_music]
+  📚 Rare Books             [books_rare]
+  ✦  Other                  [other]
+
+  Click = select (red border + checkmark). Multi-select allowed.
+  Long-press or second click = set as PRIMARY (gold star badge).
+  One primary required to proceed.
+
+STEP 3 — YOUR LIMITED EDITION STRATEGY
+  Headline: 'How do you create exclusivity?'
+  Multi-select checkboxes:
+  ☐ Numbered/Serialised Editions
+  ☐ Time-Limited Drops
+  ☐ Quantity-Limited Drops
+  ☐ Membership/Tier Access
+  ☐ Collab Drops
+  ☐ Seasonal / Annual Releases
+  ☐ Physical + Digital Bundle
+  ☐ Experience Drops (tickets, backstage, events)
+
+  Save to brands.limited_edition_strategies as jsonb.
+  CTA: 'Launch My Brand' (red, full-width)
+
+ON SUBMIT
+  1. Create auth user
+  2. Insert into brands
+  3. Insert into brand_subdomains with the slug
+  4. Insert brand_categories (primary first)
+  5. Create 3 default customer tiers:
+     Tier 1 'Follower'  level=1 color='888888' no min requirements
+     Tier 2 'Insider'   level=2 color='C0A060' min_purchases=2 OR min_spend=15000
+     Tier 3 'Legend'    level=3 color='FFD700' min_purchases=5 OR min_spend=50000
+  6. Update profile.role = 'brand'
+  7. Redirect → /brand-dashboard with welcome modal
