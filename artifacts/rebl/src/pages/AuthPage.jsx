@@ -23,31 +23,55 @@ export default function AuthPage({ mode }) {
         if (error) throw error
 
         const userId = data.user?.id
-        if (userId) {
+        const session = data.session
+
+        if (!userId) throw new Error('Signup failed — no user returned.')
+
+        if (session) {
+          // Email confirmation is OFF — session is live, insert profile now
           const { error: profileError } = await supabase
             .from('profiles')
             .insert({ id: userId, username, display_name: displayName })
           if (profileError) throw profileError
+          navigate('/dashboard')
+        } else {
+          // Email confirmation is ON — stash the profile data, user must confirm first
+          sessionStorage.setItem(
+            'rebl_pending_profile',
+            JSON.stringify({ username, display_name: displayName })
+          )
+          toast.success('Check your email and click the confirmation link to finish signing up.')
+          navigate('/login')
         }
-
-        navigate('/dashboard')
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
 
         const userId = data.user?.id
-        if (userId) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', userId)
-            .single()
+        if (!userId) { navigate('/dashboard'); return }
 
-          if (profile?.role === 'brand') {
-            navigate('/brand-dashboard')
-          } else {
-            navigate('/dashboard')
+        // If there's a pending profile from email-confirmed signup, create it now
+        const pending = sessionStorage.getItem('rebl_pending_profile')
+        if (pending) {
+          try {
+            const profileData = JSON.parse(pending)
+            await supabase
+              .from('profiles')
+              .upsert({ id: userId, ...profileData }, { onConflict: 'id' })
+            sessionStorage.removeItem('rebl_pending_profile')
+          } catch (_) {
+            // non-fatal — profile may already exist
           }
+        }
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', userId)
+          .single()
+
+        if (profile?.role === 'brand') {
+          navigate('/brand-dashboard')
         } else {
           navigate('/dashboard')
         }
