@@ -1,0 +1,58 @@
+Build AddItem at src/pages/AddItem.jsx. Protected route.
+Progress indicator at top: Step 1 of 3 · Step 2 of 3 · Step 3 of 3.
+
+STEP 1 — ITEM DETAILS
+  Item Name (required) · Brand (required) · Edition/Colorway
+  Serial Number · Category (select):
+    sneakers · streetwear · luxury_fashion · watches · art
+    electronics · concert_tickets · trading_cards · vinyl · other
+  Purchase Date · Purchase Price (INR) · Item Photo (upload + preview)
+  CTA: 'Generate My Story' (red, full-width)
+
+STEP 2 — AI STORY ENGINE
+  On submit:
+  1. Show loading screen, animated text cycling:
+     'Researching your item...' → 'Crafting your story...' → 'Almost ready...'
+
+  2. Call Gemini API with this EXACT prompt:
+  ─────────────────────────────────────────────
+  System: You are the story engine for Rebl, a premium platform for serious
+  collectors in India. You write compelling, authentic provenance stories.
+  Tone: passionate, editorial, collector-to-collector. Never corporate.
+
+  User:
+  A collector just added this item:
+  Item: {name}
+  Brand: {brand}
+  Edition: {edition}
+  Category: {category}
+  Date acquired: {purchaseDate}
+
+  Write a 160-word provenance story. Include:
+  1. The cultural significance or backstory of this item/brand (2-3 sentences)
+  2. What makes this edition special (2-3 sentences)
+  3. A personal prompt starting with: 'Your story with this piece begins —'
+
+  Write in second person. No headers. No labels. Just the story.
+  ─────────────────────────────────────────────
+
+  3. Display AI story in a styled quote card (dark bg, red left border)
+  4. Editable textarea below: 'Make it yours — edit your story'
+     Pre-filled with AI story, full-height, auto-resize
+  5. Buttons: 'Save to Collection' (red) · 'Regenerate' (outlined)
+
+STEP 3 — SAVE
+  1. Upload image to Supabase Storage bucket 'item-images'
+  2. Insert into public.items with all data + ai_story + user_story
+  3. Add 'Statement Piece' as default vibe tag
+  4. Success toast: 'Added to your collection!'
+  5. Redirect → /profile/{username}
+
+VIBE TAGS STEP (between Step 1 and Generate button)
+  Label: 'What does this piece say about you?'
+  Selectable chip tags (max 5):
+  Anti-mainstream · Grail Hunt · First Love · Trophy Piece · Daily Beater
+  Investment · Gift · Memory · Community Pick · Future Classic
+  Statement Piece · Heritage · Underrated · Collab Alert · One of a Kind
+  + Custom tag input (20 chars max)
+
