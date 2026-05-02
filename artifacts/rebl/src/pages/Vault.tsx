@@ -25,7 +25,7 @@ function computeRarity(item) {
   if (item.serial_number) s += 15
   if (item.user_story || item.ai_story) s += 15
   if (item.image_url) s += 10
-  if (item.brands?.id) s += 5
+  if (item.brand) s += 5
   return Math.min(s, 100)
 }
 function rarityLabel(r) {
@@ -75,7 +75,7 @@ export default function Vault() {
       setProfile(prof)
 
       const [itemRes, membRes] = await Promise.all([
-        supabase.from('items').select('*, brands(id, name, slug, logo_url)')
+        supabase.from('items').select('*')
           .eq('owner_id', prof.id).order('created_at', { ascending: false }),
         session
           ? supabase.from('brand_customers').select('*, brands(id, name, slug), customer_tiers(name, color)').eq('profile_id', prof.id)
@@ -91,7 +91,7 @@ export default function Vault() {
   const isOwn = currentUserId && profile && currentUserId === profile.id
   const estVal = useMemo(() => fmtValue(items), [items])
   const verifiedCount = useMemo(() => items.filter(i => i.verified).length, [items])
-  const brandCount = useMemo(() => new Set(items.map(i => i.brands?.name || i.brand).filter(Boolean)).size, [items])
+  const brandCount = useMemo(() => new Set(items.map(i => i.brand).filter(Boolean)).size, [items])
 
   function removeItem(id) {
     setItems(prev => prev.filter(i => i.id !== id))
@@ -308,8 +308,8 @@ function ByBrandView({ items, onSelect, memberships }) {
   const groups = useMemo(() => {
     const map = {}
     for (const item of items) {
-      const key = item.brands?.name || item.brand || 'Other'
-      if (!map[key]) map[key] = { brand: item.brands, brandName: key, items: [] }
+      const key = item.brand || 'Other'
+      if (!map[key]) map[key] = { brandName: key, items: [] }
       map[key].items.push(item)
     }
     return Object.values(map).sort((a, b) => b.items.length - a.items.length)
@@ -322,10 +322,7 @@ function ByBrandView({ items, onSelect, memberships }) {
         return (
           <div key={group.brandName}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
-              {group.brand?.logo_url
-                ? <img src={group.brand.logo_url} style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: `1px solid ${C.border}` }} />
-                : <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: C.card, border: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700 }}>{group.brandName[0]}</div>
-              }
+              <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: C.card, border: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700 }}>{group.brandName[0]}</div>
               <div>
                 <div style={{ fontWeight: 800, fontSize: 17 }}>{group.brandName}</div>
                 {memb?.customer_tiers && (
@@ -445,7 +442,7 @@ function TimelineView({ items, onSelect }) {
                     <div style={{ fontWeight: 700, fontSize: 15, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</div>
                     {item.verified && <span style={{ fontSize: 10, color: '#22c55e', fontWeight: 700, flexShrink: 0 }}>✓</span>}
                   </div>
-                  <div style={{ fontSize: 12, color: C.muted, marginBottom: 6 }}>{item.brands?.name || item.brand}</div>
+                  <div style={{ fontSize: 12, color: C.muted, marginBottom: 6 }}>{item.brand}</div>
                   {(item.user_story || item.ai_story) && (
                     <div style={{ fontSize: 12, color: 'rgba(241,250,238,0.55)', lineHeight: 1.6 }}>
                       {(item.user_story || item.ai_story).slice(0, 100)}…
@@ -475,9 +472,8 @@ function ItemDetailModal({ item, isOwn, onClose, onRemove, onStorySaved }) {
 
   // Fetch brand story
   useEffect(() => {
-    const brandId = item.brands?.id
-    if (!brandId) return
-    supabase.from('product_stories').select('*').eq('brand_id', brandId).eq('published', true)
+    if (!item.brand) return
+    supabase.from('product_stories').select('*').eq('brand_name', item.brand).eq('published', true)
       .order('created_at', { ascending: false }).limit(1)
       .then(({ data }) => setBrandStory(data?.[0] || null))
   }, [item.id])
@@ -539,8 +535,7 @@ function ItemDetailModal({ item, isOwn, onClose, onRemove, onStorySaved }) {
           <div style={{ marginBottom: 16 }}>
             <h2 style={{ fontSize: 22, fontWeight: 900, letterSpacing: -0.4, margin: '0 0 4px' }}>{item.name}</h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              {item.brands?.logo_url && <img src={item.brands.logo_url} style={{ width: 18, height: 18, borderRadius: '50%', objectFit: 'cover' }} />}
-              <span style={{ fontSize: 13, color: C.muted }}>{item.brands?.name || item.brand}</span>
+              <span style={{ fontSize: 13, color: C.muted }}>{item.brand}</span>
               {item.edition && <span style={{ fontSize: 12, color: C.muted }}>· {item.edition}</span>}
             </div>
           </div>
@@ -632,8 +627,8 @@ function ItemDetailModal({ item, isOwn, onClose, onRemove, onStorySaved }) {
 
           {/* ── CTA + Owner actions ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {item.brands?.slug && (
-              <Link to={`/brand/${item.brands.slug}#owner-room`}
+            {item.brand && (
+              <Link to={`/brand/${item.brand.toLowerCase().replace(/\s+/g, '-')}#owner-room`}
                 style={{ display: 'block', textAlign: 'center', backgroundColor: C.accent, color: C.cream, borderRadius: 12, padding: '13px', textDecoration: 'none', fontWeight: 700, fontSize: 14 }}>
                 Join Owner Room ↗
               </Link>
