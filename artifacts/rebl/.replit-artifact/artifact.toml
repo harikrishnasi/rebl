@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Rebl"
+version = "1.0.0"
+id = "artifacts/rebl"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21769
+
+[services.development]
+run = "pnpm --filter @workspace/rebl run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/rebl", "run", "build" ]
+publicDir = "artifacts/rebl/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21769"
+BASE_PATH = "/"
