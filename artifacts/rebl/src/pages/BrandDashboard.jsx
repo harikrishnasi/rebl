@@ -371,14 +371,17 @@ function TabDrops({ brand, lang, drops, setDrops }) {
 /* ══════════════════════════════════════════
    TAB: STORY BUILDER
 ══════════════════════════════════════════ */
+const EMPTY_FIELDS = { headline: '', origin: '', design_intent: '', why_limited: '', behind_scenes: '' }
+const LIMITS = { headline: 80, origin: 300, design_intent: 300, why_limited: 200, behind_scenes: 500 }
+
 function TabStory({ brand, lang, drops }) {
   const [selectedDrop, setSelectedDrop] = useState('')
+  const [fields, setFields] = useState(EMPTY_FIELDS)
   const [generating, setGenerating] = useState(false)
-  const [story, setStory] = useState('')
-  const [editedStory, setEditedStory] = useState('')
   const [msgIdx, setMsgIdx] = useState(0)
-  const [saved, setSaved] = useState(false)
-  const textareaRef = useRef(null)
+  const [showPreview, setShowPreview] = useState(false)
+  const [publishing, setPublishing] = useState(false)
+  const [published, setPublished] = useState(false)
   const msgs = ['Studying your brand...', 'Crafting the narrative...', 'Polishing the story...']
 
   useEffect(() => {
@@ -387,106 +390,327 @@ function TabStory({ brand, lang, drops }) {
     return () => clearInterval(iv)
   }, [generating])
 
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px'
-    }
-  }, [editedStory])
+  function setField(k, v) {
+    setFields(prev => ({ ...prev, [k]: v.slice(0, LIMITS[k]) }))
+    setPublished(false)
+  }
+
+  function handleDropChange(id) {
+    setSelectedDrop(id)
+    setFields(EMPTY_FIELDS)
+    setPublished(false)
+  }
 
   async function generate() {
     const drop = drops.find(d => d.id === selectedDrop)
     if (!drop) { toast.error(`Select a ${lang.drop.toLowerCase()} first`); return }
     setGenerating(true)
-    setSaved(false)
-    setStory('')
-    setEditedStory('')
-    const sys = `You are the story engine for Rebl. You write premium, editorial drop launch stories for Indian collector brands. Tone: exclusive, passionate, brand-to-community.`
-    const prompt = `Write a 180-word launch story for:
-Brand: ${brand.name}
-${lang.drop}: ${drop.name}
-Edition: ${drop.edition || 'Standard'}
-Quantity: ${drop.quantity ? `${drop.quantity} ${lang.product}s` : 'Limited'}
-Price: ${drop.price ? `₹${drop.price}` : 'TBD'}
+    setPublished(false)
 
-Include:
-1. Why this ${lang.drop.toLowerCase()} matters to the community (2-3 sentences)
-2. What makes this edition special (2-3 sentences)
-3. A direct call to the ${lang.community.toLowerCase()}, starting with: 'This is for —'
+    const primaryCat = brand.brand_categories?.find(c => c.is_primary)?.category
+      || brand.brand_categories?.[0]?.category || 'other'
 
-No headers. No labels. Pure narrative. Second person.`
+    const system = `You write authentic, editorial product stories for collector brands. Never corporate. Never marketing speak.`
+    const prompt = `Brand: ${brand.name} (${primaryCat})
+Drop: ${drop.name}${drop.edition ? ` — ${drop.edition}` : ''}
+Description: ${drop.description || drop.name}
+Limited edition strategies: ${(brand.limited_edition_strategies || []).join(', ') || 'limited quantity'}
+
+Return ONLY valid JSON (no markdown, no backticks):
+{ "headline": "", "origin": "", "design_intent": "", "why_limited": "" }
+
+Each field: 2-3 sentences max. Tone: collector-grade editorial.`
 
     try {
-      const result = await callGeminiAPI(prompt, sys)
-      setStory(result)
-      setEditedStory(result)
-    } catch { toast.error('Generation failed') }
-    finally { setGenerating(false) }
+      const raw = await callGeminiAPI(prompt, system)
+      const cleaned = raw.replace(/```json|```/g, '').trim()
+      const parsed = JSON.parse(cleaned)
+      setFields(prev => ({
+        ...prev,
+        headline:      (parsed.headline     || '').slice(0, LIMITS.headline),
+        origin:        (parsed.origin       || '').slice(0, LIMITS.origin),
+        design_intent: (parsed.design_intent|| '').slice(0, LIMITS.design_intent),
+        why_limited:   (parsed.why_limited  || '').slice(0, LIMITS.why_limited),
+      }))
+    } catch (err) {
+      toast.error('Generation failed — check console')
+      console.error(err)
+    } finally {
+      setGenerating(false)
+    }
   }
 
-  async function saveStory() {
+  async function handlePublish() {
     if (!selectedDrop) return
-    const { error } = await supabase.from('drops').update({ story: editedStory }).eq('id', selectedDrop)
-    if (error) toast.error(error.message)
-    else { toast.success('Story saved!'); setSaved(true) }
+    if (!fields.headline || !fields.origin) { toast.error('Headline and Origin Story are required'); return }
+    setPublishing(true)
+    try {
+      const { error } = await supabase.from('product_stories').upsert({
+        drop_id: selectedDrop,
+        brand_id: brand.id,
+        headline: fields.headline,
+        origin: fields.origin,
+        design_intent: fields.design_intent,
+        why_limited: fields.why_limited,
+        behind_scenes: fields.behind_scenes || null,
+        published: true,
+      }, { onConflict: 'drop_id' })
+      if (error) throw error
+      toast.success('Story published!')
+      setPublished(true)
+    } catch (err) { toast.error(err.message) }
+    finally { setPublishing(false) }
   }
+
+  const drop = drops.find(d => d.id === selectedDrop)
+  const hasContent = fields.headline || fields.origin
 
   return (
-    <div>
+    <div style={{ maxWidth: 680 }}>
       <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 4 }}>Story Builder</h1>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 28 }}>AI-generate a launch story for any {lang.drop.toLowerCase()}</p>
+      <p style={{ color: C.muted, fontSize: 14, marginBottom: 28 }}>
+        Craft the product story that lives on every collector's item card.
+      </p>
 
-      <div style={{ marginBottom: 20 }}>
-        <label style={{ display: 'block', fontSize: 13, color: C.muted, fontWeight: 600, marginBottom: 8 }}>
-          Choose a {lang.drop}
-        </label>
+      {/* Drop selector */}
+      <div style={{ marginBottom: 28 }}>
+        <SBLabel>Choose a {lang.drop}</SBLabel>
         {drops.length === 0
-          ? <div style={{ color: C.muted, fontSize: 14 }}>No {lang.drop.toLowerCase()}s yet. Create one in the {lang.drop}s tab first.</div>
-          : <select value={selectedDrop} onChange={e => { setSelectedDrop(e.target.value); setStory(''); setSaved(false) }} style={{ ...IS, maxWidth: 360 }}>
+          ? <p style={{ color: C.muted, fontSize: 14 }}>No {lang.drop.toLowerCase()}s yet — create one in the {lang.drop}s tab first.</p>
+          : <select value={selectedDrop} onChange={e => handleDropChange(e.target.value)} style={{ ...IS, maxWidth: 400 }}>
               <option value="">Select a {lang.drop.toLowerCase()}…</option>
               {drops.map(d => <option key={d.id} value={d.id}>{d.name}{d.edition ? ` — ${d.edition}` : ''}</option>)}
             </select>
         }
       </div>
 
-      <RedBtn onClick={generate} disabled={!selectedDrop || generating}>
-        {generating ? msgs[msgIdx] : `✦ Generate Story`}
-      </RedBtn>
+      {selectedDrop && (
+        <>
+          {/* Generate button */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
+            <button
+              onClick={generate}
+              disabled={generating}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                backgroundColor: generating ? 'rgba(230,57,70,0.25)' : 'rgba(230,57,70,0.15)',
+                color: C.accent, border: `1px solid rgba(230,57,70,0.35)`,
+                borderRadius: 10, padding: '11px 22px', fontWeight: 700, fontSize: 14,
+                cursor: generating ? 'not-allowed' : 'pointer', transition: 'all 0.2s',
+              }}
+            >
+              {generating
+                ? <><Spinner size={16} />{msgs[msgIdx]}</>
+                : <>✦ Generate with AI</>
+              }
+            </button>
+            <span style={{ color: C.muted, fontSize: 13 }}>or fill in the fields manually below</span>
+          </div>
 
-      {generating && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 28 }}>
-          <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-          <div style={{ width: 28, height: 28, border: '3px solid rgba(230,57,70,0.2)', borderTopColor: C.accent, borderRadius: '50%', animation: 'spin 0.8s linear infinite', flexShrink: 0 }} />
-          <span style={{ color: C.muted, fontSize: 14 }}>{msgs[msgIdx]}</span>
-        </div>
+          {/* Fields */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20, marginBottom: 32 }}>
+            <SBField
+              label="Headline"
+              hint="The story hook — one sharp line"
+              value={fields.headline} limit={LIMITS.headline}
+              onChange={v => setField('headline', v)}
+              placeholder="e.g. Some things are made to last. This is one of them."
+            />
+            <SBField
+              label="Origin Story"
+              hint="Where did this come from?"
+              value={fields.origin} limit={LIMITS.origin}
+              onChange={v => setField('origin', v)}
+              multiline
+              placeholder="The idea, the place, the moment that started it all…"
+            />
+            <SBField
+              label="Design Intent"
+              hint="What were you expressing?"
+              value={fields.design_intent} limit={LIMITS.design_intent}
+              onChange={v => setField('design_intent', v)}
+              multiline
+              placeholder="The aesthetic decisions, the references, the obsession behind the form…"
+            />
+            <SBField
+              label="Why Limited?"
+              hint="The honest scarcity rationale"
+              value={fields.why_limited} limit={LIMITS.why_limited}
+              onChange={v => setField('why_limited', v)}
+              multiline
+              placeholder="Not because it's marketing — because of this specific reason…"
+            />
+            <SBField
+              label="Behind the Scenes"
+              hint="Text or media URL — optional"
+              value={fields.behind_scenes} limit={LIMITS.behind_scenes}
+              onChange={v => setField('behind_scenes', v)}
+              placeholder="https://… or a short note about the making process"
+            />
+          </div>
+
+          {/* Actions */}
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <button
+              onClick={() => hasContent && setShowPreview(true)}
+              disabled={!hasContent}
+              style={{
+                backgroundColor: 'transparent', color: hasContent ? C.cream : C.muted,
+                border: `1px solid ${hasContent ? 'rgba(255,255,255,0.2)' : C.border}`,
+                borderRadius: 10, padding: '12px 22px', fontWeight: 600, fontSize: 14,
+                cursor: hasContent ? 'pointer' : 'not-allowed',
+              }}
+            >
+              👁 Preview as Collector
+            </button>
+            <button
+              onClick={handlePublish}
+              disabled={publishing || published}
+              style={{
+                backgroundColor: published ? '#22c55e' : C.accent,
+                color: C.cream, border: 'none',
+                borderRadius: 10, padding: '12px 26px', fontWeight: 700, fontSize: 14,
+                cursor: publishing || published ? 'not-allowed' : 'pointer',
+                transition: 'background-color 0.2s', opacity: publishing ? 0.75 : 1,
+              }}
+            >
+              {publishing ? 'Publishing…' : published ? '✓ Published' : 'Save & Publish'}
+            </button>
+          </div>
+        </>
       )}
 
-      {story && !generating && (
-        <div style={{ marginTop: 28 }}>
-          <div style={{ backgroundColor: '#0d0d1a', borderLeft: `4px solid ${C.accent}`, borderRadius: '0 14px 14px 0', padding: '20px 24px', marginBottom: 20 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: C.accent, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 12 }}>
-              ✦ Rebl AI Story
-            </div>
-            <p style={{ color: C.cream, fontSize: 15, lineHeight: 1.8, margin: 0, fontStyle: 'italic' }}>{story}</p>
-          </div>
-
-          <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', fontSize: 13, color: C.muted, fontWeight: 600, marginBottom: 8 }}>Edit your story</label>
-            <textarea ref={textareaRef} value={editedStory} onChange={e => { setEditedStory(e.target.value); setSaved(false) }}
-              style={{ ...IS, width: '100%', minHeight: 140, resize: 'none', lineHeight: 1.75, fontSize: 15, boxSizing: 'border-box', overflow: 'hidden' }} />
-          </div>
-
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button onClick={saveStory} style={{ backgroundColor: saved ? '#22c55e' : C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '12px 24px', fontWeight: 700, cursor: 'pointer', transition: 'background-color 0.2s' }}>
-              {saved ? '✓ Saved' : `Save to ${lang.drop}`}
-            </button>
-            <button onClick={generate} style={{ backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '12px 20px', cursor: 'pointer' }}>
-              Regenerate
-            </button>
-          </div>
-        </div>
+      {/* Preview modal */}
+      {showPreview && drop && (
+        <StoryPreviewModal
+          fields={fields}
+          drop={drop}
+          brand={brand}
+          lang={lang}
+          onClose={() => setShowPreview(false)}
+        />
       )}
     </div>
+  )
+}
+
+/* ── Story field component ── */
+function SBLabel({ children }) {
+  return <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: 0.7, marginBottom: 7 }}>{children}</div>
+}
+
+function SBField({ label, hint, value, limit, onChange, multiline, placeholder }) {
+  const pct = Math.round((value.length / limit) * 100)
+  const nearLimit = pct >= 85
+
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 7 }}>
+        <div>
+          <span style={{ fontSize: 13, fontWeight: 700, color: C.cream }}>{label}</span>
+          {hint && <span style={{ fontSize: 12, color: C.muted, marginLeft: 8 }}>— {hint}</span>}
+        </div>
+        <span style={{ fontSize: 11, color: nearLimit ? C.gold : C.muted, fontWeight: nearLimit ? 700 : 400, transition: 'color 0.2s' }}>
+          {value.length}/{limit}
+        </span>
+      </div>
+      {multiline
+        ? <textarea
+            value={value}
+            onChange={e => onChange(e.target.value)}
+            placeholder={placeholder}
+            rows={3}
+            style={{
+              ...IS, width: '100%', resize: 'vertical', lineHeight: 1.65, fontSize: 14, boxSizing: 'border-box',
+              borderColor: nearLimit ? 'rgba(255,183,3,0.4)' : 'rgba(255,255,255,0.09)',
+            }}
+          />
+        : <input
+            type="text"
+            value={value}
+            onChange={e => onChange(e.target.value)}
+            placeholder={placeholder}
+            style={{
+              ...IS,
+              borderColor: nearLimit ? 'rgba(255,183,3,0.4)' : 'rgba(255,255,255,0.09)',
+            }}
+          />
+      }
+    </div>
+  )
+}
+
+/* ── Collector preview modal ── */
+function StoryPreviewModal({ fields, drop, brand, lang, onClose }) {
+  return (
+    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
+      onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 480, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
+        {/* Modal header */}
+        <div style={{ padding: '18px 22px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: C.muted }}>👁 Collector View</div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontSize: 20, lineHeight: 1 }}>×</button>
+        </div>
+
+        {/* Item card preview */}
+        <div style={{ padding: '24px 24px 32px' }}>
+          {/* Brand bar */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+            {brand.logo_url
+              ? <img src={brand.logo_url} style={{ width: 30, height: 30, borderRadius: '50%', objectFit: 'cover' }} />
+              : <div style={{ width: 30, height: 30, borderRadius: '50%', backgroundColor: C.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900 }}>{brand.name[0]}</div>
+            }
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700 }}>{brand.name}</div>
+              <div style={{ fontSize: 11, color: C.muted }}>{drop.name}{drop.edition ? ` · ${drop.edition}` : ''}</div>
+            </div>
+            <div style={{ marginLeft: 'auto', padding: '3px 10px', borderRadius: 20, backgroundColor: 'rgba(230,57,70,0.12)', border: `1px solid rgba(230,57,70,0.3)`, fontSize: 11, fontWeight: 700, color: C.accent }}>
+              ✦ Verified {lang.drop}
+            </div>
+          </div>
+
+          {/* Headline */}
+          {fields.headline && (
+            <h2 style={{ fontSize: 20, fontWeight: 900, lineHeight: 1.25, marginBottom: 20, letterSpacing: '-0.3px' }}>
+              {fields.headline}
+            </h2>
+          )}
+
+          {/* Story sections */}
+          {[
+            { label: 'The Origin', value: fields.origin },
+            { label: 'Design Intent', value: fields.design_intent },
+            { label: 'Why Limited?', value: fields.why_limited },
+          ].filter(s => s.value).map((section, i) => (
+            <div key={i} style={{ marginBottom: 18, paddingLeft: 14, borderLeft: `2px solid ${i === 0 ? C.accent : i === 1 ? C.gold : 'rgba(255,255,255,0.15)'}` }}>
+              <div style={{ fontSize: 10, fontWeight: 800, color: C.muted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>{section.label}</div>
+              <p style={{ fontSize: 14, lineHeight: 1.72, color: C.cream, margin: 0 }}>{section.value}</p>
+            </div>
+          ))}
+
+          {/* Behind the scenes */}
+          {fields.behind_scenes && (
+            <div style={{ marginTop: 20, padding: '14px 16px', backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 10, border: `1px solid ${C.border}` }}>
+              <div style={{ fontSize: 10, fontWeight: 800, color: C.muted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>🎭 Behind the Scenes</div>
+              {fields.behind_scenes.startsWith('http')
+                ? <a href={fields.behind_scenes} target="_blank" rel="noreferrer" style={{ color: C.accent, fontSize: 13, wordBreak: 'break-all' }}>{fields.behind_scenes}</a>
+                : <p style={{ fontSize: 14, lineHeight: 1.6, color: C.muted, margin: 0 }}>{fields.behind_scenes}</p>
+              }
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── Spinner ── */
+function Spinner({ size = 20 }) {
+  return (
+    <>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <div style={{ width: size, height: size, border: `2px solid rgba(230,57,70,0.25)`, borderTopColor: C.accent, borderRadius: '50%', animation: 'spin 0.7s linear infinite', flexShrink: 0 }} />
+    </>
   )
 }
 
