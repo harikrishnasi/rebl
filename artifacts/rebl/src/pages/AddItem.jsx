@@ -132,7 +132,7 @@ Write in second person. No headers. No labels. Just the story.`
       setAiStory(story)
       setEditedStory(story)
     } catch (err) {
-      toast.error('Story generation failed. You can write your own.')
+      toast.error(err.message || 'Story generation failed. You can write your own.')
       setAiStory('')
       setEditedStory('')
     } finally {
