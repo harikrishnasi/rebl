@@ -1678,113 +1678,460 @@ function StatusBadge({ status }) {
 /* ══════════════════════════════════════════
    TAB: BACKSTAGE
 ══════════════════════════════════════════ */
-function TabBackstage({ brand, lang }) {
+const BS_EVENT_TYPES = [
+  { id: 'design_preview',  icon: '🎨', label: 'Design Preview',  desc: 'Show an unreleased design before the world sees it' },
+  { id: 'founder_call',    icon: '📞', label: 'Founder Call',    desc: 'Small-group video call with the founder' },
+  { id: 'factory_tour',    icon: '🏭', label: 'Factory Tour',    desc: 'Virtual or physical behind-the-scenes access' },
+  { id: 'early_purchase',  icon: '⚡', label: 'Early Purchase',  desc: 'Buy 48 hrs before the public drop goes live' },
+  { id: 'virtual_event',   icon: '🎙', label: 'Virtual Event',   desc: 'Live stream, panel, or Q&A session' },
+  { id: 'custom',          icon: '✦',  label: 'Custom',          desc: 'Define your own exclusive experience' },
+]
+
+function TabBackstage({ brand, lang, tiers, drops }) {
+  const [events, setEvents] = useState([])
   const [posts, setPosts] = useState([])
   const [loaded, setLoaded] = useState(false)
-  const [showCreate, setShowCreate] = useState(false)
-  const [form, setForm] = useState({ title: '', content: '', tier_required: 'insider', post_type: 'update' })
-  const [saving, setSaving] = useState(false)
+  const [createModal, setCreateModal] = useState(null) // null | { type }
+  const [postModal, setPostModal] = useState(false)
+  const [viewEvent, setViewEvent] = useState(null)
 
   useEffect(() => {
-    supabase.from('backstage_posts').select('*').eq('brand_id', brand.id).order('created_at', { ascending: false })
-      .then(({ data }) => { setPosts(data || []); setLoaded(true) })
+    Promise.all([
+      supabase.from('backstage_events').select('*').eq('brand_id', brand.id).order('created_at', { ascending: false }),
+      supabase.from('backstage_posts').select('*').eq('brand_id', brand.id).order('created_at', { ascending: false }),
+    ]).then(([evRes, postRes]) => {
+      setEvents(evRes.data || [])
+      setPosts(postRes.data || [])
+      setLoaded(false)
+    }).finally(() => setLoaded(true))
   }, [])
 
-  async function handleCreate(e) {
-    e.preventDefault()
-    if (!form.title || !form.content) { toast.error('Title and content required'); return }
-    setSaving(true)
-    try {
-      const { data, error } = await supabase.from('backstage_posts').insert({ brand_id: brand.id, ...form }).select().single()
-      if (error) throw error
-      setPosts(prev => [data, ...prev])
-      setShowCreate(false)
-      setForm({ title: '', content: '', tier_required: 'insider', post_type: 'update' })
-      toast.success('Backstage post published!')
-    } catch (err) { toast.error(err.message) }
-    finally { setSaving(false) }
+  function onEventCreated(ev) {
+    setEvents(prev => [ev, ...prev])
+    setCreateModal(null)
+    toast.success('Experience created!')
+  }
+
+  function onPostCreated(p) {
+    setPosts(prev => [p, ...prev])
+    setPostModal(false)
+    toast.success('Post published!')
+  }
+
+  function sendInviteForEvent(ev) {
+    toast.success('Backstage invite campaign opened in Campaigns tab')
   }
 
   if (!loaded) return <FullLoader small />
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 900 }}>Backstage</h1>
-        <RedBtn onClick={() => setShowCreate(true)}>+ New Post</RedBtn>
-      </div>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 24 }}>
-        Exclusive content for your top {lang.community.toLowerCase()}. Only visible to qualifying tiers.
+      <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 4 }}>Backstage</h1>
+      <p style={{ color: C.muted, fontSize: 14, marginBottom: 32 }}>
+        Exclusive Experiences for Your Legends — only visible to collectors with Backstage access
       </p>
 
-      {showCreate && (
-        <div style={{ backgroundColor: C.card, borderRadius: 16, border: `1px solid ${C.border}`, padding: 24, marginBottom: 24 }}>
-          <h3 style={{ fontWeight: 800, marginBottom: 20 }}>New Backstage Post</h3>
-          <form onSubmit={handleCreate}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 16 }}>
-              <div>
-                <label style={{ display: 'block', fontSize: 12, color: C.muted, fontWeight: 600, marginBottom: 6 }}>Title *</label>
-                <input value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))} placeholder="e.g. Behind the scenes — Summer Drop" style={IS} />
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: 12, color: C.muted, fontWeight: 600, marginBottom: 6 }}>Post Type</label>
-                  <select value={form.post_type} onChange={e => setForm(p => ({ ...p, post_type: e.target.value }))} style={{ ...IS, appearance: 'none' }}>
-                    <option value="update">Behind the Scenes</option>
-                    <option value="early_access">Early Access</option>
-                    <option value="making_of">Making Of</option>
-                    <option value="exclusive">Exclusive Offer</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: 12, color: C.muted, fontWeight: 600, marginBottom: 6 }}>Min Tier Required</label>
-                  <select value={form.tier_required} onChange={e => setForm(p => ({ ...p, tier_required: e.target.value }))} style={{ ...IS, appearance: 'none' }}>
-                    <option value="follower">Follower (All)</option>
-                    <option value="insider">Insider +</option>
-                    <option value="legend">Legend Only</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: 12, color: C.muted, fontWeight: 600, marginBottom: 6 }}>Content *</label>
-                <textarea value={form.content} onChange={e => setForm(p => ({ ...p, content: e.target.value }))}
-                  placeholder="Share something exclusive with your community…" rows={5}
-                  style={{ ...IS, resize: 'none', lineHeight: 1.6 }} />
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 10 }}>
-              <button type="submit" disabled={saving} style={{ backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '11px 22px', fontWeight: 700, cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
-                {saving ? 'Publishing…' : 'Publish'}
-              </button>
-              <button type="button" onClick={() => setShowCreate(false)} style={{ backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '11px 20px', cursor: 'pointer' }}>
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+      {/* ── SECTION A: Event type cards ── */}
+      <SectionHead label="A" title="Create an Experience" />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: 12, marginBottom: 44 }}>
+        {BS_EVENT_TYPES.map(t => (
+          <button key={t.id} onClick={() => setCreateModal({ typeId: t.id })}
+            style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: '20px 18px', cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s, transform 0.15s' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = C.gold; e.currentTarget.style.transform = 'translateY(-2px)' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.transform = 'none' }}>
+            <div style={{ fontSize: 26, marginBottom: 10 }}>{t.icon}</div>
+            <div style={{ fontWeight: 700, fontSize: 13, color: C.cream, marginBottom: 5 }}>{t.label}</div>
+            <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.4 }}>{t.desc}</div>
+          </button>
+        ))}
+      </div>
 
-      {posts.length === 0
-        ? <EmptyState icon="🎭" title="No backstage posts yet" desc={`Share exclusive behind-the-scenes content with your top ${lang.community.toLowerCase()}`} />
+      {/* ── SECTION B: Active events table ── */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <SectionHead label="B" title="Active Experiences" />
+      </div>
+      {events.length === 0
+        ? <EmptyState icon="✨" title="No experiences yet" desc="Pick a type above to create your first backstage experience" style={{ marginBottom: 40 }} />
         : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {posts.map(post => (
-              <div key={post.id} style={{ backgroundColor: C.card, borderRadius: 14, border: `1px solid ${C.border}`, padding: '18px 20px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                  <div style={{ fontWeight: 700, fontSize: 15 }}>{post.title}</div>
-                  <div style={{ padding: '3px 8px', borderRadius: 6, backgroundColor: 'rgba(255,183,3,0.12)', color: C.gold, fontSize: 11, fontWeight: 700, textTransform: 'capitalize' }}>
-                    🔒 {post.tier_required}+
-                  </div>
-                </div>
-                <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.65, margin: 0 }}>{post.content}</p>
-                <div style={{ fontSize: 12, color: 'rgba(141,153,174,0.5)', marginTop: 10 }}>
-                  {new Date(post.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                </div>
-              </div>
-            ))}
+          <div style={{ overflowX: 'auto', marginBottom: 40 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 600 }}>
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${C.border}` }}>
+                  {['Name', 'Type', 'Eligible Tiers', 'RSVPs', 'Date', 'Status', ''].map(h => (
+                    <th key={h} style={{ padding: '10px 12px', textAlign: 'left', color: C.muted, fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.6, whiteSpace: 'nowrap' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {events.map((ev, i) => {
+                  const typeInfo = BS_EVENT_TYPES.find(t => t.id === ev.event_type) || BS_EVENT_TYPES[5]
+                  const eligibleTiers = Array.isArray(ev.eligible_tier_ids)
+                    ? ev.eligible_tier_ids.map(id => tiers.find(t => t.id === id)?.name).filter(Boolean)
+                    : []
+                  return (
+                    <tr key={ev.id || i} style={{ borderBottom: `1px solid rgba(255,255,255,0.04)` }}
+                      onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'}
+                      onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}>
+                      <td style={{ padding: '13px 12px' }}>
+                        <div style={{ fontWeight: 600, color: C.cream }}>{ev.name}</div>
+                        {ev.description && <div style={{ fontSize: 11, color: C.muted, marginTop: 2, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ev.description}</div>}
+                      </td>
+                      <td style={{ padding: '13px 12px' }}>
+                        <span style={{ padding: '3px 9px', borderRadius: 6, backgroundColor: 'rgba(255,183,3,0.10)', color: C.gold, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                          {typeInfo.icon} {typeInfo.label}
+                        </span>
+                      </td>
+                      <td style={{ padding: '13px 12px' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                          {eligibleTiers.length > 0
+                            ? eligibleTiers.map((name, j) => (
+                              <span key={j} style={{ padding: '2px 7px', borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.07)', fontSize: 11, color: C.muted }}>{name}</span>
+                            ))
+                            : <span style={{ fontSize: 12, color: C.muted }}>All</span>
+                          }
+                        </div>
+                      </td>
+                      <td style={{ padding: '13px 12px', color: ev.rsvp_required ? C.cream : C.muted, fontWeight: ev.rsvp_count > 0 ? 700 : 400 }}>
+                        {ev.rsvp_required ? (ev.rsvp_count ?? 0) : '—'}
+                        {ev.max_attendees > 0 && <span style={{ color: C.muted, fontWeight: 400 }}>/{ev.max_attendees}</span>}
+                      </td>
+                      <td style={{ padding: '13px 12px', fontSize: 12, color: C.muted, whiteSpace: 'nowrap' }}>
+                        {ev.rolling_access
+                          ? <span style={{ color: C.gold, fontWeight: 700 }}>∞ Rolling</span>
+                          : ev.event_date
+                            ? new Date(ev.event_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                            : '—'
+                        }
+                      </td>
+                      <td style={{ padding: '13px 12px' }}>
+                        <BSEventStatusBadge event={ev} />
+                      </td>
+                      <td style={{ padding: '13px 12px' }}>
+                        <button onClick={() => sendInviteForEvent(ev)}
+                          style={{ padding: '6px 12px', borderRadius: 7, fontSize: 11, fontWeight: 700, cursor: 'pointer', border: `1px solid rgba(255,183,3,0.3)`, backgroundColor: 'rgba(255,183,3,0.08)', color: C.gold, whiteSpace: 'nowrap' }}>
+                          🎭 Send Invite
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
         )
       }
+
+      {/* ── SECTION C: Backstage posts ── */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <SectionHead label="C" title="Backstage Posts" />
+        <button onClick={() => setPostModal(true)}
+          style={{ backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer', marginBottom: 16 }}>
+          + New Post
+        </button>
+      </div>
+      {posts.length === 0
+        ? <EmptyState icon="📝" title="No posts yet" desc="Share behind-the-scenes updates only your top-tier collectors can see" />
+        : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {posts.map((post, i) => {
+              const tierName = tiers.find(t => t.id === post.eligible_tier_id)?.name
+              return (
+                <div key={post.id || i} style={{ backgroundColor: C.card, borderRadius: 14, border: `1px solid ${C.border}`, padding: '18px 20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10, marginBottom: 10 }}>
+                    <div style={{ fontWeight: 700, fontSize: 15 }}>{post.title}</div>
+                    <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                      {tierName && (
+                        <span style={{ padding: '3px 8px', borderRadius: 6, backgroundColor: 'rgba(255,183,3,0.12)', color: C.gold, fontSize: 11, fontWeight: 700 }}>
+                          🔒 {tierName}+
+                        </span>
+                      )}
+                      {!tierName && post.tier_required && (
+                        <span style={{ padding: '3px 8px', borderRadius: 6, backgroundColor: 'rgba(255,183,3,0.12)', color: C.gold, fontSize: 11, fontWeight: 700 }}>
+                          🔒 {post.tier_required}+
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <p style={{ color: C.muted, fontSize: 14, lineHeight: 1.65, margin: 0 }}>{post.content}</p>
+                  <div style={{ fontSize: 12, color: 'rgba(141,153,174,0.4)', marginTop: 10 }}>
+                    {new Date(post.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )
+      }
+
+      {/* ── CREATE EVENT MODAL ── */}
+      {createModal && (
+        <BSCreateEventModal
+          brand={brand} tiers={tiers} drops={drops}
+          initialTypeId={createModal.typeId}
+          onClose={() => setCreateModal(null)}
+          onCreate={onEventCreated}
+        />
+      )}
+
+      {/* ── CREATE POST MODAL ── */}
+      {postModal && (
+        <BSCreatePostModal
+          brand={brand} tiers={tiers}
+          onClose={() => setPostModal(false)}
+          onCreate={onPostCreated}
+        />
+      )}
+    </div>
+  )
+}
+
+/* ── Backstage event status badge ── */
+function BSEventStatusBadge({ event }) {
+  let label = 'Active', color = '#22c55e', bg = 'rgba(34,197,94,0.12)'
+  if (event.status === 'draft')    { label = 'Draft';    color = C.muted; bg = 'rgba(255,255,255,0.06)' }
+  if (event.status === 'ended')    { label = 'Ended';    color = C.muted; bg = 'rgba(255,255,255,0.06)' }
+  if (event.status === 'upcoming') { label = 'Upcoming'; color = C.gold;  bg = 'rgba(255,183,3,0.12)' }
+  if (!event.status || event.status === 'active') {
+    const now = new Date()
+    if (event.event_date && new Date(event.event_date) > now) { label = 'Upcoming'; color = C.gold; bg = 'rgba(255,183,3,0.12)' }
+    else if (event.rolling_access) { label = 'Live'; color = '#22c55e'; bg = 'rgba(34,197,94,0.12)' }
+  }
+  return <span style={{ padding: '3px 8px', borderRadius: 6, backgroundColor: bg, color, fontSize: 11, fontWeight: 700 }}>{label}</span>
+}
+
+/* ── CREATE EVENT MODAL ── */
+function BSCreateEventModal({ brand, tiers, drops, initialTypeId, onClose, onCreate }) {
+  const [form, setForm] = useState({
+    name: '',
+    event_type: initialTypeId,
+    drop_id: '',
+    description: '',
+    eligible_tier_ids: tiers.filter(t => t.has_backstage_access).map(t => t.id),
+    max_attendees: '',
+    event_date: '',
+    rolling_access: false,
+    rsvp_required: false,
+  })
+  const [saving, setSaving] = useState(false)
+  const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
+
+  function toggleTierId(id) {
+    const ids = form.eligible_tier_ids
+    set('eligible_tier_ids', ids.includes(id) ? ids.filter(i => i !== id) : [...ids, id])
+  }
+
+  async function handleSave() {
+    if (!form.name.trim()) { toast.error('Event name required'); return }
+    setSaving(true)
+    const payload = {
+      brand_id: brand.id,
+      name: form.name,
+      event_type: form.event_type,
+      drop_id: form.drop_id || null,
+      description: form.description,
+      eligible_tier_ids: form.eligible_tier_ids,
+      max_attendees: form.max_attendees ? Number(form.max_attendees) : null,
+      event_date: form.rolling_access ? null : (form.event_date || null),
+      rolling_access: form.rolling_access,
+      rsvp_required: form.rsvp_required,
+      status: 'active',
+    }
+    try {
+      const { data, error } = await supabase.from('backstage_events').insert(payload).select().single()
+      if (error) throw error
+      onCreate(data)
+    } catch (err) { toast.error(err.message) }
+    finally { setSaving(false) }
+  }
+
+  const typeInfo = BS_EVENT_TYPES.find(t => t.id === form.event_type) || BS_EVENT_TYPES[5]
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
+      onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 540, width: '100%', maxHeight: '92vh', overflowY: 'auto' }}>
+        {/* Header */}
+        <div style={{ padding: '20px 24px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', gap: 14, justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span style={{ fontSize: 24 }}>{typeInfo.icon}</span>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: 16 }}>Create {typeInfo.label}</div>
+              <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>{typeInfo.desc}</div>
+            </div>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: C.muted, fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>×</button>
+        </div>
+
+        <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+          {/* Name */}
+          <div>
+            <MLabel>Event Name *</MLabel>
+            <input value={form.name} onChange={e => set('name', e.target.value)} placeholder={`e.g. Exclusive ${typeInfo.label} — Summer '25`} style={IS} />
+          </div>
+
+          {/* Type selector */}
+          <div>
+            <MLabel>Event Type</MLabel>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+              {BS_EVENT_TYPES.map(t => (
+                <button key={t.id} onClick={() => set('event_type', t.id)}
+                  style={{ padding: '9px 8px', borderRadius: 9, cursor: 'pointer', border: `1px solid ${form.event_type === t.id ? C.gold : C.border}`, backgroundColor: form.event_type === t.id ? 'rgba(255,183,3,0.1)' : 'transparent', fontSize: 12, fontWeight: form.event_type === t.id ? 700 : 400, color: form.event_type === t.id ? C.gold : C.muted, transition: 'all 0.15s' }}>
+                  {t.icon} {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Connected drop */}
+          {drops && drops.length > 0 && (
+            <div>
+              <MLabel>Connected Drop (optional)</MLabel>
+              <select value={form.drop_id} onChange={e => set('drop_id', e.target.value)} style={{ ...IS, appearance: 'none' }}>
+                <option value="">— None —</option>
+                {drops.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+              </select>
+            </div>
+          )}
+
+          {/* Description */}
+          <div>
+            <MLabel>Description</MLabel>
+            <textarea value={form.description} onChange={e => set('description', e.target.value)}
+              rows={3} placeholder="What will they experience? Be specific — this is what excites them."
+              style={{ ...IS, resize: 'vertical', lineHeight: 1.65, fontSize: 13 }} />
+          </div>
+
+          {/* Eligible tiers */}
+          <div>
+            <MLabel>Eligible Tiers</MLabel>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {tiers.map(t => {
+                const active = form.eligible_tier_ids.includes(t.id)
+                return (
+                  <button key={t.id} onClick={() => toggleTierId(t.id)}
+                    style={{ padding: '6px 14px', borderRadius: 20, border: `1px solid ${active ? `#${t.color}` : 'rgba(255,255,255,0.12)'}`, backgroundColor: active ? `#${t.color}20` : 'transparent', color: active ? `#${t.color}` : C.muted, fontSize: 13, fontWeight: active ? 700 : 400, cursor: 'pointer', transition: 'all 0.15s' }}>
+                    {t.name}
+                    {t.has_backstage_access && ' 🎭'}
+                  </button>
+                )
+              })}
+            </div>
+            <div style={{ fontSize: 12, color: C.muted, marginTop: 7 }}>🎭 = tier has Backstage Access enabled</div>
+          </div>
+
+          {/* Rolling access toggle */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 10, border: `1px solid ${C.border}` }}>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 14 }}>∞ Rolling Access</div>
+              <div style={{ color: C.muted, fontSize: 12, marginTop: 2 }}>Available on-demand, no fixed date</div>
+            </div>
+            <Toggle on={form.rolling_access} onChange={v => set('rolling_access', v)} />
+          </div>
+
+          {/* Max attendees + Date (shown when not rolling) */}
+          {!form.rolling_access && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              <div>
+                <MLabel>Max Attendees</MLabel>
+                <input type="number" min={1} value={form.max_attendees} onChange={e => set('max_attendees', e.target.value)} placeholder="Unlimited" style={IS} />
+              </div>
+              <div>
+                <MLabel>Event Date & Time</MLabel>
+                <input type="datetime-local" value={form.event_date} onChange={e => set('event_date', e.target.value)} style={IS} />
+              </div>
+            </div>
+          )}
+
+          {/* RSVP toggle */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 10, border: `1px solid ${C.border}` }}>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 14 }}>RSVP Required</div>
+              <div style={{ color: C.muted, fontSize: 12, marginTop: 2 }}>Collectors must confirm attendance</div>
+            </div>
+            <Toggle on={form.rsvp_required} onChange={v => set('rsvp_required', v)} />
+          </div>
+
+          {/* Actions */}
+          <div style={{ display: 'flex', gap: 10, paddingTop: 4 }}>
+            <button onClick={handleSave} disabled={saving}
+              style={{ flex: 2, backgroundColor: C.gold, color: C.primary, border: 'none', borderRadius: 10, padding: '13px', fontWeight: 800, fontSize: 14, cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>
+              {saving ? 'Creating…' : `Create ${typeInfo.label}`}
+            </button>
+            <button onClick={onClose}
+              style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '13px', cursor: 'pointer' }}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── CREATE POST MODAL ── */
+function BSCreatePostModal({ brand, tiers, onClose, onCreate }) {
+  const [form, setForm] = useState({ title: '', content: '', eligible_tier_id: tiers[0]?.id || '', post_type: 'update' })
+  const [saving, setSaving] = useState(false)
+  const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
+
+  async function handleSave() {
+    if (!form.title.trim() || !form.content.trim()) { toast.error('Title and content required'); return }
+    setSaving(true)
+    try {
+      const { data, error } = await supabase.from('backstage_posts').insert({ brand_id: brand.id, ...form }).select().single()
+      if (error) throw error
+      onCreate(data)
+    } catch (err) { toast.error(err.message) }
+    finally { setSaving(false) }
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
+      onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 500, width: '100%' }}>
+        <div style={{ padding: '20px 24px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ fontWeight: 800, fontSize: 16 }}>📝 New Backstage Post</div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: C.muted, fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>×</button>
+        </div>
+        <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div>
+            <MLabel>Title *</MLabel>
+            <input value={form.title} onChange={e => set('title', e.target.value)} placeholder="Behind the scenes — Summer Drop" style={IS} />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+            <div>
+              <MLabel>Post Type</MLabel>
+              <select value={form.post_type} onChange={e => set('post_type', e.target.value)} style={{ ...IS, appearance: 'none' }}>
+                <option value="update">Behind the Scenes</option>
+                <option value="early_access">Early Access</option>
+                <option value="making_of">Making Of</option>
+                <option value="exclusive">Exclusive Offer</option>
+              </select>
+            </div>
+            <div>
+              <MLabel>Visible to Tier</MLabel>
+              <select value={form.eligible_tier_id} onChange={e => set('eligible_tier_id', e.target.value)} style={{ ...IS, appearance: 'none' }}>
+                {tiers.map(t => <option key={t.id} value={t.id}>{t.name}+</option>)}
+              </select>
+            </div>
+          </div>
+          <div>
+            <MLabel>Content *</MLabel>
+            <textarea value={form.content} onChange={e => set('content', e.target.value)} rows={5}
+              placeholder="Share something exclusive…" style={{ ...IS, resize: 'vertical', lineHeight: 1.65 }} />
+          </div>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button onClick={handleSave} disabled={saving}
+              style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '13px', fontWeight: 700, cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
+              {saving ? 'Publishing…' : 'Publish Post'}
+            </button>
+            <button onClick={onClose}
+              style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '13px', cursor: 'pointer' }}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
