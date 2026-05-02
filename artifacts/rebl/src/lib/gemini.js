@@ -1,8 +1,9 @@
 // Models tried in order — each has its own free quota bucket
+// (Only models confirmed available for this API key)
 const MODELS = [
-  'gemini-1.5-flash',
-  'gemini-1.5-flash-8b',
   'gemini-2.0-flash-lite',
+  'gemini-2.5-flash-lite',
+  'gemini-2.5-flash',
   'gemini-2.0-flash',
 ]
 
