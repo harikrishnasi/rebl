@@ -196,10 +196,13 @@ export default function BrandSignup() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
       {/* Header */}
-      <div style={{ padding: '0 24px', height: 56, borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 18, color: C.cream, letterSpacing: '-0.5px' }}>Rēbl</span>
+      <div style={{ padding: '0 24px', height: 64, borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 26, color: C.cream, letterSpacing: '-0.5px', lineHeight: 1 }}>Rēbl</span>
+          <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 7, color: C.muted, letterSpacing: '0.2em', textTransform: 'uppercase' }}>Own the rare. Tell its story.</span>
+        </div>
         <button onClick={() => step > 1 ? goTo(step - 1) : navigate('/')}
-          style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontSize: 11, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', letterSpacing: '0.1em', textTransform: 'uppercase', padding: 0 }}>
+          style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontSize: 12, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', letterSpacing: '0.08em', textTransform: 'uppercase', padding: 0, fontWeight: 500 }}>
           ← {step > 1 ? 'Back' : 'Home'}
         </button>
       </div>
@@ -249,29 +252,34 @@ export default function BrandSignup() {
 /* ─── PROGRESS ─── */
 function WizardProgress({ step }) {
   const labels = ['Brand Basics', 'Categories', 'Strategy']
+  const MONO = '"Space Mono", monospace'
+  const BODY = '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif'
   return (
-    <div style={{ backgroundColor: C.card, borderBottom: `1px solid ${C.border}`, padding: '16px 20px' }}>
+    <div style={{ backgroundColor: C.card, borderBottom: `1px solid ${C.border}`, padding: '16px 24px' }}>
       <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', alignItems: 'center' }}>
         {labels.map((label, i) => {
           const s = i + 1
           return (
             <div key={s} style={{ display: 'flex', alignItems: 'center', flex: i < 2 ? 1 : 'none' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <div style={{
-                  width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
-                  backgroundColor: step >= s ? C.accent : 'rgba(255,255,255,0.08)',
+                  width: 24, height: 24, flexShrink: 0,
+                  border: `1px solid ${step >= s ? C.cream : C.muted}`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 12, fontWeight: 800,
+                  fontFamily: MONO, fontSize: 10, letterSpacing: '0.05em',
                   color: step >= s ? C.cream : C.muted,
-                  transition: 'background-color 0.3s',
+                  backgroundColor: step > s ? C.cream : 'transparent',
+                  transition: 'all 0.3s',
                 }}>
-                  {step > s ? '✓' : s}
+                  <span style={{ color: step > s ? '#000' : step >= s ? C.cream : C.muted }}>
+                    {step > s ? '◈' : s}
+                  </span>
                 </div>
-                <span style={{ fontSize: 12, fontWeight: step === s ? 700 : 400, color: step >= s ? C.cream : C.muted, whiteSpace: 'nowrap' }}>
+                <span style={{ fontFamily: BODY, fontSize: 12, fontWeight: step === s ? 600 : 400, color: step >= s ? C.cream : C.muted, whiteSpace: 'nowrap', letterSpacing: '0.02em' }}>
                   {label}
                 </span>
               </div>
-              {i < 2 && <div style={{ flex: 1, height: 2, margin: '0 12px', backgroundColor: step > s ? C.accent : 'rgba(255,255,255,0.08)', transition: 'background-color 0.3s' }} />}
+              {i < 2 && <div style={{ flex: 1, height: 1, margin: '0 16px', backgroundColor: step > s ? C.cream : C.border, transition: 'background-color 0.3s' }} />}
             </div>
           )
         })}
@@ -282,10 +290,12 @@ function WizardProgress({ step }) {
 
 /* ─── STEP 1 ─── */
 function Step1({ brandName, onBrandName, slug, onSlug, email, onEmail, password, onPassword, description, onDescription, logoPreview, logoRef, onLogoChange, onNext }) {
+  const DISPLAY = '"Cinzel", Georgia, serif'
+  const BODY = '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif'
   return (
     <div>
-      <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 6 }}>Brand Basics</h2>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 28 }}>Let's set up your brand's home on Rebl.</p>
+      <h2 style={{ fontFamily: DISPLAY, fontSize: 22, fontWeight: 700, marginBottom: 6, letterSpacing: '0.03em', textTransform: 'uppercase' }}>Brand Basics</h2>
+      <p style={{ color: C.muted, fontSize: 14, marginBottom: 28, fontFamily: BODY }}>Set up your brand's home on Rebl.</p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         {/* Logo */}
@@ -293,20 +303,20 @@ function Step1({ brandName, onBrandName, slug, onSlug, email, onEmail, password,
           <div
             onClick={() => logoRef.current?.click()}
             style={{
-              width: 88, height: 88, borderRadius: '50%', flexShrink: 0,
-              backgroundColor: C.card, border: `2px dashed ${logoPreview ? C.accent : 'rgba(255,255,255,0.15)'}`,
+              width: 80, height: 80, flexShrink: 0,
+              backgroundColor: C.card, border: `1px solid ${logoPreview ? C.accent : C.border}`,
               cursor: 'pointer', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
           >
             {logoPreview
               ? <img src={logoPreview} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              : <span style={{ fontSize: 28 }}>🏷</span>
+              : <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 22, color: C.muted }}>◈</span>
             }
           </div>
           <input ref={logoRef} type="file" accept="image/*" onChange={onLogoChange} style={{ display: 'none' }} />
           <div>
-            <div style={{ fontWeight: 600, fontSize: 14 }}>Brand Logo</div>
-            <div style={{ color: C.muted, fontSize: 13, marginTop: 4 }}>Tap to upload · Circular crop</div>
+            <div style={{ fontFamily: BODY, fontWeight: 600, fontSize: 14 }}>Brand Logo</div>
+            <div style={{ color: C.muted, fontSize: 13, marginTop: 4, fontFamily: BODY }}>Click to upload</div>
           </div>
         </div>
 
@@ -351,23 +361,25 @@ function Step1({ brandName, onBrandName, slug, onSlug, email, onEmail, password,
 
 /* ─── STEP 2 ─── */
 function Step2({ selectedCats, primaryCat, onCatClick, onCatMouseUp, onNext }) {
+  const DISPLAY = '"Cinzel", Georgia, serif'
+  const BODY = '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif'
+  const MONO = '"Space Mono", monospace'
   return (
     <div>
-      <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 6 }}>What does your brand create?</h2>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 8 }}>
-        Select all that apply. <span style={{ color: C.cream }}>Click once</span> to select,{' '}
-        <span style={{ color: C.gold }}>click again</span> to set as primary.
+      <h2 style={{ fontFamily: DISPLAY, fontSize: 22, fontWeight: 700, marginBottom: 6, letterSpacing: '0.03em', textTransform: 'uppercase' }}>What do you create?</h2>
+      <p style={{ color: C.muted, fontSize: 14, marginBottom: 8, fontFamily: BODY }}>
+        Click once to select. Click again to set as primary.
       </p>
       {primaryCat && (
-        <div style={{ fontSize: 13, color: C.gold, marginBottom: 20, fontWeight: 600 }}>
-          ★ Primary: {CATEGORIES.find(c => c.value === primaryCat)?.label}
+        <div style={{ fontFamily: MONO, fontSize: 10, color: C.accent, marginBottom: 20, letterSpacing: '0.15em' }}>
+          ◈ PRIMARY: {CATEGORIES.find(c => c.value === primaryCat)?.label.toUpperCase()}
         </div>
       )}
 
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(175px, 1fr))',
-        gap: 12, marginBottom: 32,
+        gap: 8, marginBottom: 32,
       }}>
         {CATEGORIES.map(cat => {
           const selected = selectedCats.includes(cat.value)
@@ -380,31 +392,26 @@ function Step2({ selectedCats, primaryCat, onCatClick, onCatMouseUp, onNext }) {
               onTouchStart={() => onCatClick(cat.value)}
               onTouchEnd={() => onCatMouseUp(cat.value)}
               style={{
-                padding: '16px 14px', borderRadius: 14, cursor: 'pointer',
-                backgroundColor: isPrimary ? 'rgba(255,183,3,0.1)' : selected ? 'rgba(230,57,70,0.1)' : C.card,
-                border: `2px solid ${isPrimary ? C.gold : selected ? C.accent : 'rgba(255,255,255,0.09)'}`,
+                padding: '16px 14px', cursor: 'pointer',
+                backgroundColor: isPrimary ? 'rgba(255,255,255,0.06)' : selected ? 'rgba(255,255,255,0.03)' : C.card,
+                border: `1px solid ${isPrimary ? C.cream : selected ? C.accent : C.border}`,
                 textAlign: 'left', position: 'relative', transition: 'all 0.15s',
-                transform: selected ? 'scale(1.01)' : 'scale(1)',
               }}
             >
               {isPrimary && (
                 <div style={{
                   position: 'absolute', top: 8, right: 8,
-                  backgroundColor: C.gold, color: '#0F0F1A',
-                  borderRadius: 4, padding: '2px 6px', fontSize: 10, fontWeight: 800,
-                }}>★ PRIMARY</div>
+                  backgroundColor: C.cream, color: '#000',
+                  padding: '2px 6px', fontFamily: MONO, fontSize: 8, fontWeight: 700, letterSpacing: '0.1em',
+                }}>PRIMARY</div>
               )}
               {selected && !isPrimary && (
                 <div style={{
                   position: 'absolute', top: 8, right: 8,
-                  backgroundColor: C.accent, color: C.cream,
-                  borderRadius: '50%', width: 18, height: 18,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 10, fontWeight: 800,
-                }}>✓</div>
+                  fontFamily: MONO, fontSize: 10, color: C.accent,
+                }}>◈</div>
               )}
-              <div style={{ fontSize: 26, marginBottom: 8 }}>{cat.emoji}</div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: C.cream, lineHeight: 1.3 }}>{cat.label}</div>
+              <div style={{ fontFamily: BODY, fontSize: 13, fontWeight: selected ? 600 : 400, color: selected ? C.cream : C.muted, lineHeight: 1.3 }}>{cat.label}</div>
             </button>
           )
         })}
@@ -417,12 +424,15 @@ function Step2({ selectedCats, primaryCat, onCatClick, onCatMouseUp, onNext }) {
 
 /* ─── STEP 3 ─── */
 function Step3({ strategies, onToggle, submitting, onSubmit }) {
+  const DISPLAY = '"Cinzel", Georgia, serif'
+  const BODY = '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif'
+  const MONO = '"Space Mono", monospace'
   return (
     <div>
-      <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 6 }}>How do you create exclusivity?</h2>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 28 }}>Select all that apply to your drops.</p>
+      <h2 style={{ fontFamily: DISPLAY, fontSize: 22, fontWeight: 700, marginBottom: 6, letterSpacing: '0.03em', textTransform: 'uppercase' }}>How do you create exclusivity?</h2>
+      <p style={{ color: C.muted, fontSize: 14, marginBottom: 28, fontFamily: BODY }}>Select all that apply to your drops.</p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 36 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 36 }}>
         {STRATEGIES.map(s => {
           const checked = strategies.includes(s.value)
           return (
@@ -431,22 +441,22 @@ function Step3({ strategies, onToggle, submitting, onSubmit }) {
               onClick={() => onToggle(s.value)}
               style={{
                 display: 'flex', alignItems: 'center', gap: 14,
-                padding: '16px 18px', borderRadius: 12, cursor: 'pointer', textAlign: 'left',
-                backgroundColor: checked ? 'rgba(230,57,70,0.08)' : C.card,
-                border: `1px solid ${checked ? C.accent : 'rgba(255,255,255,0.09)'}`,
+                padding: '14px 16px', cursor: 'pointer', textAlign: 'left',
+                backgroundColor: checked ? 'rgba(255,255,255,0.04)' : C.card,
+                border: `1px solid ${checked ? C.cream : C.border}`,
                 transition: 'all 0.15s',
               }}
             >
               <div style={{
-                width: 22, height: 22, borderRadius: 6, flexShrink: 0,
-                backgroundColor: checked ? C.accent : 'transparent',
-                border: `2px solid ${checked ? C.accent : 'rgba(255,255,255,0.25)'}`,
+                width: 20, height: 20, flexShrink: 0,
+                border: `1px solid ${checked ? C.cream : C.muted}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'all 0.15s',
+                backgroundColor: checked ? C.cream : 'transparent',
               }}>
-                {checked && <span style={{ fontSize: 12, color: C.cream, fontWeight: 800 }}>✓</span>}
+                {checked && <span style={{ fontFamily: MONO, fontSize: 10, color: '#000' }}>◈</span>}
               </div>
-              <span style={{ fontSize: 15, fontWeight: checked ? 600 : 400, color: checked ? C.cream : C.muted, transition: 'color 0.15s' }}>
+              <span style={{ fontFamily: BODY, fontSize: 14, fontWeight: checked ? 500 : 400, color: checked ? C.cream : C.muted, transition: 'color 0.15s' }}>
                 {s.label}
               </span>
             </button>
@@ -457,10 +467,10 @@ function Step3({ strategies, onToggle, submitting, onSubmit }) {
       {/* Tier preview */}
       <div style={{
         backgroundColor: C.card, border: `1px solid ${C.border}`,
-        borderRadius: 14, padding: '20px 22px', marginBottom: 32,
+        padding: '20px 22px', marginBottom: 32,
       }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 14 }}>
-          Default Customer Tiers (auto-created)
+        <div style={{ fontFamily: MONO, fontSize: 9, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 16 }}>
+          Default Customer Tiers — Auto-Created
         </div>
         {[
           { name: 'Follower', color: '#888888', desc: 'All customers' },
@@ -468,17 +478,17 @@ function Step3({ strategies, onToggle, submitting, onSubmit }) {
           { name: 'Legend', color: '#FFD700', desc: '5+ purchases or ₹50,000+ spent' },
         ].map((tier, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: i < 2 ? `1px solid ${C.border}` : 'none' }}>
-            <div style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: tier.color, flexShrink: 0 }} />
+            <div style={{ width: 8, height: 8, backgroundColor: tier.color, flexShrink: 0 }} />
             <div>
-              <span style={{ fontWeight: 700, fontSize: 14, color: C.cream }}>{tier.name}</span>
-              <span style={{ fontSize: 12, color: C.muted, marginLeft: 10 }}>{tier.desc}</span>
+              <span style={{ fontFamily: BODY, fontWeight: 600, fontSize: 13, color: C.cream }}>{tier.name}</span>
+              <span style={{ fontFamily: BODY, fontSize: 12, color: C.muted, marginLeft: 10 }}>{tier.desc}</span>
             </div>
           </div>
         ))}
       </div>
 
       <PrimaryBtn onClick={onSubmit} disabled={submitting}>
-        {submitting ? 'Launching…' : 'Launch My Brand 🚀'}
+        {submitting ? 'Launching…' : 'Launch My Brand →'}
       </PrimaryBtn>
     </div>
   )
@@ -515,9 +525,13 @@ function PrimaryBtn({ children, onClick, disabled }) {
       onClick={onClick}
       disabled={disabled}
       style={{
-        width: '100%', backgroundColor: disabled ? 'rgba(230,57,70,0.4)' : C.accent,
-        color: C.cream, border: 'none', borderRadius: 12, padding: '15px',
-        fontWeight: 700, fontSize: 16, cursor: disabled ? 'not-allowed' : 'pointer',
+        width: '100%',
+        backgroundColor: disabled ? '#333' : C.cream,
+        color: disabled ? C.muted : '#000',
+        border: 'none', padding: '15px',
+        fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif',
+        fontWeight: 600, fontSize: 14, letterSpacing: '0.08em', textTransform: 'uppercase',
+        cursor: disabled ? 'not-allowed' : 'pointer',
         transition: 'background-color 0.2s',
       }}
     >{children}</button>
@@ -526,7 +540,7 @@ function PrimaryBtn({ children, onClick, disabled }) {
 
 const inputStyle = {
   width: '100%', backgroundColor: C.card, color: C.cream,
-  border: `1px solid rgba(255,255,255,0.09)`, borderRadius: 10,
+  border: `1px solid ${C.border}`,
   padding: '11px 14px', fontSize: 14, outline: 'none',
   fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', boxSizing: 'border-box',
 }

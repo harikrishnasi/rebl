@@ -70,12 +70,12 @@ export default function BrandDashboard() {
 
   const TABS = [
     { id: 'overview',  icon: '◈', label: 'Overview' },
-    { id: 'drops',     icon: '⚡', label: `${lang.drop}s` },
+    { id: 'drops',     icon: '⊕', label: `${lang.drop}s` },
     { id: 'story',     icon: '✦', label: 'Story Builder' },
-    { id: 'customers', icon: '👥', label: 'Customers' },
-    { id: 'campaigns', icon: '📣', label: 'Campaigns' },
+    { id: 'customers', icon: '◎', label: 'Customers' },
+    { id: 'campaigns', icon: '◈', label: 'Campaigns' },
     { id: 'backstage', icon: '✦', label: 'Backstage' },
-    { id: 'settings',  icon: '⚙', label: 'Settings' },
+    { id: 'settings',  icon: '◎', label: 'Settings' },
   ]
 
   if (loading) return <FullLoader />
@@ -89,31 +89,34 @@ export default function BrandDashboard() {
       {/* ── Floating Contact Buyers button ── */}
       <button
         onClick={() => { setActiveTab('customers') }}
-        style={{ position: 'fixed', bottom: 80, right: 24, zIndex: 200, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 28, padding: '12px 20px', fontWeight: 800, fontSize: 14, cursor: 'pointer', boxShadow: '0 4px 24px rgba(230,57,70,0.45)', display: 'flex', alignItems: 'center', gap: 8, transition: 'transform 0.15s' }}
-        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
-        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+        style={{ position: 'fixed', bottom: 80, right: 24, zIndex: 200, backgroundColor: C.cream, color: '#000', border: 'none', padding: '12px 22px', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontWeight: 600, fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, transition: 'background-color 0.15s' }}
+        onMouseEnter={e => e.currentTarget.style.backgroundColor = '#E0E0E0'}
+        onMouseLeave={e => e.currentTarget.style.backgroundColor = C.cream}
       >
-        ✉ Contact Buyers
+        ◎ Contact Buyers
       </button>
 
       {/* Top bar */}
       <div style={{
-        padding: '14px 20px', borderBottom: `1px solid ${C.border}`,
+        padding: '14px 24px', borderBottom: `1px solid ${C.border}`,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         backgroundColor: C.sidebar, flexShrink: 0,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           {brand.logo_url
-            ? <img src={brand.logo_url} alt={brand.name} style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover' }} />
-            : <div style={{ width: 34, height: 34, borderRadius: '50%', backgroundColor: C.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 14 }}>{brand.name[0]}</div>
+            ? <img src={brand.logo_url} alt={brand.name} style={{ width: 32, height: 32, objectFit: 'cover' }} />
+            : <div style={{ width: 32, height: 32, border: `1px solid ${C.border}`, backgroundColor: C.card, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '"Space Mono", monospace', fontSize: 13, color: C.accent }}>{brand.name[0].toUpperCase()}</div>
           }
           <div>
-            <div style={{ fontWeight: 800, fontSize: 15, lineHeight: 1 }}>{brand.name}</div>
-            <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>{brand.slug}.rebl.in</div>
+            <div style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontWeight: 700, fontSize: 14, lineHeight: 1 }}>{brand.name}</div>
+            <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.muted, marginTop: 3, letterSpacing: '0.05em' }}>{brand.slug}.rebl.in</div>
           </div>
         </div>
         <button onClick={() => navigate(`/brand/${brand.slug}`)}
-          style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: `1px solid ${C.border}`, color: C.cream, padding: '7px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+          style={{ backgroundColor: 'transparent', border: `1px solid ${C.border}`, color: C.accent, padding: '7px 16px', cursor: 'pointer', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.05em', transition: 'all 0.15s' }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = C.cream; e.currentTarget.style.color = C.cream }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.accent }}
+        >
           View Page ↗
         </button>
       </div>
@@ -178,12 +181,12 @@ function SidebarTab({ tab, active, onClick }) {
   return (
     <button onClick={onClick} style={{
       display: 'flex', alignItems: 'center', gap: 10, padding: '10px 20px',
-      border: 'none', background: active ? 'rgba(230,57,70,0.12)' : 'none',
-      borderLeft: `3px solid ${active ? C.accent : 'transparent'}`,
+      border: 'none', background: active ? 'rgba(255,255,255,0.04)' : 'none',
+      borderLeft: `2px solid ${active ? C.cream : 'transparent'}`,
       cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s', width: '100%',
     }}>
-      <span style={{ fontSize: 16, opacity: active ? 1 : 0.7 }}>{tab.icon}</span>
-      <span style={{ fontSize: 14, fontWeight: active ? 700 : 400, color: active ? C.cream : C.muted }}>
+      <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 13, opacity: active ? 1 : 0.5, color: active ? C.cream : C.accent }}>{tab.icon}</span>
+      <span style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontSize: 13, fontWeight: active ? 600 : 400, color: active ? C.cream : C.muted, letterSpacing: '0.02em' }}>
         {tab.label}
       </span>
     </button>
@@ -199,24 +202,23 @@ function TabOverview({ brand, lang, tiers, drops, customers }) {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 4 }}>Overview</h1>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 28 }}>Your brand performance at a glance</p>
+      <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.muted, letterSpacing: '0.3em', marginBottom: 8 }}>BRAND.OVERVIEW</div>
+      <h1 style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 22, fontWeight: 700, marginBottom: 28, letterSpacing: '0.03em', textTransform: 'uppercase' }}>Overview</h1>
 
       {/* Stats grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 14, marginBottom: 32 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 1, marginBottom: 32, background: C.border }}>
         {[
-          { label: `Total ${lang.drop}s`, value: drops.length, icon: '⚡', color: C.accent },
-          { label: 'Live Now', value: liveDrops.length, icon: '🔴', color: '#22c55e' },
-          { label: `${lang.community}`, value: customers.length, icon: '👥', color: C.gold },
-          { label: 'Revenue (₹)', value: totalRevenue > 0 ? `${(totalRevenue/1000).toFixed(1)}k` : '—', icon: '💰', color: '#a78bfa' },
+          { label: `Total ${lang.drop}s`, value: drops.length, icon: '⊕' },
+          { label: 'Live Now', value: liveDrops.length, icon: '◎' },
+          { label: lang.community, value: customers.length, icon: '◈' },
+          { label: 'Revenue (₹)', value: totalRevenue > 0 ? `${(totalRevenue/1000).toFixed(1)}k` : '—', icon: '✦' },
         ].map((s, i) => (
           <div key={i} style={{
-            backgroundColor: C.card, borderRadius: 14, padding: '18px 18px 14px',
-            border: `1px solid ${C.border}`,
+            backgroundColor: C.card, padding: '20px 18px 16px',
           }}>
-            <div style={{ fontSize: 24, marginBottom: 10 }}>{s.icon}</div>
-            <div style={{ fontSize: 26, fontWeight: 900, color: s.color }}>{s.value}</div>
-            <div style={{ fontSize: 12, color: C.muted, marginTop: 3 }}>{s.label}</div>
+            <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 16, color: C.muted, marginBottom: 10 }}>{s.icon}</div>
+            <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 28, fontWeight: 700, color: C.cream }}>{s.value}</div>
+            <div style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontSize: 11, color: C.muted, marginTop: 4, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -224,16 +226,16 @@ function TabOverview({ brand, lang, tiers, drops, customers }) {
       {/* Tier summary */}
       {tiers.length > 0 && (
         <Section title="Customer Tiers">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: C.border }}>
             {tiers.map(tier => {
               const count = customers.filter(c => c.tier_level === tier.level).length
               const pct = customers.length ? Math.round(count / customers.length * 100) : 0
               return (
-                <div key={tier.id} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', backgroundColor: C.card, borderRadius: 10, border: `1px solid ${C.border}` }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: `#${tier.color}`, flexShrink: 0 }} />
-                  <span style={{ fontWeight: 700, fontSize: 14, flex: 1 }}>{tier.name}</span>
-                  <span style={{ color: C.muted, fontSize: 13 }}>{count} {lang.community.toLowerCase()}</span>
-                  <div style={{ width: 60, height: 4, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 2, overflow: 'hidden' }}>
+                <div key={tier.id} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', backgroundColor: C.card }}>
+                  <div style={{ width: 8, height: 8, backgroundColor: `#${tier.color}`, flexShrink: 0 }} />
+                  <span style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontWeight: 600, fontSize: 13, flex: 1 }}>{tier.name}</span>
+                  <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color: C.muted }}>{count} {lang.community.toLowerCase()}</span>
+                  <div style={{ width: 60, height: 2, backgroundColor: 'rgba(255,255,255,0.08)', overflow: 'hidden' }}>
                     <div style={{ height: '100%', width: `${pct}%`, backgroundColor: `#${tier.color}`, transition: 'width 0.6s ease' }} />
                   </div>
                 </div>
@@ -246,14 +248,14 @@ function TabOverview({ brand, lang, tiers, drops, customers }) {
       {/* Recent drops */}
       {drops.length > 0 ? (
         <Section title={`Recent ${lang.drop}s`}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: C.border }}>
             {drops.slice(0, 5).map(drop => (
               <DropRow key={drop.id} drop={drop} lang={lang} />
             ))}
           </div>
         </Section>
       ) : (
-        <EmptyState icon="⚡" title={`No ${lang.drop}s yet`} desc={`Create your first ${lang.drop.toLowerCase()} to get started`} />
+        <EmptyState icon="⊕" title={`No ${lang.drop}s yet`} desc={`Create your first ${lang.drop.toLowerCase()} to get started`} />
       )}
     </div>
   )
@@ -298,15 +300,16 @@ function TabDrops({ brand, lang, drops, setDrops }) {
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 4 }}>{lang.drop}s</h1>
-          <p style={{ color: C.muted, fontSize: 14 }}>{drops.length} total · {drops.filter(d => d.status === 'live').length} live</p>
+          <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.muted, letterSpacing: '0.3em', marginBottom: 6 }}>BRAND.{lang.drop.toUpperCase()}S</div>
+          <h1 style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 22, fontWeight: 700, letterSpacing: '0.03em', textTransform: 'uppercase' }}>{lang.drop}s</h1>
+          <p style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', color: C.muted, fontSize: 13, marginTop: 4 }}>{drops.length} total · {drops.filter(d => d.status === 'live').length} live</p>
         </div>
         <RedBtn onClick={() => setShowCreate(true)}>+ New {lang.drop}</RedBtn>
       </div>
 
       {showCreate && (
-        <div style={{ backgroundColor: C.card, borderRadius: 16, border: `1px solid ${C.border}`, padding: '24px', marginBottom: 24 }}>
-          <h3 style={{ fontWeight: 800, marginBottom: 20 }}>Create {lang.drop}</h3>
+        <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, padding: '24px', marginBottom: 24 }}>
+          <h3 style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 16, fontWeight: 700, marginBottom: 20, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Create {lang.drop}</h3>
           <form onSubmit={handleCreate}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 14, marginBottom: 16 }}>
               {[
@@ -2816,31 +2819,34 @@ function SLabel({ children }) {
    WELCOME MODAL
 ══════════════════════════════════════════ */
 function WelcomeModal({ brand, lang, onClose }) {
+  const DISPLAY = '"Cinzel", Georgia, serif'
+  const BODY = '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif'
+  const MONO = '"Space Mono", monospace'
   return (
-    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}>
-      <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, padding: '40px 36px', maxWidth: 440, width: '100%', textAlign: 'center' }}>
-        <div style={{ fontSize: 52, marginBottom: 16 }}>🎉</div>
-        <h2 style={{ fontSize: 26, fontWeight: 900, marginBottom: 10 }}>Welcome to Rebl, {brand.name}!</h2>
-        <p style={{ color: C.muted, lineHeight: 1.65, marginBottom: 28 }}>
-          Your brand page is live at <span style={{ color: C.cream, fontWeight: 700 }}>{brand.slug}.rebl.in</span>.
+    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}>
+      <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, padding: '40px 36px', maxWidth: 440, width: '100%', textAlign: 'center' }}>
+        <div style={{ fontFamily: MONO, fontSize: 11, color: C.muted, letterSpacing: '0.3em', marginBottom: 16 }}>◈ BRAND ACTIVATED</div>
+        <h2 style={{ fontFamily: DISPLAY, fontSize: 22, fontWeight: 700, marginBottom: 10, letterSpacing: '0.03em', textTransform: 'uppercase' }}>Welcome, {brand.name}</h2>
+        <p style={{ fontFamily: BODY, color: C.muted, lineHeight: 1.7, marginBottom: 28, fontSize: 14 }}>
+          Your brand page is live at <span style={{ color: C.cream, fontWeight: 600 }}>{brand.slug}.rebl.in</span>.
           Start by creating your first {lang.drop.toLowerCase()} and building your {lang.community.toLowerCase()} community.
         </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: C.border, marginBottom: 28 }}>
           {[
-            { emoji: '⚡', text: `Create your first ${lang.drop}`, sub: `${lang.drop}s tab` },
-            { emoji: '✦', text: 'Generate a launch story', sub: 'Story Builder tab' },
-            { emoji: '📣', text: 'Set up a campaign', sub: 'Campaigns tab' },
+            { icon: '⊕', text: `Create your first ${lang.drop}`, sub: `${lang.drop}s tab` },
+            { icon: '✦', text: 'Generate a launch story', sub: 'Story Builder tab' },
+            { icon: '◈', text: 'Set up a campaign', sub: 'Campaigns tab' },
           ].map((item, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 10, textAlign: 'left' }}>
-              <span style={{ fontSize: 20 }}>{item.emoji}</span>
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', backgroundColor: C.card, textAlign: 'left' }}>
+              <span style={{ fontFamily: MONO, fontSize: 14, color: C.muted }}>{item.icon}</span>
               <div>
-                <div style={{ fontSize: 14, fontWeight: 600 }}>{item.text}</div>
-                <div style={{ fontSize: 12, color: C.muted }}>{item.sub}</div>
+                <div style={{ fontFamily: BODY, fontSize: 13, fontWeight: 500, color: C.cream }}>{item.text}</div>
+                <div style={{ fontFamily: MONO, fontSize: 10, color: C.muted, marginTop: 2, letterSpacing: '0.08em' }}>{item.sub.toUpperCase()}</div>
               </div>
             </div>
           ))}
         </div>
-        <button onClick={onClose} style={{ marginTop: 28, width: '100%', backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 12, padding: '14px', fontWeight: 700, fontSize: 16, cursor: 'pointer' }}>
+        <button onClick={onClose} style={{ width: '100%', backgroundColor: C.cream, color: '#000', border: 'none', padding: '14px', fontFamily: BODY, fontWeight: 600, fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer' }}>
           Let's Go →
         </button>
       </div>
@@ -2851,41 +2857,51 @@ function WelcomeModal({ brand, lang, onClose }) {
 /* ─── SHARED COMPONENTS ─── */
 function DropRow({ drop, lang }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 10, border: `1px solid ${C.border}` }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', backgroundColor: C.card }}>
       <StatusPill status={drop.status} />
       <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 600, fontSize: 14 }}>{drop.name}</div>
-        {drop.edition && <div style={{ color: C.muted, fontSize: 12 }}>{drop.edition}</div>}
+        <div style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontWeight: 600, fontSize: 14 }}>{drop.name}</div>
+        {drop.edition && <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color: C.muted, marginTop: 2 }}>{drop.edition}</div>}
       </div>
-      {drop.quantity && <span style={{ fontSize: 13, color: C.muted }}>{drop.quantity} {lang.product.toLowerCase()}s</span>}
+      {drop.quantity && <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color: C.muted }}>{drop.quantity} {lang.product.toLowerCase()}s</span>}
     </div>
   )
 }
 
 function StatusPill({ status }) {
-  const map = { live: ['#22c55e', 'rgba(34,197,94,0.12)', '● Live'], upcoming: [C.gold, 'rgba(255,183,3,0.12)', '⏳ Soon'], draft: [C.muted, 'rgba(141,153,174,0.1)', 'Draft'], ended: ['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.06)', 'Ended'] }
+  const map = {
+    live:     [C.cream,  'rgba(255,255,255,0.08)', '◎ Live'],
+    upcoming: [C.accent, 'rgba(255,255,255,0.04)', '◈ Soon'],
+    draft:    [C.muted,  'transparent',            'Draft'],
+    ended:    [C.muted,  'transparent',            'Ended'],
+  }
   const [color, bg, label] = map[status] || map.draft
-  return <span style={{ padding: '4px 10px', borderRadius: 20, backgroundColor: bg, color, fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap' }}>{label}</span>
+  return <span style={{ padding: '3px 8px', border: `1px solid ${color === C.muted ? C.border : 'rgba(255,255,255,0.15)'}`, backgroundColor: bg, color, fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>{label}</span>
 }
 
-function FilterPill({ label, active, onClick, color }) {
+function FilterPill({ label, active, onClick }) {
   return (
-    <button onClick={onClick} style={{ padding: '6px 14px', borderRadius: 20, border: `1px solid ${active ? (color || C.accent) : 'rgba(255,255,255,0.12)'}`, backgroundColor: active ? (color ? `${color}20` : 'rgba(230,57,70,0.12)') : 'transparent', color: active ? (color || C.accent) : C.muted, fontSize: 13, fontWeight: active ? 700 : 400, cursor: 'pointer' }}>
+    <button onClick={onClick} style={{ padding: '6px 14px', border: `1px solid ${active ? C.cream : C.border}`, backgroundColor: active ? 'rgba(255,255,255,0.06)' : 'transparent', color: active ? C.cream : C.muted, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontSize: 12, fontWeight: active ? 600 : 400, cursor: 'pointer', letterSpacing: '0.04em', transition: 'all 0.15s' }}>
       {label}
     </button>
   )
 }
 
 function TypePill({ type }) {
-  const map = { announcement: [C.muted, 'rgba(141,153,174,0.1)', 'Announcement'], drop_alert: [C.accent, 'rgba(230,57,70,0.12)', '⚡ Drop Alert'], early_access: [C.gold, 'rgba(255,183,3,0.12)', '★ Early Access'], reward: ['#22c55e', 'rgba(34,197,94,0.12)', '🎁 Reward'] }
+  const map = {
+    announcement: [C.muted,  'transparent',            'Announcement'],
+    drop_alert:   [C.cream,  'rgba(255,255,255,0.06)', '⊕ Drop Alert'],
+    early_access: [C.accent, 'rgba(255,255,255,0.04)', '✦ Early Access'],
+    reward:       [C.cream,  'rgba(255,255,255,0.06)', '◎ Reward'],
+  }
   const [color, bg, label] = map[type] || map.announcement
-  return <span style={{ padding: '3px 8px', borderRadius: 6, backgroundColor: bg, color, fontSize: 11, fontWeight: 700 }}>{label}</span>
+  return <span style={{ padding: '3px 8px', border: `1px solid ${C.border}`, backgroundColor: bg, color, fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: '0.05em' }}>{label}</span>
 }
 
 function Section({ title, children }) {
   return (
     <div style={{ marginTop: 28 }}>
-      <h3 style={{ fontSize: 15, fontWeight: 800, marginBottom: 14, color: C.cream }}>{title}</h3>
+      <h3 style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 13, fontWeight: 700, marginBottom: 14, color: C.accent, letterSpacing: '0.12em', textTransform: 'uppercase' }}>{title}</h3>
       {children}
     </div>
   )
@@ -2893,17 +2909,17 @@ function Section({ title, children }) {
 
 function EmptyState({ icon, title, desc }) {
   return (
-    <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-      <div style={{ fontSize: 40, marginBottom: 14 }}>{icon}</div>
-      <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 8 }}>{title}</div>
-      <div style={{ color: C.muted, fontSize: 14 }}>{desc}</div>
+    <div style={{ textAlign: 'center', padding: '60px 20px', border: `1px solid ${C.border}` }}>
+      <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 32, color: C.muted, marginBottom: 16 }}>{icon}</div>
+      <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 15, fontWeight: 700, marginBottom: 8, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{title}</div>
+      <div style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', color: C.muted, fontSize: 13 }}>{desc}</div>
     </div>
   )
 }
 
 function RedBtn({ children, onClick, disabled }) {
   return (
-    <button onClick={onClick} disabled={disabled} style={{ backgroundColor: disabled ? 'rgba(230,57,70,0.4)' : C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '10px 20px', fontWeight: 700, fontSize: 14, cursor: disabled ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap' }}>
+    <button onClick={onClick} disabled={disabled} style={{ backgroundColor: disabled ? '#333' : C.cream, color: disabled ? C.muted : '#000', border: 'none', padding: '10px 22px', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontWeight: 600, fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: disabled ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap', transition: 'background-color 0.15s' }}>
       {children}
     </button>
   )
@@ -2911,9 +2927,10 @@ function RedBtn({ children, onClick, disabled }) {
 
 function FullLoader({ small }) {
   return (
-    <div style={{ minHeight: small ? 200 : '100vh', backgroundColor: C.primary, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: small ? 200 : '100vh', backgroundColor: C.primary, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16 }}>
       <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-      <div style={{ width: 32, height: 32, border: '3px solid rgba(230,57,70,0.2)', borderTopColor: C.accent, borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
+      <div style={{ width: 28, height: 28, border: `1px solid ${C.border}`, borderTopColor: C.accent, animation: 'spin 0.7s linear infinite' }} />
+      <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.muted, letterSpacing: '0.2em' }}>LOADING</div>
     </div>
   )
 }
@@ -2924,7 +2941,7 @@ function tierBg(hex) {
 
 const IS = {
   width: '100%', backgroundColor: C.card, color: C.cream,
-  border: `1px solid rgba(255,255,255,0.09)`, borderRadius: 10,
+  border: `1px solid ${C.border}`,
   padding: '11px 14px', fontSize: 14, outline: 'none',
   fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', boxSizing: 'border-box',
 }

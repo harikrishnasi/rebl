@@ -82,24 +82,29 @@ export default function BrandsLanding() {
   return (
     <div style={{ background: T.bg, minHeight: '100vh', color: T.white, fontFamily: BODY }}>
       <nav style={{
-        position: 'sticky', top: 0, background: T.surface, borderBottom: `1px solid ${T.borderDim}`,
+        position: 'sticky', top: 0, background: T.bg, borderBottom: `1px solid ${T.border}`,
         padding: '0 40px', zIndex: 10,
       }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
-          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 18, color: T.white, letterSpacing: '-0.5px' }}>Rēbl</span>
-            <span style={{ fontFamily: MONO, fontSize: 11, color: T.gray }}>/</span>
-            <span style={{ fontFamily: MONO, fontSize: 11, color: T.gray, letterSpacing: '0.15em' }}>BRANDS</span>
+          <Link to="/" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 26, color: T.white, letterSpacing: '-0.5px', lineHeight: 1 }}>Rēbl</span>
+            <span style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.2em', textTransform: 'uppercase' }}>Own the rare. Tell its story.</span>
           </Link>
-          <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
-            <Link to="/drops" style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid, textDecoration: 'none', letterSpacing: '0.1em' }}>Drops →</Link>
+          <div style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
+            <Link to="/drops" style={{ fontFamily: BODY, fontSize: 12, fontWeight: 500, color: T.gray, textDecoration: 'none', letterSpacing: '0.08em', textTransform: 'uppercase', transition: 'color 0.2s' }}
+              onMouseEnter={e => e.currentTarget.style.color = T.white}
+              onMouseLeave={e => e.currentTarget.style.color = T.gray}
+            >Drops</Link>
             <Link
               to="/brand/create"
               style={{
-                fontFamily: MONO, fontSize: 10, color: '#000', background: T.white,
-                textDecoration: 'none', letterSpacing: '0.15em', padding: '8px 20px',
+                fontFamily: BODY, fontSize: 12, fontWeight: 600, color: '#000', background: T.white,
+                textDecoration: 'none', letterSpacing: '0.08em', padding: '8px 22px',
+                textTransform: 'uppercase', transition: 'background 0.2s',
               }}
-            >LAUNCH YOUR BRAND</Link>
+              onMouseEnter={e => e.currentTarget.style.background = '#E0E0E0'}
+              onMouseLeave={e => e.currentTarget.style.background = T.white}
+            >Launch Your Brand</Link>
           </div>
         </div>
       </nav>
@@ -116,18 +121,22 @@ export default function BrandsLanding() {
           <Link
             to="/brand/create"
             style={{
-              fontFamily: MONO, fontSize: 11, letterSpacing: '0.2em', color: '#000',
+              fontFamily: BODY, fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', color: '#000',
               background: T.white, textDecoration: 'none', padding: '14px 32px',
-              display: 'inline-block', textTransform: 'uppercase',
+              display: 'inline-block', textTransform: 'uppercase', transition: 'background 0.2s',
             }}
+            onMouseEnter={e => e.currentTarget.style.background = '#E0E0E0'}
+            onMouseLeave={e => e.currentTarget.style.background = T.white}
           >Launch Your Brand →</Link>
           <Link
             to="/drops"
             style={{
-              fontFamily: MONO, fontSize: 11, letterSpacing: '0.2em', color: T.gray,
+              fontFamily: BODY, fontSize: 12, fontWeight: 500, letterSpacing: '0.08em', color: T.gray,
               border: `1px solid ${T.borderVis}`, textDecoration: 'none', padding: '14px 32px',
-              display: 'inline-block', textTransform: 'uppercase',
+              display: 'inline-block', textTransform: 'uppercase', transition: 'all 0.2s',
             }}
+            onMouseEnter={e => { e.currentTarget.style.color = T.white; e.currentTarget.style.borderColor = T.gray }}
+            onMouseLeave={e => { e.currentTarget.style.color = T.gray; e.currentTarget.style.borderColor = T.borderVis }}
           >See Live Drops</Link>
         </div>
       </div>
@@ -270,10 +279,12 @@ export default function BrandsLanding() {
           <Link
             to="/brand/create"
             style={{
-              fontFamily: MONO, fontSize: 12, letterSpacing: '0.2em', color: '#000',
+              fontFamily: BODY, fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', color: '#000',
               background: T.white, textDecoration: 'none', padding: '16px 40px',
-              display: 'inline-block', textTransform: 'uppercase',
+              display: 'inline-block', textTransform: 'uppercase', transition: 'background 0.2s',
             }}
+            onMouseEnter={e => e.currentTarget.style.background = '#E0E0E0'}
+            onMouseLeave={e => e.currentTarget.style.background = T.white}
           >Launch Your Brand →</Link>
         </div>
       </div>
