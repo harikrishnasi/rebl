@@ -550,8 +550,8 @@ function Footer() {
       </div>
       <div style={{ borderTop: `1px solid ${T.border}` }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '28px max(8vw,32px)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-          <span style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.12em', textTransform: 'uppercase' }}>From Ancient Roots, To Infinite Futures.</span>
-          <span style={{ fontFamily: MONO, fontSize: 9, color: T.grayDark, letterSpacing: '0.12em', textTransform: 'uppercase' }}>Rebl.in · India · MMXXV</span>
+          <span style={{ fontFamily: BODY, fontSize: 12, color: T.grayMid, letterSpacing: '0.04em' }}>From ancient roots, to infinite futures.</span>
+          <span style={{ fontFamily: BODY, fontSize: 12, color: T.grayMid, letterSpacing: '0.04em' }}>Rebl.in · India · MMXXVI</span>
         </div>
       </div>
     </footer>
