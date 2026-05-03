@@ -14,17 +14,17 @@ const C = {
 }
 
 const CATEGORIES = [
-  { value: 'sneakers', label: 'Sneakers & Footwear', emoji: '👟' },
-  { value: 'streetwear', label: 'Streetwear & Apparel', emoji: '👕' },
-  { value: 'luxury_fashion', label: 'Luxury Fashion', emoji: '💎' },
-  { value: 'watches', label: 'Watches & Horology', emoji: '⌚' },
-  { value: 'art', label: 'Art & Prints', emoji: '🎨' },
-  { value: 'electronics', label: 'Electronics & Tech', emoji: '🎮' },
-  { value: 'concert_tickets', label: 'Concerts & Events', emoji: '🎵' },
-  { value: 'sports_memorabilia', label: 'Sports Memorabilia', emoji: '🏆' },
-  { value: 'trading_cards', label: 'Trading Cards', emoji: '🃏' },
-  { value: 'vinyl_music', label: 'Vinyl & Music', emoji: '💿' },
-  { value: 'books_rare', label: 'Rare Books', emoji: '📚' },
+  { value: 'sneakers', label: 'Sneakers & Footwear' },
+  { value: 'streetwear', label: 'Streetwear & Apparel' },
+  { value: 'luxury_fashion', label: 'Luxury Fashion' },
+  { value: 'watches', label: 'Watches & Horology' },
+  { value: 'art', label: 'Art & Prints' },
+  { value: 'electronics', label: 'Electronics & Tech' },
+  { value: 'concert_tickets', label: 'Concerts & Events' },
+  { value: 'sports_memorabilia', label: 'Sports Memorabilia' },
+  { value: 'trading_cards', label: 'Trading Cards' },
+  { value: 'vinyl_music', label: 'Vinyl & Music' },
+  { value: 'books_rare', label: 'Rare Books' },
   { value: 'other', label: 'Other', emoji: '✦' },
 ]
 
@@ -196,12 +196,12 @@ export default function BrandSignup() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
       {/* Header */}
-      <div style={{ padding: '16px 20px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', gap: 16 }}>
+      <div style={{ padding: '0 24px', height: 56, borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 18, color: C.cream, letterSpacing: '-0.5px' }}>Rēbl</span>
         <button onClick={() => step > 1 ? goTo(step - 1) : navigate('/')}
-          style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontSize: 14, padding: 0 }}>
-          ← Back
+          style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontSize: 11, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', letterSpacing: '0.1em', textTransform: 'uppercase', padding: 0 }}>
+          ← {step > 1 ? 'Back' : 'Home'}
         </button>
-        <span style={{ fontWeight: 800, fontSize: 16 }}>Brand Signup</span>
       </div>
 
       {/* Progress */}

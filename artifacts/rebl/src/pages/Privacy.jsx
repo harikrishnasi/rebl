@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
 
-const C = {
-  cosmos: '#0A0A12', ghost: '#2A2A3E', silver: '#A8B2C4', cream: '#F0F4FF', dim: '#5A6380',
-}
+const T = { bg: '#000000', border: '#1A1A1A', borderVis: '#2D2D2D', white: '#FFFFFF', gray: '#A6A6A6', grayMid: '#555555' }
+const DISPLAY = '"Cinzel", Georgia, serif'
+const BODY = '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif'
+const MONO = '"Space Mono", monospace'
 
 const SECTIONS = [
   { heading: 'Information We Collect', body: 'We collect information you provide directly to us when creating an account (email address, username, profile details), adding items to your vault, or communicating with us. We also collect usage data automatically, including pages visited, features used, and device information.' },
@@ -16,23 +17,23 @@ const SECTIONS = [
 
 export default function Privacy() {
   return (
-    <div style={{ backgroundColor: C.cosmos, minHeight: '100vh', color: C.cream, fontFamily: '"Plus Jakarta Sans", "Plus Jakarta Sans", Inter, sans-serif' }}>
-      <div style={{ padding: '24px 32px', borderBottom: `1px solid ${C.ghost}` }}>
-        <Link to="/" style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.dim, textDecoration: 'none', letterSpacing: '0.15em' }}
-          onMouseEnter={e => e.target.style.color = C.silver}
-          onMouseLeave={e => e.target.style.color = C.dim}
-        >← REBL</Link>
-      </div>
-      <div style={{ maxWidth: 740, margin: '0 auto', padding: 'clamp(48px,6vw,80px) 32px' }}>
-        <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.25em', marginBottom: 16 }}>LEGAL</div>
-        <h1 style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(22px,3.5vw,36px)', fontWeight: 700, color: C.cream, margin: '0 0 12px', letterSpacing: '-0.5px' }}>Privacy Policy</h1>
-        <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 13, color: C.dim, margin: '0 0 48px' }}>Last updated: May 2025</p>
-        <div style={{ height: 1, backgroundColor: C.ghost, marginBottom: 48 }} />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
+    <div style={{ backgroundColor: T.bg, minHeight: '100vh', color: T.white, fontFamily: BODY }}>
+      <nav style={{ backgroundColor: T.bg, borderBottom: `1px solid ${T.border}`, padding: '0 32px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Link to="/" style={{ textDecoration: 'none' }}>
+          <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 18, color: T.white, letterSpacing: '-0.5px' }}>Rēbl</span>
+        </Link>
+        <Link to="/" style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, textDecoration: 'none', letterSpacing: '0.15em', textTransform: 'uppercase' }}>← Back</Link>
+      </nav>
+      <div style={{ maxWidth: 740, margin: '0 auto', padding: 'clamp(56px,7vw,96px) 32px' }}>
+        <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.gray, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 20 }}>Legal</div>
+        <h1 style={{ fontFamily: DISPLAY, fontSize: 'clamp(22px,3.5vw,36px)', fontWeight: 700, color: T.white, margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '-0.5px' }}>Privacy Policy</h1>
+        <p style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid, margin: '0 0 48px', letterSpacing: '0.1em' }}>Last updated: May 2025</p>
+        <div style={{ height: 1, backgroundColor: T.border, marginBottom: 56 }} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 44 }}>
           {SECTIONS.map((s, i) => (
             <div key={i}>
-              <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.15em', marginBottom: 14 }}>{s.heading.toUpperCase()}</div>
-              <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 15, color: '#8090A8', lineHeight: 1.8, margin: 0 }}>{s.body}</p>
+              <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.gray, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 16 }}>{s.heading}</div>
+              <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.85, margin: 0 }}>{s.body}</p>
             </div>
           ))}
         </div>

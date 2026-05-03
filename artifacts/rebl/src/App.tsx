@@ -18,6 +18,7 @@ import About from '@/pages/About'
 import Privacy from '@/pages/Privacy'
 import Terms from '@/pages/Terms'
 import Demo from '@/pages/Demo'
+import NotFound from '@/pages/not-found'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import BrandRoute from '@/components/BrandRoute'
 
@@ -74,6 +75,7 @@ export default function App() {
             </BrandRoute>
           }
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />
     </BrowserRouter>

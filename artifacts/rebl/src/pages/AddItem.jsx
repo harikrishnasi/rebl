@@ -11,16 +11,16 @@ const C = {
 }
 
 const CATEGORIES = [
-  { value: 'sneakers',        label: '👟 Sneakers' },
+  { value: 'sneakers',        label: 'Sneakers' },
   { value: 'streetwear',      label: '🧢 Streetwear' },
-  { value: 'luxury_fashion',  label: '💎 Luxury Fashion' },
-  { value: 'watches',         label: '⌚ Watches' },
-  { value: 'art',             label: '🎨 Art' },
+  { value: 'luxury_fashion',  label: 'Luxury Fashion' },
+  { value: 'watches',         label: 'Watches' },
+  { value: 'art',             label: 'Art' },
   { value: 'electronics',     label: '📱 Electronics' },
   { value: 'concert_tickets', label: '🎫 Concert Tickets' },
-  { value: 'trading_cards',   label: '🃏 Trading Cards' },
-  { value: 'vinyl',           label: '🎵 Vinyl' },
-  { value: 'other',           label: '📦 Other' },
+  { value: 'trading_cards',   label: 'Trading Cards' },
+  { value: 'vinyl',           label: 'Vinyl' },
+  { value: 'other',           label: 'Other' },
 ]
 
 const VIBE_TAGS = [
@@ -311,7 +311,7 @@ function VerifyOverlay({ step, done }) {
       padding: 32,
     }}>
       {/* Wordmark */}
-      <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: -0.5, marginBottom: 56, opacity: 0.6 }}>Rebl</div>
+      <div style={{ fontFamily: '"Poppins", sans-serif', fontSize: 20, fontWeight: 800, letterSpacing: '-0.5px', marginBottom: 56, opacity: 0.5, color: '#FFFFFF' }}>Rēbl</div>
 
       {/* Icon ring */}
       <div style={{ position: 'relative', width: 88, height: 88, marginBottom: 40 }}>
@@ -575,7 +575,7 @@ function Step2({ form, userStory, setUserStory, aiStory, finalStory, setFinalSto
       {/* Item recap */}
       <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: '12px 16px', marginBottom: 28, display: 'flex', gap: 12, alignItems: 'center' }}>
         <div style={{ fontSize: 22 }}>
-          {CATEGORIES.find(c => c.value === form.category)?.label?.split(' ')[0] || '📦'}
+          {CATEGORIES.find(c => c.value === form.category)?.label?.split(' ')[0] || '◈'}
         </div>
         <div>
           <div style={{ fontWeight: 700, fontSize: 14 }}>{form.name}</div>

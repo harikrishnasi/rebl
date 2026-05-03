@@ -11,9 +11,9 @@ const C = {
 }
 
 const CAT_LABELS = {
-  sneakers: '👟 Sneakers', streetwear: '🧢 Streetwear', luxury_fashion: '💎 Luxury',
-  watches: '⌚ Watches', art: '🎨 Art', electronics: '📱 Electronics',
-  concert_tickets: '🎫 Concerts', trading_cards: '🃏 Cards', vinyl: '🎵 Vinyl', other: '📦 Other',
+  sneakers: 'Sneakers', streetwear: 'Streetwear', luxury_fashion: 'Luxury',
+  watches: 'Watches', art: 'Art', electronics: 'Electronics',
+  concert_tickets: 'Concerts', trading_cards: 'Cards', vinyl: 'Vinyl', other: 'Other',
 }
 
 const VIEWS = ['Wall', 'By Brand', 'By Category', 'Timeline']
@@ -139,14 +139,14 @@ export default function Vault() {
       `}</style>
 
       {/* ══ NAV ══ */}
-      <nav style={{ backgroundColor: C.sidebar, borderBottom: `1px solid ${C.border}`, padding: '0 20px', height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 50 }}>
-        <Link to="/dashboard" style={{ fontWeight: 900, fontSize: 18, letterSpacing: -0.5, color: C.cream, textDecoration: 'none' }}>Rebl</Link>
-        <div style={{ display: 'flex', gap: 10 }}>
+      <nav style={{ backgroundColor: C.sidebar, borderBottom: `1px solid ${C.border}`, padding: '0 24px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 50 }}>
+        <Link to="/dashboard" style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 18, letterSpacing: '-0.5px', color: C.cream, textDecoration: 'none' }}>Rēbl</Link>
+        <div style={{ display: 'flex', gap: 12 }}>
           {isOwn && (
             <>
-              <Link to="/add-item" style={{ padding: '7px 14px', borderRadius: 8, backgroundColor: C.accent, color: C.cream, textDecoration: 'none', fontSize: 12, fontWeight: 800 }}>+ Add Item</Link>
+              <Link to="/add-item" style={{ padding: '7px 16px', border: `1px solid ${C.border}`, color: C.muted, textDecoration: 'none', fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>+ Add Item</Link>
               <button onClick={() => setShowSettings(s => !s)}
-                style={{ padding: '7px 14px', borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.06)', border: `1px solid ${C.border}`, color: C.cream, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+                style={{ padding: '7px 16px', border: `1px solid ${C.border}`, backgroundColor: 'transparent', color: C.muted, fontSize: 11, fontWeight: 600, cursor: 'pointer', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                 Edit Vault
               </button>
             </>
@@ -158,21 +158,17 @@ export default function Vault() {
       <header style={{ maxWidth: 1100, margin: '0 auto', padding: '44px 24px 28px' }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20, flexWrap: 'wrap' }}>
           {/* Avatar */}
-          <div style={{ width: 72, height: 72, borderRadius: '50%', backgroundColor: C.card, border: `2px solid ${C.border}`, overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, fontWeight: 700 }}>
+          <div style={{ width: 72, height: 72, backgroundColor: C.card, border: `1px solid #2D2D2D`, overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, fontWeight: 700 }}>
             {profile.avatar_url ? <img src={profile.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (profile.display_name?.[0] || '?')}
           </div>
           <div style={{ flex: 1, minWidth: 200 }}>
-            <h1 style={{ fontSize: 'clamp(22px, 4vw, 34px)', fontWeight: 900, letterSpacing: -0.8, margin: '0 0 8px' }}>
+            <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 10, color: C.muted, letterSpacing: '0.28em', textTransform: 'uppercase', marginBottom: 10 }}>
+              {profile.archetype || 'Collector'}
+            </div>
+            <h1 style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 'clamp(18px, 3vw, 28px)', fontWeight: 700, letterSpacing: '-0.3px', margin: '0 0 8px', textTransform: 'uppercase' }}>
               {profile.display_name || username}'s Vault
             </h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
-              {profile.archetype && (
-                <span style={{ padding: '3px 10px', borderRadius: 20, backgroundColor: 'rgba(255,183,3,0.12)', color: C.gold, fontSize: 11, fontWeight: 800, letterSpacing: 0.4 }}>
-                  ✦ {profile.archetype}
-                </span>
-              )}
-              {profile.username && <span style={{ color: C.muted, fontSize: 13 }}>@{profile.username}</span>}
-            </div>
+            {profile.username && <div style={{ color: C.muted, fontSize: 13, marginBottom: 8 }}>@{profile.username}</div>}
             {profile.signature_phrase && (
               <p style={{ color: C.muted, fontSize: 14, fontStyle: 'italic', margin: '0 0 16px', lineHeight: 1.5 }}>
                 "{profile.signature_phrase}"
@@ -183,13 +179,13 @@ export default function Vault() {
             <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
               {[
                 { label: 'Items', val: items.length },
-                { label: 'Verified', val: verifiedCount, color: '#22c55e' },
+                { label: 'Verified', val: verifiedCount },
                 { label: 'Brands', val: brandCount },
-                estVal ? { label: 'Est. Value', val: estVal, color: C.gold } : null,
+                estVal ? { label: 'Est. Value', val: estVal } : null,
               ].filter(Boolean).map(s => (
-                <div key={s.label}>
-                  <span style={{ fontSize: 18, fontWeight: 900, color: s.color || C.cream }}>{s.val}</span>
-                  <span style={{ fontSize: 11, color: C.muted, fontWeight: 600, marginLeft: 5, textTransform: 'uppercase', letterSpacing: 0.6 }}>{s.label}</span>
+                <div key={s.label} style={{ textAlign: 'center' }}>
+                  <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 22, fontWeight: 700, color: C.cream, lineHeight: 1 }}>{s.val}</div>
+                  <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.muted, marginTop: 6, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{s.label}</div>
                 </div>
               ))}
             </div>
@@ -203,11 +199,19 @@ export default function Vault() {
       </header>
 
       {/* ══ VIEW TABS ══ */}
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px 20px' }}>
-        <div style={{ display: 'flex', gap: 4, backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 24, padding: 4, width: 'fit-content', flexWrap: 'wrap' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px 0', borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ display: 'flex', gap: 0 }}>
           {VIEWS.map(v => (
-            <button key={v} className="tab-btn" onClick={() => setView(v)}
-              style={{ backgroundColor: view === v ? C.accent : 'transparent', color: view === v ? C.cream : C.muted }}>
+            <button key={v} onClick={() => setView(v)} style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              padding: '14px 20px',
+              fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif',
+              fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase',
+              color: view === v ? C.cream : C.muted,
+              borderBottom: view === v ? `2px solid ${C.cream}` : '2px solid transparent',
+              marginBottom: -1, transition: 'color 0.15s',
+              whiteSpace: 'nowrap',
+            }}>
               {v}
             </button>
           ))}
@@ -272,7 +276,7 @@ function WallView({ items, onSelect, isOwn }) {
         <div key={item.id} className="wall-card" style={{ animationDelay: `${idx * 0.04}s` }} onClick={() => onSelect(item)}>
           {item.image_url
             ? <img src={item.image_url} alt={item.name} loading="lazy" />
-            : <div style={{ width: '100%', aspectRatio: '4/5', backgroundColor: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32 }}>📦</div>
+            : <div style={{ width: '100%', aspectRatio: '4/5', backgroundColor: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32 }}>◈</div>
           }
 
           {/* Name overlay */}
@@ -355,7 +359,7 @@ function HScrollCard({ item, onSelect }) {
           ? <img src={item.image_url} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.3s' }}
               onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.06)'}
               onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'} />
-          : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}>📦</div>
+          : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}>◈</div>
         }
       </div>
       <div style={{ padding: '10px 10px' }}>
@@ -514,7 +518,7 @@ function ItemDetailModal({ item, isOwn, onClose, onRemove, onStorySaved }) {
         <div style={{ position: 'relative', height: 280, flexShrink: 0, backgroundColor: 'rgba(255,255,255,0.04)' }}>
           {item.image_url
             ? <img src={item.image_url} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 56 }}>📦</div>
+            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 56 }}>◈</div>
           }
           {/* Close */}
           <button onClick={onClose} style={{ position: 'absolute', top: 14, right: 14, width: 32, height: 32, borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.55)', border: 'none', color: C.cream, fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>

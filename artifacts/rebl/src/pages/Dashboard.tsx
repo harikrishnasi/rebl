@@ -2,19 +2,27 @@ import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { supabase } from '@/lib/supabase'
+import InnerNav from '@/components/InnerNav'
 
-const C = {
-  primary: '#000000', accent: '#A6A6A6', cream: '#FFFFFF',
-  muted: '#555555', gold: '#A6A6A6', card: '#0D0D0D',
-  border: '#1A1A1A', sidebar: '#000000',
+const T = {
+  bg: '#000000', surface: '#080808', card: '#0D0D0D',
+  border: '#1A1A1A', borderVis: '#2D2D2D',
+  white: '#FFFFFF', gray: '#A6A6A6', grayMid: '#555555',
 }
+const DISPLAY = '"Cinzel", Georgia, serif'
+const BODY = '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif'
+const MONO = '"Space Mono", monospace'
 
-const IS = {
-  width: '100%', backgroundColor: 'rgba(255,255,255,0.05)',
-  border: `1px solid rgba(255,255,255,0.1)`, borderRadius: 10,
-  padding: '12px 14px', color: C.cream, fontSize: 14, outline: 'none',
-  boxSizing: 'border-box' as const,
-}
+const PLACEHOLDER_ITEMS = [
+  { id: 'p1', name: 'Air Jordan 1 Retro High OG Chicago', brand: 'Nike', category: 'Sneakers', rarity: 'Very Rare' },
+  { id: 'p2', name: 'Supreme Box Logo Hooded Sweatshirt FW23', brand: 'Supreme', category: 'Streetwear', rarity: 'Rare' },
+  { id: 'p3', name: 'Casio G-SHOCK x Maharishi MRG-B2100', brand: 'Casio', category: 'Watches', rarity: 'Ultra Rare' },
+]
+
+const sectionLabel = (txt: string) => ({
+  fontFamily: DISPLAY, fontSize: 10, color: T.gray,
+  letterSpacing: '0.28em', textTransform: 'uppercase' as const, marginBottom: 24,
+})
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -22,35 +30,19 @@ export default function Dashboard() {
   const [brandMemberships, setBrandMemberships] = useState<any[]>([])
   const [items, setItems] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [backstageView, setBackstageView] = useState<any>(null) // brand membership obj
+  const [backstageView, setBackstageView] = useState<any>(null)
 
-  useEffect(() => {
-    load()
-  }, [])
+  useEffect(() => { load() }, [])
 
   async function load() {
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) { navigate('/login'); return }
-
     const userId = session.user.id
 
     const [profRes, memberRes, itemRes] = await Promise.all([
       supabase.from('profiles').select('*').eq('id', userId).single(),
-      supabase
-        .from('brand_customers')
-        .select(`
-          *,
-          brands(id, name, slug, logo_url, description),
-          customer_tiers(id, name, color, has_backstage_access, level)
-        `)
-        .eq('profile_id', userId)
-        .order('created_at', { ascending: false }),
-      supabase
-        .from('items')
-        .select('*, brands(name, slug, logo_url)')
-        .eq('owner_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(8),
+      supabase.from('brand_customers').select(`*, brands(id,name,slug,logo_url,description), customer_tiers(id,name,color,has_backstage_access,level)`).eq('profile_id', userId).order('created_at', { ascending: false }),
+      supabase.from('items').select('*').eq('owner_id', userId).order('created_at', { ascending: false }).limit(8),
     ])
 
     setProfile(profRes.data)
@@ -60,99 +52,111 @@ export default function Dashboard() {
   }
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', backgroundColor: C.primary, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ width: 32, height: 32, border: `3px solid rgba(255,255,255,0.1)`, borderTop: `3px solid ${C.gold}`, borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+    <div style={{ minHeight: '100vh', backgroundColor: T.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <div style={{ width: 28, height: 28, border: `1px solid ${T.borderVis}`, borderTopColor: T.gray, borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
     </div>
   )
 
   const backstageBrands = brandMemberships.filter(m => m.customer_tiers?.has_backstage_access)
 
+  const navActions = (
+    <Link to="/add-item" style={{ fontFamily: BODY, fontSize: 11, fontWeight: 500, color: T.gray, textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '7px 16px', border: `1px solid ${T.borderVis}`, transition: 'all 0.2s' }}
+      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = T.white; (e.currentTarget as HTMLElement).style.borderColor = T.gray }}
+      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = T.gray; (e.currentTarget as HTMLElement).style.borderColor = T.borderVis }}
+    >+ Add Item</Link>
+  )
+
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
-      {/* Top nav */}
-      <div style={{ backgroundColor: C.sidebar, borderBottom: `1px solid ${C.border}`, padding: '0 24px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: -0.5 }}>Rebl</span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <Link to="/add-item" style={{ color: C.muted, fontSize: 13, textDecoration: 'none' }}>+ Add Item</Link>
-          {profile?.username && (
-            <Link to={`/profile/${profile.username}`}
-              style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: C.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, color: C.cream, textDecoration: 'none', overflow: 'hidden', flexShrink: 0 }}>
-              {profile.avatar_url ? <img src={profile.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (profile.display_name?.[0] || '?')}
-            </Link>
-          )}
-        </div>
-      </div>
+    <div style={{ minHeight: '100vh', backgroundColor: T.bg, color: T.white, fontFamily: BODY }}>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}} @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}`}</style>
 
-      <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 20px' }}>
+      <InnerNav profile={profile} actions={navActions} />
 
-        {/* ── Collector header ── */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 40 }}>
-          <div style={{ width: 64, height: 64, borderRadius: '50%', backgroundColor: C.card, border: `2px solid ${C.border}`, overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontWeight: 700 }}>
+      <div style={{ maxWidth: 960, margin: '0 auto', padding: '48px 24px' }}>
+
+        {/* ── Collector Header ── */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 64, paddingBottom: 48, borderBottom: `1px solid ${T.border}` }}>
+          <div style={{ width: 60, height: 60, backgroundColor: T.card, border: `1px solid ${T.borderVis}`, overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 700, color: T.white }}>
             {profile?.avatar_url ? <img src={profile.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (profile?.display_name?.[0] || '?')}
           </div>
-          <div>
-            <h1 style={{ fontSize: 22, fontWeight: 900, marginBottom: 4 }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.gray, letterSpacing: '0.25em', marginBottom: 8, textTransform: 'uppercase' }}>
+              {profile?.archetype || 'Collector'}
+            </div>
+            <h1 style={{ fontFamily: DISPLAY, fontSize: 'clamp(18px,2.5vw,28px)', fontWeight: 700, margin: 0, color: T.white, letterSpacing: '-0.3px', textTransform: 'uppercase' }}>
               {profile?.display_name || 'Collector'}
             </h1>
-            {profile?.username && <div style={{ color: C.muted, fontSize: 14 }}>@{profile.username}</div>}
+            {profile?.username && <div style={{ fontFamily: BODY, color: T.grayMid, fontSize: 13, marginTop: 4 }}>@{profile.username}</div>}
           </div>
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: 20 }}>
-            <StatPill label="Items" val={items.length} />
-            <StatPill label="Brands" val={brandMemberships.length} />
-            {backstageBrands.length > 0 && <StatPill label="Backstage" val={backstageBrands.length} gold />}
+          <div style={{ display: 'flex', gap: 40 }}>
+            {[
+              { label: 'Items', val: items.length },
+              { label: 'Brands', val: brandMemberships.length },
+              ...(backstageBrands.length > 0 ? [{ label: 'Backstage', val: backstageBrands.length, highlight: true }] : []),
+            ].map(s => (
+              <div key={s.label} style={{ textAlign: 'center' }}>
+                <div style={{ fontFamily: DISPLAY, fontSize: 28, fontWeight: 700, color: s.highlight ? T.white : T.white, lineHeight: 1 }}>{s.val}</div>
+                <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, marginTop: 6, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{s.label}</div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* ── Backstage access cards ── */}
+        {/* ── Backstage Access ── */}
         {backstageBrands.length > 0 && (
-          <div style={{ marginBottom: 44 }}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: C.gold, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 16 }}>
-              🎭 Backstage Access
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ marginBottom: 56 }}>
+            <div style={sectionLabel('Backstage Access')}>Backstage Access</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 1, backgroundColor: T.borderVis }}>
               {backstageBrands.map(m => (
-                <BackstageAccessCard
-                  key={m.id}
-                  membership={m}
-                  onView={() => setBackstageView(m)}
-                />
+                <div key={m.id} style={{ backgroundColor: T.bg, padding: '20px 24px', display: 'flex', alignItems: 'center', gap: 20 }}>
+                  <div style={{ width: 44, height: 44, backgroundColor: T.card, border: `1px solid ${T.borderVis}`, overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 16 }}>
+                    {m.brands?.logo_url ? <img src={m.brands.logo_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : m.brands?.name?.[0]}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.gray, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 6 }}>Exclusive Access Unlocked</div>
+                    <div style={{ fontFamily: BODY, fontWeight: 600, fontSize: 15, color: T.white }}>{m.brands?.name}</div>
+                    {m.customer_tiers && (
+                      <div style={{ fontFamily: BODY, fontSize: 12, color: T.grayMid, marginTop: 2 }}>
+                        {m.customer_tiers.name} member
+                      </div>
+                    )}
+                  </div>
+                  <button onClick={() => setBackstageView(m)} style={{
+                    backgroundColor: T.white, color: T.bg, border: 'none',
+                    padding: '10px 20px', fontFamily: BODY, fontSize: 12, fontWeight: 600,
+                    letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer',
+                  }}>View Access</button>
+                </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* ── Brand memberships ── */}
+        {/* ── Brand Memberships ── */}
         {brandMemberships.length > 0 && (
-          <div style={{ marginBottom: 44 }}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 16 }}>
-              Your Brands
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
+          <div style={{ marginBottom: 56 }}>
+            <div style={sectionLabel('Your Brands')}>Your Brands</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px,1fr))', gap: 1, backgroundColor: T.borderVis }}>
               {brandMemberships.map(m => {
-                const brand = m.brands
-                const tier = m.customer_tiers
+                const brand = m.brands; const tier = m.customer_tiers
                 return (
-                  <Link key={m.id} to={`/brand/${brand?.slug}`} style={{ textDecoration: 'none' }}>
-                    <div style={{ backgroundColor: C.card, borderRadius: 14, border: `1px solid ${C.border}`, padding: '18px 16px', transition: 'border-color 0.15s' }}
-                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.2)'}
-                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = C.border}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                        <div style={{ width: 36, height: 36, borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.07)', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14 }}>
-                          {brand?.logo_url ? <img src={brand.logo_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : brand?.name?.[0]}
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontWeight: 700, fontSize: 14, color: C.cream, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{brand?.name}</div>
-                        </div>
+                  <Link key={m.id} to={`/brand/${brand?.slug}`} style={{ textDecoration: 'none', backgroundColor: T.bg, padding: '20px 20px', display: 'block', transition: 'background 0.15s' }}
+                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.backgroundColor = T.card}
+                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.backgroundColor = T.bg}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                      <div style={{ width: 32, height: 32, backgroundColor: T.card, border: `1px solid ${T.borderVis}`, overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13 }}>
+                        {brand?.logo_url ? <img src={brand.logo_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : brand?.name?.[0]}
                       </div>
-                      {tier && (
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '3px 10px', borderRadius: 20, backgroundColor: `#${tier.color}18`, border: `1px solid #${tier.color}40`, fontSize: 12, fontWeight: 700, color: `#${tier.color}` }}>
-                          <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: `#${tier.color}` }} />
-                          {tier.name}
-                          {tier.has_backstage_access && ' 🎭'}
-                        </div>
-                      )}
+                      <div style={{ fontFamily: BODY, fontWeight: 600, fontSize: 14, color: T.white }}>{brand?.name}</div>
                     </div>
+                    {tier && (
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, border: `1px solid ${T.borderVis}`, padding: '3px 10px' }}>
+                        <div style={{ width: 5, height: 5, backgroundColor: T.gray }} />
+                        <span style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{tier.name}</span>
+                      </div>
+                    )}
                   </Link>
                 )
               })}
@@ -162,99 +166,82 @@ export default function Dashboard() {
 
         {/* ── Collection ── */}
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: 'uppercase', letterSpacing: 1.5 }}>
-              Your Collection
-            </div>
-            <Link to="/add-item" style={{ fontSize: 13, color: C.accent, fontWeight: 600, textDecoration: 'none' }}>+ Add Item</Link>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+            <div style={sectionLabel('Your Collection')}>Your Collection</div>
+            <Link to="/add-item" style={{ fontFamily: MONO, fontSize: 10, color: T.gray, textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>+ Add Item</Link>
           </div>
 
-          {items.length === 0
-            ? (
-              <div style={{ backgroundColor: C.card, borderRadius: 16, border: `1px solid ${C.border}`, padding: '40px 24px', textAlign: 'center' }}>
-                <div style={{ fontSize: 36, marginBottom: 12 }}>📦</div>
-                <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>Nothing in your vault yet</div>
-                <div style={{ color: C.muted, fontSize: 14, marginBottom: 20 }}>Add the things you own and care about</div>
-                <Link to="/add-item" style={{ backgroundColor: C.accent, color: C.cream, padding: '10px 24px', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: 14 }}>
-                  Add First Item
-                </Link>
-              </div>
-            )
-            : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
-                {items.map(item => (
-                  <div key={item.id} style={{ backgroundColor: C.card, borderRadius: 14, border: `1px solid ${C.border}`, overflow: 'hidden' }}>
-                    {item.image_url
-                      ? <img src={item.image_url} alt={item.name} style={{ width: '100%', height: 160, objectFit: 'cover', display: 'block' }} />
-                      : <div style={{ width: '100%', height: 160, backgroundColor: 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32 }}>📷</div>
-                    }
-                    <div style={{ padding: '14px 14px 16px' }}>
-                      <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</div>
-                      {item.brands?.name && <div style={{ fontSize: 12, color: C.muted }}>{item.brands.name}</div>}
+          {items.length === 0 ? (
+            <div>
+              {/* Placeholder items */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px,1fr))', gap: 1, backgroundColor: T.borderVis, marginBottom: 1 }}>
+                {PLACEHOLDER_ITEMS.map(item => (
+                  <div key={item.id} style={{ backgroundColor: T.bg, padding: 0, position: 'relative', opacity: 0.35 }}>
+                    <div style={{ height: 160, backgroundColor: T.card, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ fontFamily: DISPLAY, fontSize: 32, color: T.borderVis }}>◈</div>
+                    </div>
+                    <div style={{ padding: '14px 16px 18px' }}>
+                      <div style={{ fontFamily: BODY, fontWeight: 600, fontSize: 13, color: T.white, marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</div>
+                      <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.1em' }}>{item.brand} · {item.category}</div>
                     </div>
                   </div>
                 ))}
               </div>
-            )
-          }
+              {/* Empty CTA */}
+              <div style={{ padding: '40px 32px', border: `1px solid ${T.borderVis}`, borderTop: 'none', textAlign: 'center' }}>
+                <div style={{ fontFamily: DISPLAY, fontSize: 14, color: T.white, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 12 }}>Your vault awaits.</div>
+                <p style={{ fontFamily: BODY, fontSize: 14, color: T.grayMid, margin: '0 0 28px', lineHeight: 1.7 }}>Add the pieces that define you. Every item gets an AI-generated provenance story.</p>
+                <Link to="/add-item" style={{
+                  fontFamily: BODY, fontSize: 12, fontWeight: 600, color: T.bg,
+                  textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase',
+                  padding: '12px 32px', backgroundColor: T.white, display: 'inline-block',
+                }}>Add First Item →</Link>
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px,1fr))', gap: 1, backgroundColor: T.borderVis }}>
+              {items.map(item => (
+                <div key={item.id} style={{ backgroundColor: T.bg, overflow: 'hidden' }}>
+                  {item.image_url
+                    ? <img src={item.image_url} alt={item.name} style={{ width: '100%', height: 160, objectFit: 'cover', display: 'block' }} />
+                    : <div style={{ width: '100%', height: 160, backgroundColor: T.card, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ fontFamily: DISPLAY, fontSize: 32, color: T.borderVis }}>◈</div>
+                      </div>
+                  }
+                  <div style={{ padding: '14px 16px 18px' }}>
+                    <div style={{ fontFamily: BODY, fontWeight: 600, fontSize: 13, color: T.white, marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</div>
+                    {item.brand && <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.1em' }}>{item.brand}</div>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Quick links */}
+        <div style={{ marginTop: 56, paddingTop: 40, borderTop: `1px solid ${T.border}`, display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+          {[
+            { label: 'View Full Vault', to: profile?.username ? `/vault/${profile.username}` : '/dashboard' },
+            { label: 'Find Your Tribe', to: '/tribe' },
+            { label: 'Profile Settings', to: profile?.username ? `/profile/${profile.username}` : '/dashboard' },
+          ].map(link => (
+            <Link key={link.label} to={link.to} style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid, textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase', transition: 'color 0.2s' }}
+              onMouseEnter={e => (e.target as HTMLElement).style.color = T.white}
+              onMouseLeave={e => (e.target as HTMLElement).style.color = T.grayMid}
+            >{link.label} →</Link>
+          ))}
         </div>
       </div>
 
-      {/* ── BACKSTAGE VIEW MODAL ── */}
+      {/* Backstage Modal */}
       {backstageView && (
-        <BackstageViewModal
-          membership={backstageView}
-          onClose={() => setBackstageView(null)}
-        />
+        <BackstageModal membership={backstageView} onClose={() => setBackstageView(null)} />
       )}
     </div>
   )
 }
 
-/* ── Stat pill ── */
-function StatPill({ label, val, gold }: { label: string; val: number; gold?: boolean }) {
-  return (
-    <div style={{ textAlign: 'center' }}>
-      <div style={{ fontSize: 22, fontWeight: 900, color: gold ? C.gold : C.cream }}>{val}</div>
-      <div style={{ fontSize: 11, color: C.muted, fontWeight: 600, marginTop: 2 }}>{label}</div>
-    </div>
-  )
-}
-
-/* ── Backstage access card ── */
-function BackstageAccessCard({ membership, onView }: { membership: any; onView: () => void }) {
-  const brand = membership.brands
-  const tier = membership.customer_tiers
-
-  return (
-    <div style={{ borderRadius: 16, border: `1px solid ${C.gold}`, backgroundImage: `linear-gradient(135deg, rgba(255,183,3,0.08) 0%, rgba(22,22,42,0.6) 100%)`, padding: '20px 22px', display: 'flex', alignItems: 'center', gap: 18 }}>
-      {/* Brand logo */}
-      <div style={{ width: 48, height: 48, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.07)', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 18, border: `1px solid rgba(255,183,3,0.2)` }}>
-        {brand?.logo_url ? <img src={brand.logo_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : brand?.name?.[0]}
-      </div>
-
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 13, color: C.gold, fontWeight: 700, marginBottom: 4 }}>🎭 Backstage Unlocked</div>
-        <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 2 }}>
-          {brand?.name} has unlocked something for you.
-        </div>
-        {tier && (
-          <div style={{ fontSize: 12, color: C.muted }}>
-            You're a <span style={{ color: `#${tier.color}`, fontWeight: 700 }}>{tier.name}</span> member
-          </div>
-        )}
-      </div>
-
-      <button onClick={onView}
-        style={{ flexShrink: 0, backgroundColor: C.gold, color: C.primary, border: 'none', borderRadius: 10, padding: '10px 18px', fontWeight: 800, fontSize: 13, cursor: 'pointer', whiteSpace: 'nowrap' }}>
-        View Backstage
-      </button>
-    </div>
-  )
-}
-
-/* ── Backstage view modal ── */
-function BackstageViewModal({ membership, onClose }: { membership: any; onClose: () => void }) {
+function BackstageModal({ membership, onClose }: { membership: any; onClose: () => void }) {
   const brand = membership.brands
   const [events, setEvents] = useState<any[]>([])
   const [posts, setPosts] = useState<any[]>([])
@@ -263,18 +250,8 @@ function BackstageViewModal({ membership, onClose }: { membership: any; onClose:
   useEffect(() => {
     if (!brand?.id) return
     Promise.all([
-      supabase
-        .from('backstage_events')
-        .select('*')
-        .eq('brand_id', brand.id)
-        .eq('status', 'active')
-        .order('created_at', { ascending: false }),
-      supabase
-        .from('backstage_posts')
-        .select('*')
-        .eq('brand_id', brand.id)
-        .order('created_at', { ascending: false })
-        .limit(10),
+      supabase.from('backstage_events').select('*').eq('brand_id', brand.id).eq('status', 'active').order('created_at', { ascending: false }),
+      supabase.from('backstage_posts').select('*').eq('brand_id', brand.id).order('created_at', { ascending: false }).limit(10),
     ]).then(([evRes, postRes]) => {
       setEvents(evRes.data || [])
       setPosts(postRes.data || [])
@@ -282,120 +259,69 @@ function BackstageViewModal({ membership, onClose }: { membership: any; onClose:
     })
   }, [brand?.id])
 
-  const BS_ICONS: Record<string, string> = {
-    design_preview: '🎨', founder_call: '📞', factory_tour: '🏭',
-    early_purchase: '⚡', virtual_event: '🎙', custom: '✦',
-  }
-
   return (
-    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', zIndex: 1000 }}
+    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.9)', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', zIndex: 1000 }}
       onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={{ backgroundColor: C.card, borderRadius: '24px 24px 0 0', border: `1px solid ${C.gold}`, borderBottom: 'none', width: '100%', maxWidth: 700, maxHeight: '88vh', overflowY: 'auto', padding: '28px 28px 40px' }}>
-        <style>{`@keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}`}</style>
-        <div style={{ animation: 'slideUp 0.3s ease' }}>
-
-          {/* Handle */}
-          <div style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.15)', margin: '0 auto 24px' }} />
-
-          {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28 }}>
-            <div style={{ width: 52, height: 52, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.07)', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 20, border: `1px solid ${C.gold}40` }}>
-              {brand?.logo_url ? <img src={brand.logo_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : brand?.name?.[0]}
-            </div>
-            <div>
-              <div style={{ fontSize: 12, color: C.gold, fontWeight: 700, marginBottom: 3 }}>🎭 BACKSTAGE ACCESS</div>
-              <div style={{ fontWeight: 900, fontSize: 20 }}>{brand?.name}</div>
-            </div>
-            <button onClick={onClose} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: C.muted, fontSize: 24, cursor: 'pointer', lineHeight: 1 }}>×</button>
+      <style>{`@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}`}</style>
+      <div style={{ backgroundColor: T.card, border: `1px solid ${T.borderVis}`, borderBottom: 'none', width: '100%', maxWidth: 700, maxHeight: '88vh', overflowY: 'auto', padding: '32px 32px 48px', animation: 'slideUp 0.25s ease' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32 }}>
+          <div style={{ width: 44, height: 44, backgroundColor: T.bg, border: `1px solid ${T.borderVis}`, overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 16 }}>
+            {brand?.logo_url ? <img src={brand.logo_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : brand?.name?.[0]}
           </div>
-
-          {loading
-            ? <div style={{ padding: '40px', textAlign: 'center', color: C.muted }}>Loading exclusive content…</div>
-            : <>
-              {/* Events */}
-              {events.length > 0 && (
-                <div style={{ marginBottom: 32 }}>
-                  <div style={{ fontSize: 11, fontWeight: 800, color: C.gold, textTransform: 'uppercase', letterSpacing: 1.4, marginBottom: 14 }}>
-                    Experiences
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {events.map(ev => (
-                      <div key={ev.id} style={{ backgroundColor: 'rgba(255,183,3,0.06)', borderRadius: 14, border: `1px solid rgba(255,183,3,0.2)`, padding: '18px 20px' }}>
-                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                          <div style={{ fontSize: 24, flexShrink: 0 }}>{BS_ICONS[ev.event_type] || '✦'}</div>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{ev.name}</div>
-                            {ev.description && <div style={{ color: C.muted, fontSize: 13, lineHeight: 1.6, marginBottom: 10 }}>{ev.description}</div>}
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, fontSize: 12, color: C.muted }}>
-                              {ev.rolling_access && <span style={{ color: C.gold, fontWeight: 600 }}>∞ Rolling access</span>}
-                              {!ev.rolling_access && ev.event_date && (
-                                <span>📅 {new Date(ev.event_date).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                              )}
-                              {ev.max_attendees > 0 && <span>👥 {ev.rsvp_count ?? 0}/{ev.max_attendees} attending</span>}
-                            </div>
-                          </div>
-                          {ev.rsvp_required && (
-                            <RSVPButton event={ev} />
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Posts */}
-              {posts.length > 0 && (
-                <div>
-                  <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: 'uppercase', letterSpacing: 1.4, marginBottom: 14 }}>
-                    From the Brand
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {posts.map(p => (
-                      <div key={p.id} style={{ backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 12, border: `1px solid ${C.border}`, padding: '16px 18px' }}>
-                        <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8 }}>{p.title}</div>
-                        <div style={{ color: C.muted, fontSize: 13, lineHeight: 1.65 }}>{p.content}</div>
-                        <div style={{ fontSize: 11, color: 'rgba(141,153,174,0.4)', marginTop: 10 }}>
-                          {new Date(p.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {events.length === 0 && posts.length === 0 && (
-                <div style={{ padding: '40px 20px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 36, marginBottom: 12 }}>🎭</div>
-                  <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>Nothing posted yet</div>
-                  <div style={{ color: C.muted, fontSize: 13 }}>This brand is preparing something exclusive for you. Check back soon.</div>
-                </div>
-              )}
-            </>
-          }
+          <div>
+            <div style={{ fontFamily: DISPLAY, fontSize: 9, color: T.gray, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 6 }}>Exclusive Access</div>
+            <div style={{ fontFamily: DISPLAY, fontSize: 18, fontWeight: 600, color: T.white }}>{brand?.name}</div>
+          </div>
+          <button onClick={onClose} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: T.grayMid, fontSize: 22, cursor: 'pointer', lineHeight: 1, fontFamily: BODY }}>×</button>
         </div>
+
+        {loading ? (
+          <div style={{ padding: '40px', textAlign: 'center', color: T.grayMid, fontFamily: BODY, fontSize: 14 }}>Loading exclusive content…</div>
+        ) : (
+          <>
+            {events.length > 0 && (
+              <div style={{ marginBottom: 32 }}>
+                <div style={{ fontFamily: DISPLAY, fontSize: 9, color: T.gray, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 16 }}>Experiences</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 1, backgroundColor: T.borderVis }}>
+                  {events.map(ev => (
+                    <div key={ev.id} style={{ backgroundColor: T.bg, padding: '20px 24px' }}>
+                      <div style={{ fontFamily: BODY, fontWeight: 600, fontSize: 15, color: T.white, marginBottom: 8 }}>{ev.name}</div>
+                      {ev.description && <div style={{ fontFamily: BODY, color: T.grayMid, fontSize: 13, lineHeight: 1.65, marginBottom: 12 }}>{ev.description}</div>}
+                      <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.1em' }}>
+                        {ev.rolling_access ? 'ROLLING ACCESS' : ev.event_date && new Date(ev.event_date).toLocaleDateString('en-IN')}
+                        {ev.max_attendees > 0 && ` · ${ev.rsvp_count ?? 0}/${ev.max_attendees} ATTENDING`}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {posts.length > 0 && (
+              <div>
+                <div style={{ fontFamily: DISPLAY, fontSize: 9, color: T.gray, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 16 }}>From the Brand</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 1, backgroundColor: T.borderVis }}>
+                  {posts.map(p => (
+                    <div key={p.id} style={{ backgroundColor: T.bg, padding: '20px 24px' }}>
+                      <div style={{ fontFamily: BODY, fontWeight: 600, fontSize: 14, color: T.white, marginBottom: 8 }}>{p.title}</div>
+                      <div style={{ fontFamily: BODY, color: T.grayMid, fontSize: 13, lineHeight: 1.7 }}>{p.content}</div>
+                      <div style={{ fontFamily: MONO, fontSize: 9, color: T.borderVis, marginTop: 12, letterSpacing: '0.1em' }}>
+                        {new Date(p.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {events.length === 0 && posts.length === 0 && (
+              <div style={{ padding: '48px 24px', textAlign: 'center', border: `1px solid ${T.borderVis}` }}>
+                <div style={{ fontFamily: DISPLAY, fontSize: 24, color: T.borderVis, marginBottom: 16 }}>◎</div>
+                <div style={{ fontFamily: DISPLAY, fontSize: 14, color: T.white, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Nothing posted yet</div>
+                <div style={{ fontFamily: BODY, color: T.grayMid, fontSize: 13 }}>This brand is preparing something exclusive. Check back soon.</div>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
-  )
-}
-
-/* ── RSVP button ── */
-function RSVPButton({ event }: { event: any }) {
-  const [rsvp, setRsvp] = useState(false)
-  const [loading, setLoading] = useState(false)
-
-  async function toggle() {
-    setLoading(true)
-    await new Promise(r => setTimeout(r, 500))
-    setRsvp(r => !r)
-    setLoading(false)
-    if (!rsvp) toast.success('RSVP confirmed!')
-  }
-
-  return (
-    <button onClick={toggle} disabled={loading}
-      style={{ flexShrink: 0, padding: '8px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: rsvp ? 'none' : `1px solid rgba(255,183,3,0.4)`, backgroundColor: rsvp ? C.gold : 'transparent', color: rsvp ? C.primary : C.gold, opacity: loading ? 0.6 : 1, transition: 'all 0.2s' }}>
-      {loading ? '…' : rsvp ? '✓ Going' : 'RSVP'}
-    </button>
   )
 }

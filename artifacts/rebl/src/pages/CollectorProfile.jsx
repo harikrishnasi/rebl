@@ -69,15 +69,11 @@ export default function CollectorProfile() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
-      {/* Back nav */}
-      <div style={{ padding: '16px 20px', borderBottom: `1px solid ${C.border}` }}>
-        <button onClick={() => navigate(-1)} style={{
-          background: 'none', border: 'none', color: C.muted, cursor: 'pointer',
-          fontSize: 14, display: 'flex', alignItems: 'center', gap: 6, padding: 0,
-        }}>
-          ← Back
-        </button>
-      </div>
+      {/* Nav */}
+      <nav style={{ backgroundColor: C.primary, borderBottom: `1px solid ${C.border}`, padding: '0 24px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 50 }}>
+        <Link to="/dashboard" style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 18, letterSpacing: '-0.5px', color: C.cream, textDecoration: 'none' }}>Rēbl</Link>
+        <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontSize: 11, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', letterSpacing: '0.1em', textTransform: 'uppercase', padding: 0 }}>← Back</button>
+      </nav>
 
       <div style={{ maxWidth: 960, margin: '0 auto', padding: '32px 20px' }}>
         <ProfileHeader profile={profile} items={items} verifiedCount={verifiedCount} isOwn={isOwn} />
@@ -348,7 +344,7 @@ function ItemModal({ item, isOwn, onClose, onStoryUpdated }) {
           {item.image_url ? (
             <img src={item.image_url} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
-            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 60 }}>📦</div>
+            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 60 }}>◈</div>
           )}
         </div>
 
@@ -519,7 +515,7 @@ function ItemModal({ item, isOwn, onClose, onStoryUpdated }) {
 function EmptyState({ isOwn }) {
   return (
     <div style={{ textAlign: 'center', padding: '80px 24px' }}>
-      <div style={{ fontSize: 56, marginBottom: 20 }}>📦</div>
+      <div style={{ fontSize: 56, marginBottom: 20 }}>◈</div>
       <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>
         {isOwn ? 'Your collection starts here.' : 'Nothing here yet.'}
       </h2>

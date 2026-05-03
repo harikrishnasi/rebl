@@ -74,7 +74,7 @@ export default function BrandDashboard() {
     { id: 'story',     icon: '✦', label: 'Story Builder' },
     { id: 'customers', icon: '👥', label: 'Customers' },
     { id: 'campaigns', icon: '📣', label: 'Campaigns' },
-    { id: 'backstage', icon: '🎭', label: 'Backstage' },
+    { id: 'backstage', icon: '✦', label: 'Backstage' },
     { id: 'settings',  icon: '⚙', label: 'Settings' },
   ]
 
@@ -702,7 +702,7 @@ function StoryPreviewModal({ fields, drop, brand, lang, onClose }) {
           {/* Behind the scenes */}
           {fields.behind_scenes && (
             <div style={{ marginTop: 20, padding: '14px 16px', backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 10, border: `1px solid ${C.border}` }}>
-              <div style={{ fontSize: 10, fontWeight: 800, color: C.muted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>🎭 Behind the Scenes</div>
+              <div style={{ fontSize: 10, fontWeight: 800, color: C.muted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>✦ Behind the Scenes</div>
               {fields.behind_scenes.startsWith('http')
                 ? <a href={fields.behind_scenes} target="_blank" rel="noreferrer" style={{ color: C.accent, fontSize: 13, wordBreak: 'break-all' }}>{fields.behind_scenes}</a>
                 : <p style={{ fontSize: 14, lineHeight: 1.6, color: C.muted, margin: 0 }}>{fields.behind_scenes}</p>
@@ -792,7 +792,7 @@ function TabCustomers({ brand, lang, tiers: initTiers, customers }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, marginTop: 8 }}>
                 <div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: `#${tier.color}`, flexShrink: 0 }} />
                 <span style={{ fontWeight: 800, fontSize: 16 }}>{tier.name}</span>
-                {tier.has_backstage_access && <span style={{ fontSize: 10, backgroundColor: 'rgba(255,183,3,0.15)', color: C.gold, border: `1px solid rgba(255,183,3,0.3)`, borderRadius: 4, padding: '2px 6px', fontWeight: 700 }}>🎭 BACKSTAGE</span>}
+                {tier.has_backstage_access && <span style={{ fontSize: 10, backgroundColor: 'rgba(255,183,3,0.15)', color: C.gold, border: `1px solid rgba(255,183,3,0.3)`, borderRadius: 4, padding: '2px 6px', fontWeight: 700 }}>✦ BACKSTAGE</span>}
               </div>
               <div style={{ fontSize: 28, fontWeight: 900, color: `#${tier.color}`, marginBottom: 4 }}>{count}</div>
               <div style={{ fontSize: 12, color: C.muted, marginBottom: 14 }}>{lang.community.toLowerCase()}</div>
@@ -1159,7 +1159,7 @@ function TierEditModal({ tier, onClose, onSave }) {
           {/* Backstage toggle */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', backgroundColor: 'rgba(255,183,3,0.06)', borderRadius: 10, border: `1px solid rgba(255,183,3,0.15)` }}>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 14 }}>🎭 Backstage Access</div>
+              <div style={{ fontWeight: 700, fontSize: 14 }}>✦ Backstage Access</div>
               <div style={{ color: C.muted, fontSize: 12, marginTop: 2 }}>Can view exclusive brand posts</div>
             </div>
             <Toggle on={form.has_backstage} onChange={v => set('has_backstage', v)} />
@@ -1781,7 +1781,7 @@ function MLabel({ children }) {
 const CAMP_TEMPLATES = [
   { id: 'drop_announcement', icon: '⚡', label: 'Drop Announcement',  desc: 'Announce your next drop to all collectors',     type: 'drop_alert',    defaultTiers: ['all'],              subject: 'Something big is dropping. This is your heads up.',    body: 'We\'ve been working on something you won\'t want to miss. Our next drop is almost here — and it\'s exactly what you\'ve been waiting for.\n\nStay close. Details dropping soon.' },
   { id: 'early_access',      icon: '🔑', label: 'Early Access Invite', desc: 'Exclusive first look for top-tier collectors',   type: 'early_access',  defaultTiers: ['insider','legend'], subject: 'You\'re getting in first.',                              body: 'Because you\'ve been here from the start — you get access before anyone else.\n\nThis is your 24-hour early window. Don\'t miss it.' },
-  { id: 'backstage_invite',  icon: '🎭', label: 'Backstage Invite',    desc: 'Private access for your Legend tier',            type: 'announcement',  defaultTiers: ['legend'],           subject: 'Backstage is open. Just for you.',                      body: 'Legends only. You\'ve earned your place here.\n\nHead to the Backstage section to see what we\'ve been building behind the scenes.' },
+  { id: 'backstage_invite',  icon: '✦', label: 'Backstage Invite',    desc: 'Private access for your Legend tier',            type: 'announcement',  defaultTiers: ['legend'],           subject: 'Backstage is open. Just for you.',                      body: 'Legends only. You\'ve earned your place here.\n\nHead to the Backstage section to see what we\'ve been building behind the scenes.' },
   { id: 'story_nudge',       icon: '✍️', label: 'Story Nudge',         desc: 'Buyers who haven\'t written their story yet',    type: 'announcement',  defaultTiers: ['all'],              subject: 'Your piece deserves a story.',                          body: 'You own one of ours. But your story with it hasn\'t been written yet.\n\nHead to your collection and tell us what it means to you. It takes 2 minutes — and it lives on your profile forever.' },
   { id: 'loyalty_reward',    icon: '🎁', label: 'Loyalty Reward',      desc: 'Reward a specific tier',                         type: 'reward',        defaultTiers: ['all'],              subject: 'A gift from us, for being you.',                        body: 'We don\'t take loyalty for granted.\n\nAs a thank you for being part of this community, we\'ve got something for you. Check your Rebl account for your reward.' },
   { id: 're_engagement',     icon: '🔄', label: 'Re-engagement',       desc: 'Collectors inactive 60+ days',                  type: 'announcement',  defaultTiers: ['all'],              subject: 'It\'s been a while. We\'ve been busy.',                 body: 'We noticed you\'ve been away. A lot has happened here.\n\nCome back and see what\'s new. There\'s a drop coming up you might actually care about.' },
@@ -2172,7 +2172,7 @@ function StatusBadge({ status }) {
    TAB: BACKSTAGE
 ══════════════════════════════════════════ */
 const BS_EVENT_TYPES = [
-  { id: 'design_preview',  icon: '🎨', label: 'Design Preview',  desc: 'Show an unreleased design before the world sees it' },
+  { id: 'design_preview',  icon: '◇', label: 'Design Preview',  desc: 'Show an unreleased design before the world sees it' },
   { id: 'founder_call',    icon: '📞', label: 'Founder Call',    desc: 'Small-group video call with the founder' },
   { id: 'factory_tour',    icon: '🏭', label: 'Factory Tour',    desc: 'Virtual or physical behind-the-scenes access' },
   { id: 'early_purchase',  icon: '⚡', label: 'Early Purchase',  desc: 'Buy 48 hrs before the public drop goes live' },
@@ -2504,12 +2504,12 @@ function BSCreateEventModal({ brand, tiers, drops, initialTypeId, onClose, onCre
                   <button key={t.id} onClick={() => toggleTierId(t.id)}
                     style={{ padding: '6px 14px', borderRadius: 20, border: `1px solid ${active ? `#${t.color}` : 'rgba(255,255,255,0.12)'}`, backgroundColor: active ? `#${t.color}20` : 'transparent', color: active ? `#${t.color}` : C.muted, fontSize: 13, fontWeight: active ? 700 : 400, cursor: 'pointer', transition: 'all 0.15s' }}>
                     {t.name}
-                    {t.has_backstage_access && ' 🎭'}
+                    {t.has_backstage_access && ' ✦'}
                   </button>
                 )
               })}
             </div>
-            <div style={{ fontSize: 12, color: C.muted, marginTop: 7 }}>🎭 = tier has Backstage Access enabled</div>
+            <div style={{ fontSize: 12, color: C.muted, marginTop: 7 }}>✦ = tier has Backstage Access enabled</div>
           </div>
 
           {/* Rolling access toggle */}

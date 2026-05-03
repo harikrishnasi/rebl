@@ -305,7 +305,7 @@ function LiveDropCard({ drop, accent, textColor, mutedColor, primary }: any) {
         <div style={{ minHeight: 280, backgroundColor: 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
           {drop.image_url
             ? <img src={drop.image_url} alt={drop.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', minHeight: 280 }} />
-            : <div style={{ fontSize: 64, opacity: 0.3 }}>📦</div>
+            : <div style={{ fontSize: 40, opacity: 0.15 }}>◈</div>
           }
         </div>
 
@@ -367,7 +367,7 @@ function UpcomingDropCard({ drop, accent, textColor, mutedColor, primary, onNoti
       <div style={{ height: 180, backgroundColor: 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
         {drop.image_url
           ? <img src={drop.image_url} alt={drop.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-          : <div style={{ fontSize: 48, opacity: 0.2 }}>📦</div>
+          : <div style={{ fontSize: 40, opacity: 0.15 }}>◈</div>
         }
       </div>
 

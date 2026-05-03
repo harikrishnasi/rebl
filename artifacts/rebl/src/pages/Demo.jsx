@@ -4,9 +4,9 @@ import StarField from '@/components/StarField'
 import CrossHair from '@/components/CrossHair'
 
 const C = {
-  void: '#050508', cosmos: '#0A0A12', nebula: '#12121E', crater: '#1C1C2E',
-  silver: '#A8B2C4', silverBright: '#C8D4E8', ghost: '#2A2A3E',
-  cream: '#F0F4FF', dim: '#5A6380', orbit: '#7B8FA8',
+  void: '#000000', cosmos: '#000000', nebula: '#0A0A0A', crater: '#0D0D0D',
+  silver: '#A6A6A6', silverBright: '#FFFFFF', ghost: '#1A1A1A',
+  cream: '#FFFFFF', dim: '#555555', orbit: '#A6A6A6',
 }
 
 const AI_TEXT = "The Air Jordan 1 Chicago is not just a shoe. It is the document of a cultural collision — the moment basketball, rebellion, and style fused into a single object. When Michael Jordan wore this colorway in 1985, Nike was fined $5,000 per game. He wore it anyway. Your story with this piece begins — what does owning it say about you?"
@@ -38,10 +38,10 @@ function TypewriterText({ text, active }) {
 
 const ITEMS = [
   { name: 'Air Jordan 1 Retro High OG Chicago', brand: 'Nike', color: '#B22222' },
-  { name: 'Nike Dunk Low Panda', brand: 'Nike', color: '#1C1C2E' },
+  { name: 'Nike Dunk Low Panda', brand: 'Nike', color: '#0D0D0D' },
   { name: 'Supreme Box Logo Hoodie FW23', brand: 'Supreme', color: '#CC0000' },
   { name: 'New Balance 550 White Grey', brand: 'New Balance', color: '#3A3A4A' },
-  { name: 'Adidas Samba OG', brand: 'Adidas', color: '#2A2A3E' },
+  { name: 'Adidas Samba OG', brand: 'Adidas', color: '#1A1A1A' },
   { name: 'Off-White x Nike Air Force 1', brand: 'Off-White', color: '#8B7355' },
 ]
 
@@ -69,7 +69,7 @@ export default function Demo() {
   }, [])
 
   return (
-    <div style={{ backgroundColor: C.cosmos, minHeight: '100vh', color: C.cream, fontFamily: '"Plus Jakarta Sans", "Plus Jakarta Sans", Inter, sans-serif' }}>
+    <div style={{ backgroundColor: C.cosmos, minHeight: '100vh', color: C.cream, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
       <style>{`@keyframes pulse-dot{0%,100%{opacity:0.4;transform:scale(1)}50%{opacity:1;transform:scale(1.2)}}`}</style>
 
       {/* Nav */}
@@ -153,7 +153,7 @@ export default function Demo() {
           {/* Typewriter */}
           <div style={{ backgroundColor: C.nebula, padding: 32 }}>
             <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.silver, letterSpacing: '0.15em', marginBottom: 16 }}>AI PROVENANCE STORY</div>
-            <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 14, color: '#8090A8', lineHeight: 1.8, minHeight: 160 }}>
+            <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 14, color: '#555555', lineHeight: 1.8, minHeight: 160 }}>
               <TypewriterText text={AI_TEXT} active={aiActive} />
             </div>
             <div style={{ marginTop: 24 }}>
@@ -191,7 +191,7 @@ export default function Demo() {
                 <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: C.crater, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '"Space Mono", monospace', fontSize: 12, color: C.silver, flexShrink: 0 }}>{m.avatar}</div>
                 <div>
                   <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, marginBottom: 6 }}>{m.user}</div>
-                  <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 14, color: '#8090A8', lineHeight: 1.5 }}>{m.msg}</div>
+                  <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 14, color: '#555555', lineHeight: 1.5 }}>{m.msg}</div>
                 </div>
               </div>
             ))}
@@ -231,7 +231,7 @@ export default function Demo() {
               <div key={b.label} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                 <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.dim, width: 80 }}>{b.label}</div>
                 <div style={{ flex: 1, height: 6, backgroundColor: C.crater }}>
-                  <div style={{ width: `${b.pct}%`, height: '100%', backgroundColor: b.pct > 80 ? C.silver : b.pct > 60 ? C.orbit : '#5A6380', transition: 'width 1s ease' }} />
+                  <div style={{ width: `${b.pct}%`, height: '100%', backgroundColor: b.pct > 80 ? C.silver : b.pct > 60 ? C.orbit : '#555555', transition: 'width 1s ease' }} />
                 </div>
                 <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, width: 36, textAlign: 'right' }}>{b.pct}%</div>
               </div>

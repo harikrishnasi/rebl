@@ -11,14 +11,14 @@ const C = {
 }
 
 const ARCHETYPES = [
-  { name: 'The Purist',            icon: '🎯', color: '#60a5fa', desc: 'Only the authentic. Every time.' },
-  { name: 'The Trendhunter',       icon: '⚡', color: C.accent,  desc: 'First on every wave.' },
-  { name: 'The Heritage Keeper',   icon: '🏺', color: C.gold,    desc: 'History lives in objects.' },
-  { name: 'The Hypebeast',         icon: '🔥', color: '#f97316', desc: 'Drops. Collabs. Culture.' },
-  { name: 'The Minimalist',        icon: '◽', color: C.muted,   desc: 'Quality over quantity.' },
-  { name: 'The Storyteller',       icon: '📖', color: '#a78bfa', desc: 'Every piece has a chapter.' },
-  { name: 'The Investor',          icon: '📈', color: '#22c55e', desc: 'Eyes on the long game.' },
-  { name: 'The Community Builder', icon: '🤝', color: '#38bdf8', desc: 'Collecting is social.' },
+  { name: 'The Purist',            icon: '◎', color: C.cream, desc: 'Only the authentic. Every time.' },
+  { name: 'The Trendhunter',       icon: '✦', color: C.cream, desc: 'First on every wave.' },
+  { name: 'The Heritage Keeper',   icon: '◈', color: C.cream, desc: 'History lives in objects.' },
+  { name: 'The Hypebeast',         icon: '⊕', color: C.cream, desc: 'Drops. Collabs. Culture.' },
+  { name: 'The Minimalist',        icon: '⊞', color: C.cream, desc: 'Quality over quantity.' },
+  { name: 'The Storyteller',       icon: '◇', color: C.cream, desc: 'Every piece has a chapter.' },
+  { name: 'The Investor',          icon: '△', color: C.cream, desc: 'Eyes on the long game.' },
+  { name: 'The Community Builder', icon: '○', color: C.cream, desc: 'Collecting is social.' },
 ]
 
 const VIBE_TAGS = [
@@ -193,13 +193,13 @@ export default function TribePage() {
       `}</style>
 
       {/* ── NAV ── */}
-      <nav style={{ backgroundColor: C.sidebar, borderBottom: `1px solid ${C.border}`, padding: '0 24px', height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 50 }}>
-        <Link to="/dashboard" style={{ fontWeight: 900, fontSize: 18, letterSpacing: -0.5, color: C.cream, textDecoration: 'none' }}>Rebl</Link>
+      <nav style={{ backgroundColor: C.sidebar, borderBottom: `1px solid ${C.border}`, padding: '0 24px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 50 }}>
+        <Link to="/dashboard" style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 18, letterSpacing: '-0.5px', color: C.cream, textDecoration: 'none' }}>Rēbl</Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <Link to="/add-item" style={{ color: C.muted, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>+ Add Item</Link>
+          <Link to="/add-item" style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontSize: 11, fontWeight: 500, color: C.muted, textDecoration: 'none', letterSpacing: '0.08em', textTransform: 'uppercase' }}>+ Add Item</Link>
           {profile?.username && (
             <Link to={`/vault/${profile.username}`}
-              style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: C.accent, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, color: C.cream, textDecoration: 'none', flexShrink: 0 }}>
+              style={{ width: 30, height: 30, border: `1px solid #2D2D2D`, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 12, color: C.cream, textDecoration: 'none', flexShrink: 0, backgroundColor: '#0D0D0D' }}>
               {profile.avatar_url ? <img src={profile.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (profile.display_name?.[0] || '?')}
             </Link>
           )}
@@ -209,11 +209,12 @@ export default function TribePage() {
       <div style={{ maxWidth: 1060, margin: '0 auto', padding: '44px 22px 80px' }}>
 
         {/* ── PAGE HEADER ── */}
-        <div style={{ marginBottom: 56 }}>
-          <h1 style={{ fontSize: 'clamp(28px, 5vw, 48px)', fontWeight: 900, letterSpacing: -1.5, margin: '0 0 10px', lineHeight: 1.05 }}>
+        <div style={{ marginBottom: 56, paddingBottom: 48, borderBottom: `1px solid ${C.border}` }}>
+          <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 10, color: C.muted, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 20 }}>Your Tribe</div>
+          <h1 style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 'clamp(22px, 4vw, 40px)', fontWeight: 700, letterSpacing: '-0.5px', margin: '0 0 16px', lineHeight: 1.1, textTransform: 'uppercase' }}>
             Find Your People
           </h1>
-          <p style={{ color: C.muted, fontSize: 16, margin: 0, lineHeight: 1.6 }}>
+          <p style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', color: C.muted, fontSize: 16, margin: 0, lineHeight: 1.6 }}>
             Real collectors. Verified owners. Same taste as you.
           </p>
         </div>
@@ -226,7 +227,7 @@ export default function TribePage() {
             sub="Collectors who share brands with your vault" />
 
           {tribePeople.length === 0 ? (
-            <EmptyStrip icon="🔭" title="Add items to find your tribe"
+            <EmptyStrip icon="◎" title="Add items to find your tribe"
               desc="Once your vault has items, we'll surface collectors with overlapping taste."
               cta="Add an Item" href="/add-item" />
           ) : (
