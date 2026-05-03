@@ -52,7 +52,7 @@ function Navbar() {
   }, [])
   const links = [
     { label: 'DROPS', to: '/drops' },
-    { label: 'THE VAULT', to: user ? '/dashboard' : '/demo#step-1' },
+    { label: 'THE VAULT', to: '/dashboard' },
     { label: 'DEMO', to: '/demo' },
     { label: 'BLOG', to: '/blog' },
   ]
