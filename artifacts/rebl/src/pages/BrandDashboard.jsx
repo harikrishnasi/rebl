@@ -575,7 +575,7 @@ Each field: 2-3 sentences max. Tone: collector-grade editorial.`
                 cursor: hasContent ? 'pointer' : 'not-allowed',
               }}
             >
-              👁 Preview as Collector
+              ◎ Preview as Collector
             </button>
             <button
               onClick={handlePublish}
@@ -662,7 +662,7 @@ function StoryPreviewModal({ fields, drop, brand, lang, onClose }) {
       <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 480, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
         {/* Modal header */}
         <div style={{ padding: '18px 22px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: C.muted }}>👁 Collector View</div>
+          <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.muted, letterSpacing: '0.2em' }}>◎ COLLECTOR VIEW</div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontSize: 20, lineHeight: 1 }}>×</button>
         </div>
 
@@ -777,8 +777,9 @@ function TabCustomers({ brand, lang, tiers: initTiers, customers }) {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 4 }}>Customers</h1>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 32 }}>
+      <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.muted, letterSpacing: '0.3em', marginBottom: 8 }}>BRAND.CUSTOMERS</div>
+      <h1 style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 22, fontWeight: 700, marginBottom: 4, letterSpacing: '0.03em', textTransform: 'uppercase' }}>Customers</h1>
+      <p style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', color: C.muted, fontSize: 13, marginBottom: 32 }}>
         {customers.length} {lang.community.toLowerCase()} across {tiers.length} tiers
       </p>
 
@@ -846,7 +847,7 @@ function TabCustomers({ brand, lang, tiers: initTiers, customers }) {
       </div>
 
       {displayed.length === 0
-        ? <EmptyState icon="👥" title="No customers yet" desc="Your community will appear here once people join" />
+        ? <EmptyState icon="◎" title="No customers yet" desc="Your community will appear here once people join" />
         : (
           <div style={{ overflowX: 'auto', marginBottom: 40 }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 640 }}>
@@ -919,7 +920,7 @@ function TabCustomers({ brand, lang, tiers: initTiers, customers }) {
       {/* ── SECTION C: ANALYTICS ── */}
       <SectionHead label="C" title="Tier Analytics" />
       {customers.length === 0
-        ? <EmptyState icon="📊" title="No data yet" desc="Analytics will appear once you have customers" />
+        ? <EmptyState icon="◈" title="No data yet" desc="Analytics will appear once you have customers" />
         : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 32 }}>
             {/* Donut chart */}
@@ -1025,7 +1026,7 @@ function ThresholdRow({ label, val }) {
 /* ── Tier badge ── */
 function TierBadge({ tier }) {
   return (
-    <span style={{ padding: '3px 9px', borderRadius: 20, backgroundColor: tierBg(tier.color), border: `1px solid #${tier.color}40`, fontSize: 11, fontWeight: 700, color: `#${tier.color}`, whiteSpace: 'nowrap' }}>
+    <span style={{ padding: '3px 9px', backgroundColor: tierBg(tier.color), border: `1px solid #${tier.color}40`, fontSize: 11, fontFamily: '"Space Mono", monospace', letterSpacing: '0.06em', fontWeight: 700, color: `#${tier.color}`, whiteSpace: 'nowrap' }}>
       {tier.name}
     </span>
   )
@@ -1034,7 +1035,7 @@ function TierBadge({ tier }) {
 /* ── Small action button ── */
 function ActionBtn({ children, onClick, accent }) {
   return (
-    <button onClick={onClick} style={{ padding: '5px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer', border: accent ? 'none' : `1px solid ${C.border}`, backgroundColor: accent ? C.accent : 'transparent', color: accent ? C.cream : C.muted }}>
+    <button onClick={onClick} style={{ padding: '5px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer', border: accent ? 'none' : `1px solid ${C.border}`, backgroundColor: accent ? C.cream : 'transparent', color: accent ? '#000' : C.muted, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
       {children}
     </button>
   )
@@ -1044,8 +1045,8 @@ function ActionBtn({ children, onClick, accent }) {
 function SectionHead({ label, title }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-      <div style={{ width: 26, height: 26, borderRadius: '50%', backgroundColor: C.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900, color: C.cream, flexShrink: 0 }}>{label}</div>
-      <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>{title}</h2>
+      <div style={{ width: 22, height: 22, border: `1px solid ${C.border}`, backgroundColor: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '"Space Mono", monospace', fontSize: 11, fontWeight: 700, color: C.muted, flexShrink: 0 }}>{label}</div>
+      <h2 style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 13, fontWeight: 700, margin: 0, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{title}</h2>
       <div style={{ flex: 1, height: 1, backgroundColor: C.border }} />
     </div>
   )
@@ -1291,11 +1292,11 @@ function MessageComposer({ customer, brand, onClose }) {
    SMART CONTACT QUEUE — Section D
 ══════════════════════════════════════════ */
 const TRIGGER_META = {
-  story_not_written:    { dot: '🟡', color: '#A6A6A6', bg: 'rgba(255,183,3,0.12)',   label: 'Story Not Written',    subject: 'Your piece deserves a story.' },
-  community_not_joined: { dot: '🔴', color: C.accent,  bg: 'rgba(230,57,70,0.12)',   label: 'Community Not Joined', subject: 'Your community is waiting for you.' },
-  drop_anniversary:     { dot: '🟢', color: '#22c55e', bg: 'rgba(34,197,94,0.12)',   label: 'Drop Anniversary',     subject: 'One year ago today.' },
-  tier_upgrade:         { dot: '🔵', color: '#60a5fa', bg: 'rgba(96,165,250,0.12)',  label: 'Tier Upgraded',        subject: "You've moved up." },
-  manual:               { dot: '⚪', color: C.muted,   bg: 'rgba(255,255,255,0.07)', label: 'Manual',               subject: '' },
+  story_not_written:    { dot: '◈', color: '#A6A6A6', bg: 'rgba(166,166,166,0.08)',  label: 'Story Not Written',    subject: 'Your piece deserves a story.' },
+  community_not_joined: { dot: '◎', color: C.accent,  bg: 'rgba(255,255,255,0.05)',  label: 'Community Not Joined', subject: 'Your community is waiting for you.' },
+  drop_anniversary:     { dot: '⊕', color: C.cream,   bg: 'rgba(255,255,255,0.06)', label: 'Drop Anniversary',     subject: 'One year ago today.' },
+  tier_upgrade:         { dot: '✦', color: C.gray,    bg: 'rgba(255,255,255,0.05)', label: 'Tier Upgraded',        subject: "You've moved up." },
+  manual:               { dot: '·', color: C.muted,   bg: 'rgba(255,255,255,0.04)', label: 'Manual',               subject: '' },
 }
 
 function computeTriggers(customers) {
@@ -1419,14 +1420,14 @@ function SmartContactQueueSection({ brand, lang, tiers, customers }) {
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {storyRows.length > 0 && (
             <button onClick={() => setBulkConfirm({ type: 'story_not_written', rows: storyRows })}
-              style={{ padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: `1px solid rgba(255,183,3,0.35)`, backgroundColor: 'rgba(255,183,3,0.08)', color: '#A6A6A6' }}>
-              🟡 Send All Story Nudges ({storyRows.length})
+              style={{ padding: '7px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer', border: `1px solid ${C.border}`, backgroundColor: 'transparent', color: C.gray, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
+              ◈ Send All Story Nudges ({storyRows.length})
             </button>
           )}
           {anniversaryRows.length > 0 && (
             <button onClick={() => setBulkConfirm({ type: 'drop_anniversary', rows: anniversaryRows })}
-              style={{ padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: `1px solid rgba(34,197,94,0.35)`, backgroundColor: 'rgba(34,197,94,0.08)', color: '#22c55e' }}>
-              🟢 Send All Anniversaries ({anniversaryRows.length})
+              style={{ padding: '7px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer', border: `1px solid ${C.border}`, backgroundColor: 'transparent', color: C.cream, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
+              ⊕ Send All Anniversaries ({anniversaryRows.length})
             </button>
           )}
         </div>
@@ -1434,10 +1435,10 @@ function SmartContactQueueSection({ brand, lang, tiers, customers }) {
 
       {eligible.length === 0
         ? (
-          <div style={{ backgroundColor: C.card, borderRadius: 14, border: `1px solid ${C.border}`, padding: '28px 24px', display: 'flex', alignItems: 'center', gap: 16 }}>
-            <span style={{ fontSize: 28 }}>✅</span>
+          <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, padding: '28px 24px', display: 'flex', alignItems: 'center', gap: 16 }}>
+            <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 22, color: C.muted }}>◈</span>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Queue is clear</div>
+              <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontWeight: 700, fontSize: 13, marginBottom: 4, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Queue is clear</div>
               <div style={{ color: C.muted, fontSize: 13 }}>No contact opportunities right now — Rebl will surface them automatically</div>
             </div>
           </div>
@@ -1537,7 +1538,7 @@ function SmartContactRow({ trigger, tiers, onSend }) {
   const snippets = {
     story_not_written:    `Bought ${trigger.daysSince}d ago — story not written`,
     community_not_joined: `Joined ${trigger.daysSince}d ago — never entered community`,
-    drop_anniversary:     `1 year since first purchase 🎉`,
+    drop_anniversary:     `1 year since first purchase`,
     tier_upgrade:         `Moved to ${tier?.name || 'new tier'} recently`,
   }
 
@@ -1576,7 +1577,7 @@ function SmartContactRow({ trigger, tiers, onSend }) {
           style={{ padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none', backgroundColor: C.accent, color: C.cream, width: '100%', transition: 'opacity 0.15s' }}
           onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
           onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
-          Send ✉
+          Send ◎
         </button>
       </div>
     </div>
@@ -1667,7 +1668,7 @@ function SmartComposerModal({ trigger, prefillMsg, subject: initSubject, generat
         <div style={{ display: 'flex', gap: 10 }}>
           <button onClick={handleSend} disabled={sending || generating || !msg.trim()}
             style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '13px', fontWeight: 700, fontSize: 14, cursor: 'pointer', opacity: (sending || generating || !msg.trim()) ? 0.6 : 1 }}>
-            {sending ? 'Sending…' : '✉ Send Message'}
+            {sending ? 'Sending…' : '◎ Send Message'}
           </button>
           <button onClick={onClose}
             style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '13px', cursor: 'pointer' }}>
@@ -1702,7 +1703,7 @@ function ContactLogSection({ brand }) {
       {!loaded
         ? <div style={{ color: C.muted, fontSize: 13 }}>Loading…</div>
         : log.length === 0
-          ? <EmptyState icon="📋" title="No messages sent yet" desc="Contact history will appear here" />
+          ? <EmptyState icon="◎" title="No messages sent yet" desc="Contact history will appear here" />
           : (
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 560 }}>
@@ -1782,20 +1783,20 @@ function MLabel({ children }) {
    TAB: CAMPAIGNS
 ══════════════════════════════════════════ */
 const CAMP_TEMPLATES = [
-  { id: 'drop_announcement', icon: '⚡', label: 'Drop Announcement',  desc: 'Announce your next drop to all collectors',     type: 'drop_alert',    defaultTiers: ['all'],              subject: 'Something big is dropping. This is your heads up.',    body: 'We\'ve been working on something you won\'t want to miss. Our next drop is almost here — and it\'s exactly what you\'ve been waiting for.\n\nStay close. Details dropping soon.' },
-  { id: 'early_access',      icon: '🔑', label: 'Early Access Invite', desc: 'Exclusive first look for top-tier collectors',   type: 'early_access',  defaultTiers: ['insider','legend'], subject: 'You\'re getting in first.',                              body: 'Because you\'ve been here from the start — you get access before anyone else.\n\nThis is your 24-hour early window. Don\'t miss it.' },
+  { id: 'drop_announcement', icon: '◈', label: 'Drop Announcement',  desc: 'Announce your next drop to all collectors',     type: 'drop_alert',    defaultTiers: ['all'],              subject: 'Something big is dropping. This is your heads up.',    body: 'We\'ve been working on something you won\'t want to miss. Our next drop is almost here — and it\'s exactly what you\'ve been waiting for.\n\nStay close. Details dropping soon.' },
+  { id: 'early_access',      icon: '◎', label: 'Early Access Invite', desc: 'Exclusive first look for top-tier collectors',   type: 'early_access',  defaultTiers: ['insider','legend'], subject: 'You\'re getting in first.',                              body: 'Because you\'ve been here from the start — you get access before anyone else.\n\nThis is your 24-hour early window. Don\'t miss it.' },
   { id: 'backstage_invite',  icon: '✦', label: 'Backstage Invite',    desc: 'Private access for your Legend tier',            type: 'announcement',  defaultTiers: ['legend'],           subject: 'Backstage is open. Just for you.',                      body: 'Legends only. You\'ve earned your place here.\n\nHead to the Backstage section to see what we\'ve been building behind the scenes.' },
-  { id: 'story_nudge',       icon: '✍️', label: 'Story Nudge',         desc: 'Buyers who haven\'t written their story yet',    type: 'announcement',  defaultTiers: ['all'],              subject: 'Your piece deserves a story.',                          body: 'You own one of ours. But your story with it hasn\'t been written yet.\n\nHead to your collection and tell us what it means to you. It takes 2 minutes — and it lives on your profile forever.' },
-  { id: 'loyalty_reward',    icon: '🎁', label: 'Loyalty Reward',      desc: 'Reward a specific tier',                         type: 'reward',        defaultTiers: ['all'],              subject: 'A gift from us, for being you.',                        body: 'We don\'t take loyalty for granted.\n\nAs a thank you for being part of this community, we\'ve got something for you. Check your Rebl account for your reward.' },
-  { id: 're_engagement',     icon: '🔄', label: 'Re-engagement',       desc: 'Collectors inactive 60+ days',                  type: 'announcement',  defaultTiers: ['all'],              subject: 'It\'s been a while. We\'ve been busy.',                 body: 'We noticed you\'ve been away. A lot has happened here.\n\nCome back and see what\'s new. There\'s a drop coming up you might actually care about.' },
-  { id: 'custom',            icon: '✏️', label: 'Custom Message',       desc: 'Blank canvas — write your own',                 type: 'announcement',  defaultTiers: ['all'],              subject: '',                                                      body: '' },
+  { id: 'story_nudge',       icon: '✦', label: 'Story Nudge',         desc: 'Buyers who haven\'t written their story yet',    type: 'announcement',  defaultTiers: ['all'],              subject: 'Your piece deserves a story.',                          body: 'You own one of ours. But your story with it hasn\'t been written yet.\n\nHead to your collection and tell us what it means to you. It takes 2 minutes — and it lives on your profile forever.' },
+  { id: 'loyalty_reward',    icon: '◎', label: 'Loyalty Reward',      desc: 'Reward a specific tier',                         type: 'reward',        defaultTiers: ['all'],              subject: 'A gift from us, for being you.',                        body: 'We don\'t take loyalty for granted.\n\nAs a thank you for being part of this community, we\'ve got something for you. Check your Rebl account for your reward.' },
+  { id: 're_engagement',     icon: '⊕', label: 'Re-engagement',       desc: 'Collectors inactive 60+ days',                  type: 'announcement',  defaultTiers: ['all'],              subject: 'It\'s been a while. We\'ve been busy.',                 body: 'We noticed you\'ve been away. A lot has happened here.\n\nCome back and see what\'s new. There\'s a drop coming up you might actually care about.' },
+  { id: 'custom',            icon: '✦', label: 'Custom Message',       desc: 'Blank canvas — write your own',                 type: 'announcement',  defaultTiers: ['all'],              subject: '',                                                      body: '' },
 ]
 
 const TYPE_META = {
-  drop_alert:   { label: '⚡ Drop Alert',    color: C.accent,  bg: 'rgba(230,57,70,0.12)' },
-  early_access: { label: '🔑 Early Access',  color: C.gold,    bg: 'rgba(255,183,3,0.12)' },
-  announcement: { label: '📣 Announcement',  color: C.muted,   bg: 'rgba(141,153,174,0.1)' },
-  reward:       { label: '🎁 Reward',        color: '#22c55e', bg: 'rgba(34,197,94,0.12)' },
+  drop_alert:   { label: '◈ Drop Alert',    color: C.accent,  bg: 'rgba(255,255,255,0.05)' },
+  early_access: { label: '◎ Early Access',  color: C.cream,   bg: 'rgba(255,255,255,0.06)' },
+  announcement: { label: '◈ Announcement',  color: C.muted,   bg: 'rgba(255,255,255,0.04)' },
+  reward:       { label: '◎ Reward',        color: C.cream,   bg: 'rgba(255,255,255,0.06)' },
 }
 
 function TabCampaigns({ brand, lang, tiers, customers }) {
@@ -1844,8 +1845,9 @@ function TabCampaigns({ brand, lang, tiers, customers }) {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 4 }}>Campaigns</h1>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 32 }}>
+      <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.muted, letterSpacing: '0.3em', marginBottom: 8 }}>BRAND.CAMPAIGNS</div>
+      <h1 style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 22, fontWeight: 700, marginBottom: 4, letterSpacing: '0.03em', textTransform: 'uppercase' }}>Campaigns</h1>
+      <p style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', color: C.muted, fontSize: 13, marginBottom: 32 }}>
         One-click templates — choose a type and we'll pre-fill the rest
       </p>
 
@@ -1871,7 +1873,7 @@ function TabCampaigns({ brand, lang, tiers, customers }) {
       {/* ── History ── */}
       <SectionHead label="H" title="Campaign History" />
       {campaigns.length === 0
-        ? <EmptyState icon="📣" title="No campaigns sent yet" desc="Pick a template above to get started" />
+        ? <EmptyState icon="◈" title="No campaigns sent yet" desc="Pick a template above to get started" />
         : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 560 }}>
@@ -2113,8 +2115,8 @@ Rewrite it: same intent, same length, but in a sharper, more collector-grade edi
           <CLabel>Send Via</CLabel>
           <div style={{ display: 'flex', gap: 12 }}>
             {[
-              { key: 'sendInApp', label: '📱 In-App' },
-              { key: 'sendEmail', label: '✉️ Email' },
+              { key: 'sendInApp', label: '◎ In-App' },
+              { key: 'sendEmail', label: '✦ Email' },
             ].map(ch => (
               <button key={ch.key} onClick={() => set(ch.key, !c[ch.key])}
                 style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 18px', borderRadius: 10, cursor: 'pointer', border: `1px solid ${c[ch.key] ? C.accent : C.border}`, backgroundColor: c[ch.key] ? 'rgba(230,57,70,0.1)' : 'transparent', transition: 'all 0.15s' }}>
@@ -2146,12 +2148,12 @@ Rewrite it: same intent, same length, but in a sharper, more collector-grade edi
         {/* Actions */}
         <div style={{ display: 'flex', gap: 10, paddingTop: 4 }}>
           <button onClick={() => set('preview', true)}
-            style={{ flex: 1, backgroundColor: 'transparent', color: C.cream, border: `1px solid rgba(255,255,255,0.2)`, borderRadius: 10, padding: '13px', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
-            👁 Preview
+            style={{ flex: 1, backgroundColor: 'transparent', color: C.cream, border: `1px solid ${C.border}`, padding: '13px', fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
+            ◎ Preview
           </button>
           <button onClick={handleSend} disabled={sending}
-            style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '13px', fontWeight: 700, fontSize: 14, cursor: sending ? 'not-allowed' : 'pointer', opacity: sending ? 0.7 : 1 }}>
-            {sending ? 'Sending…' : c.scheduleMode === 'now' ? '⚡ Send Now' : '⏰ Schedule'}
+            style={{ flex: 2, backgroundColor: C.cream, color: '#000', border: 'none', padding: '13px', fontWeight: 700, fontSize: 14, cursor: sending ? 'not-allowed' : 'pointer', opacity: sending ? 0.7 : 1 }}>
+            {sending ? 'Sending…' : c.scheduleMode === 'now' ? '◈ Send Now' : '◎ Schedule'}
           </button>
         </div>
       </div>
@@ -2166,9 +2168,9 @@ function CLabel({ children }) {
 
 /* ── Status badge ── */
 function StatusBadge({ status }) {
-  const map = { sent: ['#22c55e', 'rgba(34,197,94,0.12)', 'Sent'], scheduled: [C.gold, 'rgba(255,183,3,0.12)', 'Scheduled'], draft: [C.muted, 'rgba(255,255,255,0.06)', 'Draft'], failed: [C.accent, 'rgba(230,57,70,0.12)', 'Failed'] }
+  const map = { sent: [C.cream, 'rgba(255,255,255,0.06)', 'Sent'], scheduled: [C.gray, 'rgba(255,255,255,0.04)', 'Scheduled'], draft: [C.muted, 'transparent', 'Draft'], failed: [C.accent, 'rgba(255,255,255,0.04)', 'Failed'] }
   const [color, bg, label] = map[status] || map.draft
-  return <span style={{ padding: '3px 8px', borderRadius: 6, backgroundColor: bg, color, fontSize: 11, fontWeight: 700 }}>{label}</span>
+  return <span style={{ padding: '3px 8px', border: `1px solid ${C.border}`, backgroundColor: bg, color, fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: '0.1em' }}>{label}</span>
 }
 
 /* ══════════════════════════════════════════
@@ -2176,11 +2178,11 @@ function StatusBadge({ status }) {
 ══════════════════════════════════════════ */
 const BS_EVENT_TYPES = [
   { id: 'design_preview',  icon: '◇', label: 'Design Preview',  desc: 'Show an unreleased design before the world sees it' },
-  { id: 'founder_call',    icon: '📞', label: 'Founder Call',    desc: 'Small-group video call with the founder' },
-  { id: 'factory_tour',    icon: '🏭', label: 'Factory Tour',    desc: 'Virtual or physical behind-the-scenes access' },
-  { id: 'early_purchase',  icon: '⚡', label: 'Early Purchase',  desc: 'Buy 48 hrs before the public drop goes live' },
-  { id: 'virtual_event',   icon: '🎙', label: 'Virtual Event',   desc: 'Live stream, panel, or Q&A session' },
-  { id: 'custom',          icon: '✦',  label: 'Custom',          desc: 'Define your own exclusive experience' },
+  { id: 'founder_call',    icon: '◎', label: 'Founder Call',    desc: 'Small-group video call with the founder' },
+  { id: 'factory_tour',    icon: '⊕', label: 'Factory Tour',    desc: 'Virtual or physical behind-the-scenes access' },
+  { id: 'early_purchase',  icon: '◈', label: 'Early Purchase',  desc: 'Buy 48 hrs before the public drop goes live' },
+  { id: 'virtual_event',   icon: '◈', label: 'Virtual Event',   desc: 'Live stream, panel, or Q&A session' },
+  { id: 'custom',          icon: '✦', label: 'Custom',          desc: 'Define your own exclusive experience' },
 ]
 
 function TabBackstage({ brand, lang, tiers, drops }) {
@@ -2222,8 +2224,9 @@ function TabBackstage({ brand, lang, tiers, drops }) {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 4 }}>Backstage</h1>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 32 }}>
+      <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.muted, letterSpacing: '0.3em', marginBottom: 8 }}>BRAND.BACKSTAGE</div>
+      <h1 style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 22, fontWeight: 700, marginBottom: 4, letterSpacing: '0.03em', textTransform: 'uppercase' }}>Backstage</h1>
+      <p style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', color: C.muted, fontSize: 13, marginBottom: 32 }}>
         Exclusive Experiences for Your Legends — only visible to collectors with Backstage access
       </p>
 
@@ -2247,7 +2250,7 @@ function TabBackstage({ brand, lang, tiers, drops }) {
         <SectionHead label="B" title="Active Experiences" />
       </div>
       {events.length === 0
-        ? <EmptyState icon="✨" title="No experiences yet" desc="Pick a type above to create your first backstage experience" style={{ marginBottom: 40 }} />
+        ? <EmptyState icon="✦" title="No experiences yet" desc="Pick a type above to create your first backstage experience" style={{ marginBottom: 40 }} />
         : (
           <div style={{ overflowX: 'auto', marginBottom: 40 }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 600 }}>
@@ -2305,7 +2308,7 @@ function TabBackstage({ brand, lang, tiers, drops }) {
                       <td style={{ padding: '13px 12px' }}>
                         <button onClick={() => sendInviteForEvent(ev)}
                           style={{ padding: '6px 12px', borderRadius: 7, fontSize: 11, fontWeight: 700, cursor: 'pointer', border: `1px solid rgba(255,183,3,0.3)`, backgroundColor: 'rgba(255,183,3,0.08)', color: C.gold, whiteSpace: 'nowrap' }}>
-                          🎭 Send Invite
+                          ◈ Send Invite
                         </button>
                       </td>
                     </tr>
@@ -2338,12 +2341,12 @@ function TabBackstage({ brand, lang, tiers, drops }) {
                     <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
                       {tierName && (
                         <span style={{ padding: '3px 8px', borderRadius: 6, backgroundColor: 'rgba(255,183,3,0.12)', color: C.gold, fontSize: 11, fontWeight: 700 }}>
-                          🔒 {tierName}+
+                          ✦ {tierName}+
                         </span>
                       )}
                       {!tierName && post.tier_required && (
-                        <span style={{ padding: '3px 8px', borderRadius: 6, backgroundColor: 'rgba(255,183,3,0.12)', color: C.gold, fontSize: 11, fontWeight: 700 }}>
-                          🔒 {post.tier_required}+
+                        <span style={{ padding: '3px 8px', border: `1px solid ${C.border}`, backgroundColor: 'rgba(255,255,255,0.04)', color: C.gray, fontSize: 11, fontWeight: 700 }}>
+                          ✦ {post.tier_required}+
                         </span>
                       )}
                     </div>
@@ -2383,16 +2386,16 @@ function TabBackstage({ brand, lang, tiers, drops }) {
 
 /* ── Backstage event status badge ── */
 function BSEventStatusBadge({ event }) {
-  let label = 'Active', color = '#22c55e', bg = 'rgba(34,197,94,0.12)'
-  if (event.status === 'draft')    { label = 'Draft';    color = C.muted; bg = 'rgba(255,255,255,0.06)' }
-  if (event.status === 'ended')    { label = 'Ended';    color = C.muted; bg = 'rgba(255,255,255,0.06)' }
-  if (event.status === 'upcoming') { label = 'Upcoming'; color = C.gold;  bg = 'rgba(255,183,3,0.12)' }
+  let label = 'Active', color = C.cream, bg = 'rgba(255,255,255,0.06)'
+  if (event.status === 'draft')    { label = 'Draft';    color = C.muted; bg = 'transparent' }
+  if (event.status === 'ended')    { label = 'Ended';    color = C.muted; bg = 'transparent' }
+  if (event.status === 'upcoming') { label = 'Upcoming'; color = C.gray;  bg = 'rgba(255,255,255,0.04)' }
   if (!event.status || event.status === 'active') {
     const now = new Date()
-    if (event.event_date && new Date(event.event_date) > now) { label = 'Upcoming'; color = C.gold; bg = 'rgba(255,183,3,0.12)' }
-    else if (event.rolling_access) { label = 'Live'; color = '#22c55e'; bg = 'rgba(34,197,94,0.12)' }
+    if (event.event_date && new Date(event.event_date) > now) { label = 'Upcoming'; color = C.gray; bg = 'rgba(255,255,255,0.04)' }
+    else if (event.rolling_access) { label = 'Live'; color = C.cream; bg = 'rgba(255,255,255,0.06)' }
   }
-  return <span style={{ padding: '3px 8px', borderRadius: 6, backgroundColor: bg, color, fontSize: 11, fontWeight: 700 }}>{label}</span>
+  return <span style={{ padding: '3px 8px', border: `1px solid ${C.border}`, backgroundColor: bg, color, fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: '0.1em' }}>{label}</span>
 }
 
 /* ── CREATE EVENT MODAL ── */
@@ -2586,7 +2589,7 @@ function BSCreatePostModal({ brand, tiers, onClose, onCreate }) {
       onClick={e => e.target === e.currentTarget && onClose()}>
       <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 500, width: '100%' }}>
         <div style={{ padding: '20px 24px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontWeight: 800, fontSize: 16 }}>📝 New Backstage Post</div>
+          <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontWeight: 700, fontSize: 14, letterSpacing: '0.06em', textTransform: 'uppercase' }}>✦ New Backstage Post</div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: C.muted, fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>×</button>
         </div>
         <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -2690,8 +2693,9 @@ function TabSettings({ brand, lang, setBrand }) {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 4 }}>Settings</h1>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 32 }}>Manage your brand profile and public page</p>
+      <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.muted, letterSpacing: '0.3em', marginBottom: 8 }}>BRAND.SETTINGS</div>
+      <h1 style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 22, fontWeight: 700, marginBottom: 4, letterSpacing: '0.03em', textTransform: 'uppercase' }}>Settings</h1>
+      <p style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', color: C.muted, fontSize: 13, marginBottom: 32 }}>Manage your brand profile and public page</p>
 
       <div style={{ maxWidth: 540, display: 'flex', flexDirection: 'column', gap: 28 }}>
 
@@ -2700,7 +2704,7 @@ function TabSettings({ brand, lang, setBrand }) {
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
             <div onClick={() => logoRef.current?.click()} style={{ width: 88, height: 88, borderRadius: '50%', backgroundColor: C.card, border: `2px dashed ${logoPreview ? C.accent : 'rgba(255,255,255,0.15)'}`, cursor: 'pointer', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              {logoPreview ? <img src={logoPreview} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 28 }}>🏷</span>}
+              {logoPreview ? <img src={logoPreview} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 22, color: C.muted }}>◈</span>}
             </div>
             <input ref={logoRef} type="file" accept="image/*" onChange={handleLogoChange} style={{ display: 'none' }} />
             <div>
@@ -2792,7 +2796,7 @@ function TabSettings({ brand, lang, setBrand }) {
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid ${C.border}`, color: C.cream, borderRadius: 10, padding: '12px', textDecoration: 'none', fontWeight: 700, fontSize: 14, transition: 'background 0.15s' }}
             onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.09)'}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}>
-            👁 Preview My Page ↗
+            ◎ Preview My Page ↗
           </a>
         </SettingsBlock>
 
@@ -2804,8 +2808,8 @@ function TabSettings({ brand, lang, setBrand }) {
 
 function SettingsBlock({ title, children }) {
   return (
-    <div style={{ backgroundColor: C.card, borderRadius: 16, border: `1px solid ${C.border}`, padding: '22px 22px', display: 'flex', flexDirection: 'column', gap: 18 }}>
-      <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: 'uppercase', letterSpacing: 1.2 }}>{title}</div>
+    <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, padding: '22px 22px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.2em' }}>{title}</div>
       {children}
     </div>
   )
