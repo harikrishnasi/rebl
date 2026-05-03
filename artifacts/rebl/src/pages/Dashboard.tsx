@@ -332,7 +332,7 @@ export default function Dashboard() {
             </div>
           ) : (
             <>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px,1fr))', gap: 1, backgroundColor: T.borderVis }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px,1fr))', gap: 1, backgroundColor: T.bg }}>
                 {items.map(item => (
                   <Link key={item.id} to={profile?.username ? `/vault/${profile.username}` : '/dashboard'}
                     style={{ backgroundColor: T.bg, overflow: 'hidden', textDecoration: 'none', display: 'block', transition: 'background 0.15s' }}
