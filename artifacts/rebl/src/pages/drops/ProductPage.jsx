@@ -146,6 +146,16 @@ export default function ProductPage() {
             <div style={{ marginBottom: 24 }}>
               <div style={{ fontFamily: MONO, fontSize: 40, color: T.white, fontWeight: 700, letterSpacing: '-1px' }}>{formatINR(product.price)}</div>
               <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, marginTop: 4, letterSpacing: '0.1em' }}>INCLUDES AI VAULT STORY</div>
+              {product.marketPrice && (
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 10, marginTop: 12,
+                  padding: '8px 14px', border: `1px solid ${T.border}`, background: T.card,
+                }}>
+                  <span style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.25em' }}>MARKET VALUE</span>
+                  <span style={{ fontFamily: MONO, fontSize: 13, color: T.white }}>{formatINR(product.marketPrice)}</span>
+                  <span style={{ fontFamily: MONO, fontSize: 10, color: '#4CAF50', fontWeight: 700 }}>↑ {product.priceTrend}% ABOVE RETAIL</span>
+                </div>
+              )}
             </div>
 
             <div style={{ marginBottom: 24 }}>

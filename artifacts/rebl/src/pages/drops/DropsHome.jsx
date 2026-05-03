@@ -71,12 +71,19 @@ function DropCard({ product }) {
         <div style={{ padding: '16px 18px' }}>
           <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 6 }}>{product.brand}</div>
           <div style={{ fontFamily: MONO, fontSize: 14, color: T.white, fontWeight: 700, marginBottom: 8, lineHeight: 1.3 }}>{product.name}</div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
             <span style={{ fontFamily: MONO, fontSize: 14, color: T.white }}>{formatINR(product.price)}</span>
             {endingSoon && product.status === 'live' && (
               <span style={{ fontFamily: MONO, fontSize: 9, color: '#CC0000', letterSpacing: '0.1em' }}>{countdown}</span>
             )}
           </div>
+          {product.marketPrice && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+              <span style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.15em' }}>MARKET</span>
+              <span style={{ fontFamily: MONO, fontSize: 9, color: T.gray }}>{formatINR(product.marketPrice)}</span>
+              <span style={{ fontFamily: MONO, fontSize: 8, color: '#4CAF50', letterSpacing: '0.05em' }}>↑{product.priceTrend}%</span>
+            </div>
+          )}
           <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, marginBottom: 6 }}>
             {product.unitsSold} of {product.units} claimed
           </div>
@@ -119,6 +126,13 @@ function UpcomingCard({ product }) {
       <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid }}>{product.edition}</div>
       <div style={{ fontFamily: MONO, fontSize: 18, color: T.white, letterSpacing: '0.1em' }}>{countdown}</div>
       <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid }}>DROPS IN</div>
+      {product.marketPrice && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+          <span style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.15em' }}>MARKET</span>
+          <span style={{ fontFamily: MONO, fontSize: 9, color: T.gray }}>{formatINR(product.marketPrice)}</span>
+          <span style={{ fontFamily: MONO, fontSize: 8, color: '#4CAF50' }}>↑{product.priceTrend}%</span>
+        </div>
+      )}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
         <span style={{ fontFamily: MONO, fontSize: 13, color: T.white }}>{formatINR(product.price)}</span>
         <button
@@ -169,6 +183,13 @@ function EventCard({ product }) {
           <div style={{ fontFamily: MONO, fontSize: 18, color: T.white }}>{countdown}</div>
           <div style={{ fontFamily: MONO, fontSize: 20, color: T.white, fontWeight: 700, marginTop: 16 }}>{formatINR(product.price)}</div>
           <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid }}>from</div>
+          {product.marketPrice && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 6, justifyContent: 'flex-end' }}>
+              <span style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.15em' }}>MARKET</span>
+              <span style={{ fontFamily: MONO, fontSize: 9, color: T.gray }}>{formatINR(product.marketPrice)}</span>
+              <span style={{ fontFamily: MONO, fontSize: 8, color: '#4CAF50' }}>↑{product.priceTrend}%</span>
+            </div>
+          )}
         </div>
       </div>
     </Link>
@@ -209,6 +230,13 @@ function FeaturedBanner({ product }) {
           <div style={{ display: 'flex', gap: 32, alignItems: 'flex-end', marginBottom: 24, flexWrap: 'wrap' }}>
             <div>
               <div style={{ fontFamily: MONO, fontSize: 32, color: T.white, fontWeight: 700 }}>{formatINR(product.price)}</div>
+              {product.marketPrice && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 6 }}>
+                  <span style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.2em' }}>MARKET</span>
+                  <span style={{ fontFamily: MONO, fontSize: 11, color: T.gray }}>{formatINR(product.marketPrice)}</span>
+                  <span style={{ fontFamily: MONO, fontSize: 10, color: '#4CAF50', fontWeight: 700 }}>↑{product.priceTrend}%</span>
+                </div>
+              )}
             </div>
             <div>
               <div style={{ fontFamily: MONO, fontSize: 11, color: T.grayMid, marginBottom: 4 }}>ENDS IN</div>
