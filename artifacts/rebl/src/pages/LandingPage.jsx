@@ -438,28 +438,74 @@ function BrandMission() {
 
 /* ─── UPCOMING TECH ─── */
 function UpcomingTech() {
+  const [pulse, setPulse] = useState(true)
+  useEffect(() => {
+    const t = setInterval(() => setPulse(p => !p), 800)
+    return () => clearInterval(t)
+  }, [])
+
   const items = [
-    { label: 'NFC Authentication', icon: '◎', body: 'Tap your physical item with your phone. Ownership verified in under 1 second. No apps, no QR codes.' },
-    { label: 'Blockchain Provenance', icon: '⬡', body: 'Every ownership transfer recorded on-chain. The item\'s full history, permanently and publicly verifiable.' },
-    { label: 'NFT Vault Presence', icon: '◈', body: 'Every verified item in your vault gets a soulbound NFT. Non-transferable proof of ownership. Yours forever.' },
-    { label: 'P2P Resale Market', icon: '⟳', body: 'Sell with full provenance attached. Buyers know exactly what they\'re getting. Royalties auto-distributed.' },
+    { n: '01', label: 'NFC Authentication', icon: '◎', eta: 'Q3 2026', body: 'Tap your physical item with your phone. Ownership verified in under 1 second. No apps, no QR codes.', progress: 72 },
+    { n: '02', label: 'Blockchain Provenance', icon: '⬡', eta: 'Q3 2026', body: 'Every ownership transfer recorded on-chain. The item\'s full history, permanently and publicly verifiable.', progress: 55 },
+    { n: '03', label: 'NFT Vault Presence', icon: '◈', eta: 'Q4 2026', body: 'Every verified item in your vault gets a soulbound NFT. Non-transferable proof of ownership. Yours forever.', progress: 38 },
+    { n: '04', label: 'P2P Resale Market', icon: '⟳', eta: 'Q1 2027', body: 'Sell with full provenance attached. Buyers know exactly what they\'re getting. Royalties auto-distributed.', progress: 20 },
   ]
   return (
     <section style={{ backgroundColor: T.bg, padding: 'clamp(80px,10vw,140px) max(8vw,32px)', position: 'relative', overflow: 'hidden', borderTop: `1px solid ${T.border}` }}>
       <StarField />
-      <img src={imgTelescope} alt="" style={{ position: 'absolute', right: '0%', bottom: 0, height: '90%', width: '50%', objectFit: 'cover', objectPosition: 'center bottom', opacity: 0.11, pointerEvents: 'none', maskImage: 'linear-gradient(to right, transparent 0%, black 35%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 35%)' }} />
+      <img src={imgTelescope} alt="" style={{ position: 'absolute', right: '0%', bottom: 0, height: '90%', width: '50%', objectFit: 'cover', objectPosition: 'center bottom', opacity: 0.13, pointerEvents: 'none', maskImage: 'linear-gradient(to right, transparent 0%, black 35%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 35%)' }} />
       <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-        <div style={{ marginBottom: 72 }}>
-          <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.grayMid, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 20 }}>Classified // Coming Soon</div>
-          <h2 style={{ fontFamily: DISPLAY, fontSize: 'clamp(22px,3.2vw,40px)', fontWeight: 700, color: T.white, margin: 0, textTransform: 'uppercase', letterSpacing: '-0.5px' }}>What's being built.</h2>
+
+        {/* Header */}
+        <div style={{ marginBottom: 80, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 32 }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
+              <div style={{ width: 8, height: 8, backgroundColor: '#CC0000', opacity: pulse ? 1 : 0.25, transition: 'opacity 0.5s' }} />
+              <span style={{ fontFamily: MONO, fontSize: 10, color: '#CC0000', letterSpacing: '0.3em', textTransform: 'uppercase' }}>Classified Intel — Active Development</span>
+            </div>
+            <h2 style={{ fontFamily: DISPLAY, fontSize: 'clamp(32px,5vw,64px)', fontWeight: 700, color: T.white, margin: 0, textTransform: 'uppercase', letterSpacing: '-1px', lineHeight: 1 }}>What's<br />being built.</h2>
+          </div>
+          <div style={{ fontFamily: BODY, fontSize: 14, color: T.grayMid, maxWidth: 300, lineHeight: 1.8 }}>
+            The infrastructure that makes ownership permanent, physical, and provable — launching in phases.
+          </div>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px,1fr))', gap: 1, backgroundColor: T.bg }}>
+
+        {/* Cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px,1fr))', gap: 24 }}>
           {items.map((item, i) => (
-            <div key={i} style={{ backgroundColor: T.bg, padding: '40px 32px' }}>
-              <div style={{ fontSize: 20, color: T.gray, marginBottom: 16 }}>{item.icon}</div>
-              <div style={{ fontFamily: DISPLAY, fontSize: 11, color: T.gray, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 16 }}>{item.label}</div>
-              <p style={{ fontFamily: BODY, fontSize: 14, color: T.grayMid, lineHeight: 1.8, margin: 0 }}>{item.body}</p>
-              <div style={{ fontFamily: MONO, fontSize: 9, color: T.borderVis, letterSpacing: '0.15em', marginTop: 24 }}>STATUS: DEVELOPMENT</div>
+            <div key={i} style={{ backgroundColor: T.surface, border: `1px solid ${T.borderVis}`, padding: '40px 32px', display: 'flex', flexDirection: 'column', position: 'relative', transition: 'border-color 0.2s' }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = T.gray}
+              onMouseLeave={e => e.currentTarget.style.borderColor = T.borderVis}
+            >
+              {/* Top row */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 32 }}>
+                <div style={{ fontSize: 28, color: T.white, lineHeight: 1 }}>{item.icon}</div>
+                <span style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.15em' }}>{item.n}</span>
+              </div>
+
+              {/* Label */}
+              <div style={{ fontFamily: DISPLAY, fontSize: 13, color: T.white, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 16, lineHeight: 1.3 }}>{item.label}</div>
+
+              {/* Body */}
+              <p style={{ fontFamily: BODY, fontSize: 14, color: T.grayMid, lineHeight: 1.9, margin: '0 0 32px', flex: 1 }}>{item.body}</p>
+
+              {/* Progress */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.2em' }}>BUILD PROGRESS</span>
+                  <span style={{ fontFamily: MONO, fontSize: 8, color: T.gray, letterSpacing: '0.1em' }}>{item.progress}%</span>
+                </div>
+                <div style={{ height: 2, backgroundColor: T.border, width: '100%' }}>
+                  <div style={{ height: '100%', width: `${item.progress}%`, backgroundColor: T.gray, transition: 'width 1s ease' }} />
+                </div>
+                <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <div style={{ width: 5, height: 5, border: `1px solid #CC0000` }} />
+                    <span style={{ fontFamily: MONO, fontSize: 8, color: '#CC0000', letterSpacing: '0.2em' }}>IN DEVELOPMENT</span>
+                  </div>
+                  <span style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.1em' }}>ETA {item.eta}</span>
+                </div>
+              </div>
             </div>
           ))}
         </div>
