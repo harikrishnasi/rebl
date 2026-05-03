@@ -17,13 +17,19 @@ export default function BrandRoute({ children }: BrandRouteProps) {
         return
       }
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', data.session.user.id)
-        .single()
+      const userId = data.session.user.id
 
-      if (profile?.role === 'brand') {
+      // Check profile role OR existence of a brands row (handles cases where role update failed)
+      const [{ data: profile }, { data: brand }] = await Promise.all([
+        supabase.from('profiles').select('role').eq('id', userId).single(),
+        supabase.from('brands').select('id').eq('owner_id', userId).single(),
+      ])
+
+      if (profile?.role === 'brand' || brand?.id) {
+        // Also ensure profile role is set correctly for future checks
+        if (brand?.id && profile?.role !== 'brand') {
+          await supabase.from('profiles').update({ role: 'brand' }).eq('id', userId)
+        }
         setStatus('authorized')
       } else {
         setStatus('unauthorized')
@@ -33,7 +39,7 @@ export default function BrandRoute({ children }: BrandRouteProps) {
 
   if (status === 'loading') return null
 
-  if (status === 'unauthorized') return <Navigate to="/login" replace />
+  if (status === 'unauthorized') return <Navigate to="/brand/signup" replace />
 
   return <>{children}</>
 }
