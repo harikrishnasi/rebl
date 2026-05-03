@@ -45,10 +45,31 @@ function slugify(str) {
 
 export default function BrandSignup() {
   const navigate = useNavigate()
+  const [mode, setMode] = useState('signup') // 'signup' | 'login'
   const [step, setStep] = useState(1)
   const [animating, setAnimating] = useState(false)
   const [direction, setDirection] = useState(1)
   const [submitting, setSubmitting] = useState(false)
+
+  // Login state
+  const [loginEmail, setLoginEmail] = useState('')
+  const [loginPassword, setLoginPassword] = useState('')
+  const [loginLoading, setLoginLoading] = useState(false)
+
+  async function handleLogin(e) {
+    e.preventDefault()
+    if (!loginEmail.trim() || !loginPassword) { toast.error('Enter your email and password'); return }
+    setLoginLoading(true)
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email: loginEmail, password: loginPassword })
+      if (error) throw error
+      navigate('/brand-dashboard')
+    } catch (err) {
+      toast.error(err.message || 'Login failed')
+    } finally {
+      setLoginLoading(false)
+    }
+  }
 
   // Step 1
   const [brandName, setBrandName] = useState('')
@@ -208,44 +229,110 @@ export default function BrandSignup() {
         </button>
       </div>
 
-      {/* Progress */}
-      <WizardProgress step={step} />
-
-      {/* Content */}
-      <div style={{
-        maxWidth: 640, margin: '0 auto', padding: '36px 20px 100px',
-        opacity: animating ? 0 : 1,
-        transform: animating ? `translateX(${direction * 30}px)` : 'translateX(0)',
-        transition: 'opacity 0.28s ease, transform 0.28s ease',
-      }}>
-        {step === 1 && (
-          <Step1
-            brandName={brandName} onBrandName={handleBrandNameChange}
-            slug={slug} onSlug={v => { setSlug(slugify(v)); setSlugManual(true) }}
-            email={email} onEmail={setEmail}
-            password={password} onPassword={setPassword}
-            description={description} onDescription={setDescription}
-            logoPreview={logoPreview} logoRef={logoRef} onLogoChange={handleLogoChange}
-            onNext={() => { if (validateStep1()) goTo(2) }}
-          />
-        )}
-        {step === 2 && (
-          <Step2
-            selectedCats={selectedCats} primaryCat={primaryCat}
-            onCatClick={handleCatClick} onCatMouseUp={handleCatMouseUp}
-            onNext={() => {
-              if (!primaryCat) { toast.error('Pick at least one category and set a primary'); return }
-              goTo(3)
-            }}
-          />
-        )}
-        {step === 3 && (
-          <Step3
-            strategies={strategies} onToggle={toggleStrategy}
-            submitting={submitting} onSubmit={handleSubmit}
-          />
-        )}
+      {/* Mode toggle */}
+      <div style={{ borderBottom: `1px solid ${C.border}`, backgroundColor: C.card }}>
+        <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex' }}>
+          {[{ key: 'signup', label: 'Create Brand' }, { key: 'login', label: 'Brand Login' }].map(m => (
+            <button key={m.key} onClick={() => setMode(m.key)} style={{
+              flex: 1, padding: '14px 0', background: 'none', border: 'none', cursor: 'pointer',
+              fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: '0.2em',
+              textTransform: 'uppercase', color: mode === m.key ? C.cream : C.muted,
+              borderBottom: `2px solid ${mode === m.key ? C.cream : 'transparent'}`,
+              transition: 'all 0.2s',
+            }}>{m.label}</button>
+          ))}
+        </div>
       </div>
+
+      {mode === 'login' ? (
+        /* ── LOGIN FORM ── */
+        <div style={{ maxWidth: 480, margin: '0 auto', padding: '64px 20px 100px' }}>
+          <h2 style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 22, fontWeight: 700, color: C.cream, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
+            Brand Portal
+          </h2>
+          <p style={{ fontFamily: '"Satoshi", sans-serif', fontSize: 14, color: C.muted, marginBottom: 48 }}>
+            Sign in to access your brand dashboard.
+          </p>
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div>
+              <label style={{ display: 'block', fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.accent, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 8 }}>Email</label>
+              <input
+                type="email" value={loginEmail} onChange={e => setLoginEmail(e.target.value)}
+                placeholder="brand@example.com" autoComplete="email"
+                style={{ width: '100%', background: C.card, border: `1px solid ${C.border}`, color: C.cream, padding: '14px 16px', fontSize: 14, fontFamily: '"Satoshi", sans-serif', outline: 'none', boxSizing: 'border-box' }}
+                onFocus={e => e.target.style.borderColor = C.accent}
+                onBlur={e => e.target.style.borderColor = C.border}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.accent, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 8 }}>Password</label>
+              <input
+                type="password" value={loginPassword} onChange={e => setLoginPassword(e.target.value)}
+                placeholder="••••••••" autoComplete="current-password"
+                style={{ width: '100%', background: C.card, border: `1px solid ${C.border}`, color: C.cream, padding: '14px 16px', fontSize: 14, fontFamily: '"Satoshi", sans-serif', outline: 'none', boxSizing: 'border-box' }}
+                onFocus={e => e.target.style.borderColor = C.accent}
+                onBlur={e => e.target.style.borderColor = C.border}
+              />
+            </div>
+            <button type="submit" disabled={loginLoading} style={{
+              marginTop: 8, padding: '16px', backgroundColor: C.cream, color: '#000',
+              border: 'none', cursor: loginLoading ? 'not-allowed' : 'pointer',
+              fontFamily: '"Satoshi", sans-serif', fontSize: 13, fontWeight: 700,
+              letterSpacing: '0.1em', textTransform: 'uppercase', opacity: loginLoading ? 0.6 : 1,
+              transition: 'opacity 0.2s',
+            }}>
+              {loginLoading ? 'Signing in...' : 'Enter Dashboard →'}
+            </button>
+          </form>
+          <p style={{ marginTop: 32, fontFamily: '"Satoshi", sans-serif', fontSize: 13, color: C.muted, textAlign: 'center' }}>
+            No brand yet?{' '}
+            <button onClick={() => setMode('signup')} style={{ background: 'none', border: 'none', color: C.cream, cursor: 'pointer', fontSize: 13, fontFamily: '"Satoshi", sans-serif', textDecoration: 'underline', padding: 0 }}>
+              Create one →
+            </button>
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Progress */}
+          <WizardProgress step={step} />
+
+          {/* Signup Content */}
+          <div style={{
+            maxWidth: 640, margin: '0 auto', padding: '36px 20px 100px',
+            opacity: animating ? 0 : 1,
+            transform: animating ? `translateX(${direction * 30}px)` : 'translateX(0)',
+            transition: 'opacity 0.28s ease, transform 0.28s ease',
+          }}>
+            {step === 1 && (
+              <Step1
+                brandName={brandName} onBrandName={handleBrandNameChange}
+                slug={slug} onSlug={v => { setSlug(slugify(v)); setSlugManual(true) }}
+                email={email} onEmail={setEmail}
+                password={password} onPassword={setPassword}
+                description={description} onDescription={setDescription}
+                logoPreview={logoPreview} logoRef={logoRef} onLogoChange={handleLogoChange}
+                onNext={() => { if (validateStep1()) goTo(2) }}
+              />
+            )}
+            {step === 2 && (
+              <Step2
+                selectedCats={selectedCats} primaryCat={primaryCat}
+                onCatClick={handleCatClick} onCatMouseUp={handleCatMouseUp}
+                onNext={() => {
+                  if (!primaryCat) { toast.error('Pick at least one category and set a primary'); return }
+                  goTo(3)
+                }}
+              />
+            )}
+            {step === 3 && (
+              <Step3
+                strategies={strategies} onToggle={toggleStrategy}
+                submitting={submitting} onSubmit={handleSubmit}
+              />
+            )}
+          </div>
+        </>
+      )}
     </div>
   )
 }
