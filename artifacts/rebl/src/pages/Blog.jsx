@@ -32,7 +32,7 @@ const POSTS = [
 
 export default function Blog() {
   return (
-    <div style={{ backgroundColor: C.cosmos, minHeight: '100vh', color: C.cream, fontFamily: '"DM Sans", Inter, sans-serif' }}>
+    <div style={{ backgroundColor: C.cosmos, minHeight: '100vh', color: C.cream, fontFamily: '"Plus Jakarta Sans", "Plus Jakarta Sans", Inter, sans-serif' }}>
       {/* Nav */}
       <div style={{ padding: '24px 32px', borderBottom: `1px solid ${C.ghost}` }}>
         <Link to="/" style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.dim, textDecoration: 'none', letterSpacing: '0.15em', transition: 'color 0.2s' }}
@@ -63,7 +63,7 @@ export default function Blog() {
                   <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.dim, letterSpacing: '0.1em' }}>{post.readTime}</span>
                 </div>
                 <h2 className="post-title" style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(16px,2.2vw,22px)', fontWeight: 700, color: C.cream, margin: '0 0 12px', letterSpacing: '-0.5px', lineHeight: 1.3, transition: 'color 0.2s' }}>{post.title}</h2>
-                <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 15, color: C.dim, lineHeight: 1.7, margin: '0 0 16px' }}>{post.excerpt}</p>
+                <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 15, color: C.dim, lineHeight: 1.7, margin: '0 0 16px' }}>{post.excerpt}</p>
                 <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.15em' }}>Read →</span>
               </Link>
             </div>

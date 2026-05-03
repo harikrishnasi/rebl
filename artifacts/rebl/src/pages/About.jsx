@@ -14,7 +14,7 @@ const VALUES = [
 
 export default function About() {
   return (
-    <div style={{ backgroundColor: C.cosmos, minHeight: '100vh', color: C.cream, fontFamily: '"DM Sans", Inter, sans-serif' }}>
+    <div style={{ backgroundColor: C.cosmos, minHeight: '100vh', color: C.cream, fontFamily: '"Plus Jakarta Sans", "Plus Jakarta Sans", Inter, sans-serif' }}>
       <div style={{ padding: '24px 32px', borderBottom: `1px solid ${C.ghost}` }}>
         <Link to="/" style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.dim, textDecoration: 'none', letterSpacing: '0.15em', transition: 'color 0.2s' }}
           onMouseEnter={e => e.target.style.color = C.silver}
@@ -30,13 +30,13 @@ export default function About() {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 32, marginBottom: 64 }}>
-          <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 17, color: '#8090A8', lineHeight: 1.85, margin: 0 }}>
+          <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 17, color: '#8090A8', lineHeight: 1.85, margin: 0 }}>
             Rebl was founded by a collector who was frustrated — frustrated by the gap between how much they cared about their collection and how little the existing tools supported that care.
           </p>
-          <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 17, color: '#8090A8', lineHeight: 1.85, margin: 0 }}>
+          <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 17, color: '#8090A8', lineHeight: 1.85, margin: 0 }}>
             Instagram stores died in 24 hours. Discord servers were full of noise. There was no way to verify anything, no permanent record, no path to finding the other people who cared as much. The infrastructure for serious collectors didn't exist.
           </p>
-          <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 17, color: '#8090A8', lineHeight: 1.85, margin: 0 }}>
+          <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 17, color: '#8090A8', lineHeight: 1.85, margin: 0 }}>
             India's collector culture is at an inflection point. The drops are happening. The communities are forming. The culture is building. Rebl exists to build the platform before the culture outgrows the tools available to it.
           </p>
         </div>
@@ -50,7 +50,7 @@ export default function About() {
                 <CrossHair size={16} color={C.silver} style={{ marginTop: 2 }} />
                 <div>
                   <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color: C.silver, letterSpacing: '0.15em', marginBottom: 10 }}>{v.label}</div>
-                  <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 15, color: '#8090A8', lineHeight: 1.75, margin: 0 }}>{v.body}</p>
+                  <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 15, color: '#8090A8', lineHeight: 1.75, margin: 0 }}>{v.body}</p>
                 </div>
               </div>
             </div>

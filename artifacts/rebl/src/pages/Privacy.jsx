@@ -16,7 +16,7 @@ const SECTIONS = [
 
 export default function Privacy() {
   return (
-    <div style={{ backgroundColor: C.cosmos, minHeight: '100vh', color: C.cream, fontFamily: '"DM Sans", Inter, sans-serif' }}>
+    <div style={{ backgroundColor: C.cosmos, minHeight: '100vh', color: C.cream, fontFamily: '"Plus Jakarta Sans", "Plus Jakarta Sans", Inter, sans-serif' }}>
       <div style={{ padding: '24px 32px', borderBottom: `1px solid ${C.ghost}` }}>
         <Link to="/" style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.dim, textDecoration: 'none', letterSpacing: '0.15em' }}
           onMouseEnter={e => e.target.style.color = C.silver}
@@ -26,13 +26,13 @@ export default function Privacy() {
       <div style={{ maxWidth: 740, margin: '0 auto', padding: 'clamp(48px,6vw,80px) 32px' }}>
         <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.25em', marginBottom: 16 }}>LEGAL</div>
         <h1 style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(22px,3.5vw,36px)', fontWeight: 700, color: C.cream, margin: '0 0 12px', letterSpacing: '-0.5px' }}>Privacy Policy</h1>
-        <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 13, color: C.dim, margin: '0 0 48px' }}>Last updated: May 2025</p>
+        <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 13, color: C.dim, margin: '0 0 48px' }}>Last updated: May 2025</p>
         <div style={{ height: 1, backgroundColor: C.ghost, marginBottom: 48 }} />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
           {SECTIONS.map((s, i) => (
             <div key={i}>
               <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.15em', marginBottom: 14 }}>{s.heading.toUpperCase()}</div>
-              <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 15, color: '#8090A8', lineHeight: 1.8, margin: 0 }}>{s.body}</p>
+              <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 15, color: '#8090A8', lineHeight: 1.8, margin: 0 }}>{s.body}</p>
             </div>
           ))}
         </div>

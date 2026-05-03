@@ -69,7 +69,7 @@ export default function Demo() {
   }, [])
 
   return (
-    <div style={{ backgroundColor: C.cosmos, minHeight: '100vh', color: C.cream, fontFamily: '"DM Sans", Inter, sans-serif' }}>
+    <div style={{ backgroundColor: C.cosmos, minHeight: '100vh', color: C.cream, fontFamily: '"Plus Jakarta Sans", "Plus Jakarta Sans", Inter, sans-serif' }}>
       <style>{`@keyframes pulse-dot{0%,100%{opacity:0.4;transform:scale(1)}50%{opacity:1;transform:scale(1.2)}}`}</style>
 
       {/* Nav */}
@@ -94,7 +94,7 @@ export default function Demo() {
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: 'clamp(48px,6vw,80px) 32px 0' }}>
         <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.25em', marginBottom: 16 }}>INTERACTIVE DEMO</div>
         <h1 style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(28px,4vw,52px)', fontWeight: 700, color: C.cream, margin: '0 0 16px', letterSpacing: '-1.5px' }}>See Rebl in 4 minutes.</h1>
-        <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 17, color: C.dim, margin: 0 }}>A walkthrough of every core feature. No signup required.</p>
+        <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 17, color: C.dim, margin: 0 }}>A walkthrough of every core feature. No signup required.</p>
       </div>
 
       {/* STEP 1 — VAULT */}
@@ -122,7 +122,7 @@ export default function Demo() {
             {ITEMS.map((item, i) => (
               <div key={i} style={{ backgroundColor: C.crater, border: `1px solid ${C.ghost}`, padding: '16px 14px', position: 'relative' }}>
                 <div style={{ width: '100%', aspectRatio: '1', backgroundColor: item.color, marginBottom: 12, opacity: 0.4 }} />
-                <div style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 11, color: C.cream, lineHeight: 1.3, marginBottom: 4 }}>{item.name}</div>
+                <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 11, color: C.cream, lineHeight: 1.3, marginBottom: 4 }}>{item.name}</div>
                 <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.dim }}>{item.brand}</div>
                 {i < 3 && <div style={{ position: 'absolute', top: 8, right: 8, width: 6, height: 6, borderRadius: '50%', backgroundColor: '#4ade80', animation: 'pulse-dot 2s ease-in-out infinite' }} />}
               </div>
@@ -147,18 +147,18 @@ export default function Demo() {
           <div style={{ backgroundColor: C.nebula, padding: 32 }}>
             <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.dim, letterSpacing: '0.15em', marginBottom: 16 }}>ITEM DETAILS</div>
             <div style={{ backgroundColor: '#B22222', aspectRatio: '1', marginBottom: 20, opacity: 0.3 }} />
-            <div style={{ fontFamily: '"DM Sans", sans-serif', fontWeight: 700, fontSize: 16, color: C.cream, marginBottom: 4 }}>Air Jordan 1 Chicago</div>
+            <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 700, fontSize: 16, color: C.cream, marginBottom: 4 }}>Air Jordan 1 Chicago</div>
             <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.dim }}>Nike · 1985 / 2022 · Sz 10</div>
           </div>
           {/* Typewriter */}
           <div style={{ backgroundColor: C.nebula, padding: 32 }}>
             <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.silver, letterSpacing: '0.15em', marginBottom: 16 }}>AI PROVENANCE STORY</div>
-            <div style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 14, color: '#8090A8', lineHeight: 1.8, minHeight: 160 }}>
+            <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 14, color: '#8090A8', lineHeight: 1.8, minHeight: 160 }}>
               <TypewriterText text={AI_TEXT} active={aiActive} />
             </div>
             <div style={{ marginTop: 24 }}>
               <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.dim, letterSpacing: '0.1em', marginBottom: 8 }}>YOUR CHAPTER</div>
-              <div style={{ border: `1px solid ${C.ghost}`, padding: '12px 16px', fontFamily: '"DM Sans", sans-serif', fontSize: 13, color: C.dim }}>Tell your story with this piece…</div>
+              <div style={{ border: `1px solid ${C.ghost}`, padding: '12px 16px', fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 13, color: C.dim }}>Tell your story with this piece…</div>
             </div>
           </div>
         </div>
@@ -191,7 +191,7 @@ export default function Demo() {
                 <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: C.crater, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '"Space Mono", monospace', fontSize: 12, color: C.silver, flexShrink: 0 }}>{m.avatar}</div>
                 <div>
                   <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, marginBottom: 6 }}>{m.user}</div>
-                  <div style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 14, color: '#8090A8', lineHeight: 1.5 }}>{m.msg}</div>
+                  <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 14, color: '#8090A8', lineHeight: 1.5 }}>{m.msg}</div>
                 </div>
               </div>
             ))}
@@ -265,7 +265,7 @@ export default function Demo() {
                 <div style={{ width: 8, height: 8, backgroundColor: C.silver, animation: `pulse-dot ${2 + i * 0.5}s ease-in-out infinite`, animationDelay: `${i * 0.3}s` }} />
               </div>
               <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.15em', marginBottom: 12 }}>{item.label}</div>
-              <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 13, color: C.dim, lineHeight: 1.7, margin: 0 }}>{item.body}</p>
+              <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 13, color: C.dim, lineHeight: 1.7, margin: 0 }}>{item.body}</p>
             </div>
           ))}
         </div>
@@ -286,7 +286,7 @@ export default function Demo() {
         <StarField />
         <div style={{ position: 'relative', zIndex: 1 }}>
           <h2 style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(24px,4vw,48px)', fontWeight: 700, color: C.cream, margin: '0 0 16px', letterSpacing: '-1px' }}>Ready to start your vault?</h2>
-          <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 17, color: C.dim, margin: '0 0 40px' }}>Join 500+ collectors already on Rebl.</p>
+          <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 17, color: C.dim, margin: '0 0 40px' }}>Join 500+ collectors already on Rebl.</p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link to="/signup" style={{
               fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.void,

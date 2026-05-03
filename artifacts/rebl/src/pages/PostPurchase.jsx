@@ -73,7 +73,7 @@ export default function PostPurchase() {
   return (
     <div style={{
       minHeight: '100vh', backgroundColor: C.primary, overflow: 'hidden',
-      position: 'relative', fontFamily: 'Inter, sans-serif', color: C.cream,
+      position: 'relative', fontFamily: '"Plus Jakarta Sans", Inter, sans-serif', color: C.cream,
     }}>
       <ProgressDots current={screen} />
       <div style={{
@@ -304,7 +304,7 @@ Write in second person. No headers. No labels. Just the story.`
                   width: '100%', backgroundColor: C.card, color: C.cream,
                   border: `1px solid ${C.border}`, borderRadius: 12,
                   padding: '14px 16px', fontSize: 15, lineHeight: 1.75,
-                  resize: 'none', outline: 'none', fontFamily: 'Inter, sans-serif',
+                  resize: 'none', outline: 'none', fontFamily: '"Plus Jakarta Sans", Inter, sans-serif',
                   boxSizing: 'border-box', minHeight: 140, overflow: 'hidden',
                 }}
               />

@@ -83,7 +83,7 @@ export default function BrandDashboard() {
   const tabProps = { brand, lang, tiers, drops, setDrops, customers }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: 'Inter, sans-serif', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Plus Jakarta Sans", Inter, sans-serif', display: 'flex', flexDirection: 'column' }}>
       {showWelcome && <WelcomeModal brand={brand} lang={lang} onClose={() => setShowWelcome(false)} />}
 
       {/* ── Floating Contact Buyers button ── */}
@@ -2926,5 +2926,5 @@ const IS = {
   width: '100%', backgroundColor: C.card, color: C.cream,
   border: `1px solid rgba(255,255,255,0.09)`, borderRadius: 10,
   padding: '11px 14px', fontSize: 14, outline: 'none',
-  fontFamily: 'Inter, sans-serif', boxSizing: 'border-box',
+  fontFamily: '"Plus Jakarta Sans", Inter, sans-serif', boxSizing: 'border-box',
 }

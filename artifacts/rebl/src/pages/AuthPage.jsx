@@ -13,7 +13,7 @@ const inputStyle = {
   backgroundColor: C.nebula, color: C.cream,
   border: `1px solid ${C.ghost}`, borderRadius: 0,
   padding: '12px 14px', width: '100%', outline: 'none',
-  fontSize: 14, fontFamily: '"DM Sans", Inter, sans-serif',
+  fontSize: 14, fontFamily: '"Plus Jakarta Sans", "Plus Jakarta Sans", Inter, sans-serif',
   transition: 'border-color 0.15s', boxSizing: 'border-box',
 }
 
@@ -73,12 +73,12 @@ export default function AuthPage({ mode }) {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: C.void, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', fontFamily: '"DM Sans", Inter, sans-serif' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: C.void, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', fontFamily: '"Plus Jakarta Sans", "Plus Jakarta Sans", Inter, sans-serif' }}>
       <div style={{ width: '100%', maxWidth: 400 }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 48 }}>
           <Link to="/" style={{ textDecoration: 'none' }}>
-            <div style={{ fontFamily: '"Syne", sans-serif', fontWeight: 800, fontSize: 32, color: C.cream, letterSpacing: '-1px' }}>Rēbl</div>
+            <img src="/rebl-logo.png" alt="Rebl" style={{ height: 36, width: 'auto', filter: 'brightness(0) invert(1)', marginBottom: 4 }} />
             <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.dim, letterSpacing: '0.25em', marginTop: 4 }}>COLLECTOR OS</div>
           </Link>
         </div>
@@ -159,7 +159,7 @@ export default function AuthPage({ mode }) {
             </button>
           </form>
 
-          <div style={{ marginTop: 24, textAlign: 'center', fontFamily: '"DM Sans", sans-serif', fontSize: 13, color: C.dim }}>
+          <div style={{ marginTop: 24, textAlign: 'center', fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 13, color: C.dim }}>
             {isSignup ? <>Already have an account?{' '}<Link to="/login" style={{ color: C.silver, textDecoration: 'none' }}>Sign in</Link></> : <>No account?{' '}<Link to="/signup" style={{ color: C.silver, textDecoration: 'none' }}>Create one</Link></>}
           </div>
         </div>

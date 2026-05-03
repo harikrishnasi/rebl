@@ -95,7 +95,7 @@ export default function BlogPost() {
   if (!article) return <Navigate to="/blog" replace />
 
   return (
-    <div style={{ backgroundColor: C.cosmos, minHeight: '100vh', color: C.cream, fontFamily: '"DM Sans", Inter, sans-serif' }}>
+    <div style={{ backgroundColor: C.cosmos, minHeight: '100vh', color: C.cream, fontFamily: '"Plus Jakarta Sans", "Plus Jakarta Sans", Inter, sans-serif' }}>
       {/* Nav */}
       <div style={{ padding: '24px 32px', borderBottom: `1px solid ${C.ghost}` }}>
         <Link to="/blog" style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.dim, textDecoration: 'none', letterSpacing: '0.15em', transition: 'color 0.2s' }}
@@ -124,7 +124,7 @@ export default function BlogPost() {
               {s.heading && (
                 <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.2em', marginBottom: 16 }}>{s.heading}</div>
               )}
-              <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 17, color: '#8090A8', lineHeight: 1.85, margin: 0 }}>{s.body}</p>
+              <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 17, color: '#8090A8', lineHeight: 1.85, margin: 0 }}>{s.body}</p>
             </div>
           ))}
         </div>

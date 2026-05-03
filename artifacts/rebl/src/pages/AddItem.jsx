@@ -221,7 +221,7 @@ Enhance this. Keep their voice and every personal detail. Add cultural context. 
 
   /* ── Render ── */
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Plus Jakarta Sans", Inter, sans-serif' }}>
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
@@ -699,6 +699,6 @@ const inputStyle = {
   width: '100%', backgroundColor: C.card, color: C.cream,
   border: `1px solid ${C.border}`, borderRadius: 10,
   padding: '11px 14px', fontSize: 14, outline: 'none',
-  fontFamily: 'Inter, sans-serif', boxSizing: 'border-box',
+  fontFamily: '"Plus Jakarta Sans", Inter, sans-serif', boxSizing: 'border-box',
   transition: 'border-color 0.2s',
 }

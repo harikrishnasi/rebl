@@ -22,7 +22,7 @@ const C = {
 
 export default function LandingPage() {
   return (
-    <div style={{ backgroundColor: C.cosmos, color: C.cream, fontFamily: '"DM Sans", Inter, sans-serif' }}>
+    <div style={{ backgroundColor: C.cosmos, color: C.cream, fontFamily: '"Plus Jakarta Sans", "Plus Jakarta Sans", Inter, sans-serif' }}>
       <Navbar />
       <Hero />
       <Identity />
@@ -67,9 +67,9 @@ function Navbar() {
     }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 68 }}>
         {/* Logo */}
-        <Link to="/" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 0 }}>
-          <span style={{ fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: 20, color: C.cream, letterSpacing: '-1px', lineHeight: 1 }}>Rēbl</span>
-          <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 8, color: C.dim, letterSpacing: '0.2em', textTransform: 'uppercase' }}>COLLECTOR OS</span>
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <img src="/rebl-logo.png" alt="Rebl" style={{ height: 26, width: 'auto', display: 'block', filter: 'brightness(0) invert(1)' }} />
+          <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 7, color: C.dim, letterSpacing: '0.22em', textTransform: 'uppercase' }}>COLLECTOR OS</span>
         </Link>
 
         {/* Center nav */}
@@ -160,14 +160,14 @@ function Hero() {
 
         {/* Headline */}
         <h1 style={{ margin: 0, lineHeight: 1.05, letterSpacing: '-2px' }}>
-          <div style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(48px, 6.5vw, 88px)', fontWeight: 800, color: C.cream }}>Own it.</div>
-          <div style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(48px, 6.5vw, 88px)', fontWeight: 800, color: C.silver }}>Tell its story.</div>
-          <div style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(48px, 6.5vw, 88px)', fontWeight: 800, color: C.ghost }}>Find your orbit.</div>
+          <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(48px, 6.5vw, 88px)', fontWeight: 800, color: C.cream }}>Own it.</div>
+          <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(48px, 6.5vw, 88px)', fontWeight: 800, color: C.silver }}>Tell its story.</div>
+          <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(48px, 6.5vw, 88px)', fontWeight: 800, color: C.ghost }}>Find your orbit.</div>
         </h1>
 
         {/* Sub */}
         <p style={{
-          marginTop: 32, fontFamily: '"DM Sans", sans-serif', fontSize: 18, color: C.dim,
+          marginTop: 32, fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 18, color: C.dim,
           maxWidth: 480, lineHeight: 1.6,
         }}>
           Rebl is a vault for the things that define you. Limited drops, verified ownership, and a community of collectors who get it.
@@ -233,8 +233,8 @@ function Identity() {
             <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 48, alignItems: 'start' }}>
               <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 64, fontWeight: 700, color: C.crater, lineHeight: 1 }}>{r.n}</div>
               <div>
-                <h3 style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(18px,2.5vw,26px)', fontWeight: 700, color: C.cream, margin: '0 0 16px', letterSpacing: '-0.5px' }}>{r.title}</h3>
-                <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 16, color: C.dim, lineHeight: 1.75, margin: 0, maxWidth: 560 }}>{r.body}</p>
+                <h3 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(18px,2.5vw,26px)', fontWeight: 700, color: C.cream, margin: '0 0 16px', letterSpacing: '-0.5px' }}>{r.title}</h3>
+                <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 16, color: C.dim, lineHeight: 1.75, margin: 0, maxWidth: 560 }}>{r.body}</p>
               </div>
             </div>
           </div>
@@ -256,7 +256,7 @@ function Mission() {
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div style={{ marginBottom: 64 }}>
           <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 16 }}>MISSION PARAMETERS</div>
-          <h2 style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 800, color: C.cream, margin: 0, letterSpacing: '-1px' }}>Three coordinates. One platform.</h2>
+          <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 800, color: C.cream, margin: 0, letterSpacing: '-1px' }}>Three coordinates. One platform.</h2>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 0 }}>
           {items.map((item, i) => (
@@ -272,7 +272,7 @@ function Mission() {
                 <div style={{ flex: 1, height: 1, backgroundColor: C.ghost }} />
                 <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color: C.silver, letterSpacing: '0.15em' }}>{item.label}</span>
               </div>
-              <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 15, color: C.dim, lineHeight: 1.75, margin: 0 }}>{item.body}</p>
+              <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 15, color: C.dim, lineHeight: 1.75, margin: 0 }}>{item.body}</p>
             </div>
           ))}
         </div>
@@ -292,14 +292,14 @@ function TheVault() {
     <section style={{ backgroundColor: C.cosmos, padding: 'clamp(60px,8vw,128px) max(5vw,32px)' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div style={{ marginBottom: 64, maxWidth: 600 }}>
-          <h2 style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(40px,5.5vw,72px)', fontWeight: 800, color: C.cream, margin: '0 0 16px', letterSpacing: '-2px', lineHeight: 1 }}>The Vault.</h2>
-          <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 17, color: C.dim, lineHeight: 1.65, margin: 0 }}>Not a profile. Not a portfolio. A permanent record of who you are as a collector.</p>
+          <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(40px,5.5vw,72px)', fontWeight: 800, color: C.cream, margin: '0 0 16px', letterSpacing: '-2px', lineHeight: 1 }}>The Vault.</h2>
+          <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 17, color: C.dim, lineHeight: 1.65, margin: 0 }}>Not a profile. Not a portfolio. A permanent record of who you are as a collector.</p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 1, backgroundColor: C.ghost }}>
           {cards.map((c, i) => (
             <div key={i} style={{ backgroundColor: C.cosmos, padding: '40px 32px' }}>
               <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.2em', marginBottom: 20 }}>{c.label}</div>
-              <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 15, color: C.dim, lineHeight: 1.75, margin: 0 }}>{c.body}</p>
+              <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 15, color: C.dim, lineHeight: 1.75, margin: 0 }}>{c.body}</p>
             </div>
           ))}
         </div>
@@ -331,8 +331,8 @@ function BrandMission() {
       <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 80, alignItems: 'center' }}>
         <div>
           <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 20 }}>FOR BRANDS</div>
-          <h2 style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(24px,3.5vw,40px)', fontWeight: 800, color: C.cream, margin: '0 0 20px', letterSpacing: '-1px', lineHeight: 1.1 }}>Limited editions done right.</h2>
-          <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 16, color: C.dim, lineHeight: 1.75, margin: '0 0 36px' }}>Rebl gives brands the infrastructure to make scarcity meaningful — not just a marketing trick. Launch drops, build verified communities, and know your most passionate buyers by name.</p>
+          <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(24px,3.5vw,40px)', fontWeight: 800, color: C.cream, margin: '0 0 20px', letterSpacing: '-1px', lineHeight: 1.1 }}>Limited editions done right.</h2>
+          <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 16, color: C.dim, lineHeight: 1.75, margin: '0 0 36px' }}>Rebl gives brands the infrastructure to make scarcity meaningful — not just a marketing trick. Launch drops, build verified communities, and know your most passionate buyers by name.</p>
           <Link to="/brand/signup" style={{
             fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver,
             textDecoration: 'none', letterSpacing: '0.2em', textTransform: 'uppercase',
@@ -348,7 +348,7 @@ function BrandMission() {
           {metrics.map((m, i) => (
             <div key={i} style={{ padding: '28px 0', borderBottom: `1px solid ${C.ghost}` }}>
               <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(32px,4vw,52px)', fontWeight: 700, color: C.cream, letterSpacing: '-2px' }}>{m.val}</div>
-              <div style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 13, color: C.dim, marginTop: 6 }}>{m.label}</div>
+              <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 13, color: C.dim, marginTop: 6 }}>{m.label}</div>
             </div>
           ))}
         </div>
@@ -371,14 +371,14 @@ function UpcomingTech() {
       <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <div style={{ marginBottom: 64 }}>
           <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.25em', marginBottom: 16 }}>CLASSIFIED // COMING SOON</div>
-          <h2 style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 800, color: C.cream, margin: 0, letterSpacing: '-1px' }}>What's being built.</h2>
+          <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 800, color: C.cream, margin: 0, letterSpacing: '-1px' }}>What's being built.</h2>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 1, backgroundColor: C.ghost }}>
           {items.map((item, i) => (
             <div key={i} style={{ backgroundColor: C.void, padding: '36px 32px', display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ height: 1, backgroundColor: C.silver, width: 40 }} />
               <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.2em' }}>{item.label}</div>
-              <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 14, color: C.dim, lineHeight: 1.75, margin: 0, flex: 1 }}>{item.body}</p>
+              <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 14, color: C.dim, lineHeight: 1.75, margin: 0, flex: 1 }}>{item.body}</p>
               <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.ghost, letterSpacing: '0.15em' }}>STATUS: DEVELOPMENT</div>
             </div>
           ))}
@@ -395,19 +395,19 @@ function Pricing() {
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div style={{ marginBottom: 64 }}>
           <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.25em', marginBottom: 16 }}>PRICING</div>
-          <h2 style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 800, color: C.cream, margin: 0, letterSpacing: '-1px' }}>Free to collect. Powerful to build.</h2>
+          <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 800, color: C.cream, margin: 0, letterSpacing: '-1px' }}>Free to collect. Powerful to build.</h2>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 1, backgroundColor: C.ghost }}>
           {/* Collector */}
           <div style={{ backgroundColor: C.cosmos, padding: '48px 40px' }}>
             <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.orbit, letterSpacing: '0.2em', marginBottom: 24 }}>COLLECTOR</div>
             <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 48, fontWeight: 700, color: C.cream, lineHeight: 1 }}>Free</div>
-            <div style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 13, color: C.dim, margin: '8px 0 36px' }}>Forever</div>
+            <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 13, color: C.dim, margin: '8px 0 36px' }}>Forever</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 40 }}>
               {['Unlimited items in your vault', 'AI story for every item', 'Owner Rooms for verified pieces', 'Collector DNA profile', 'Public vault URL'].map(f => (
                 <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <CrossHair size={14} color={C.silver} />
-                  <span style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 14, color: C.dim }}>{f}</span>
+                  <span style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 14, color: C.dim }}>{f}</span>
                 </div>
               ))}
             </div>
@@ -430,16 +430,16 @@ function Pricing() {
               <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 8, color: C.void, backgroundColor: C.silver, padding: '3px 8px', letterSpacing: '0.1em' }}>MOST POPULAR</div>
             </div>
             <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 48, fontWeight: 700, color: C.cream, lineHeight: 1 }}>₹0</div>
-            <div style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 13, color: C.dim, margin: '8px 0 36px' }}>For your first drop</div>
+            <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 13, color: C.dim, margin: '8px 0 36px' }}>For your first drop</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 16 }}>
               {['Unlimited drops', 'Customer tier engine', 'Post-purchase contact center', 'Brand story builder', 'AI campaign tools', 'Subdomain: yourbrand.rebl.in', 'Analytics dashboard'].map(f => (
                 <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <CrossHair size={14} color={C.silver} />
-                  <span style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 14, color: C.dim }}>{f}</span>
+                  <span style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 14, color: C.dim }}>{f}</span>
                 </div>
               ))}
             </div>
-            <div style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 12, color: C.dim, marginBottom: 32 }}>Growth from ₹15,000/mo</div>
+            <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 12, color: C.dim, marginBottom: 32 }}>Growth from ₹15,000/mo</div>
             <Link to="/brand/signup" style={{
               display: 'block', textAlign: 'center',
               fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.void,
@@ -500,9 +500,9 @@ function Footer() {
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '2fr repeat(4, 1fr)', gap: 40, marginBottom: 64, flexWrap: 'wrap' }}>
           <div>
-            <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 20, fontWeight: 700, color: C.cream, letterSpacing: '-1px' }}>Rēbl</div>
-            <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 8, color: C.dim, letterSpacing: '0.2em', marginBottom: 16 }}>COLLECTOR OS</div>
-            <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 13, color: C.dim, lineHeight: 1.65, margin: 0, maxWidth: 220 }}>The platform for collectors who refuse to blend in.</p>
+            <img src="/rebl-logo.png" alt="Rebl" style={{ height: 28, width: 'auto', display: 'block', filter: 'brightness(0) invert(1)', marginBottom: 8 }} />
+            <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 7, color: C.dim, letterSpacing: '0.22em', marginBottom: 14 }}>COLLECTOR OS</div>
+            <p style={{ fontSize: 13, color: C.dim, lineHeight: 1.65, margin: 0, maxWidth: 220 }}>The platform for collectors who refuse to blend in.</p>
           </div>
           {cols.map(col => (
             <div key={col.label}>
@@ -510,7 +510,7 @@ function Footer() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {col.links.map(link => (
                   <Link key={link.text} to={link.to} style={{
-                    fontFamily: '"DM Sans", sans-serif', fontSize: 13, color: C.dim,
+                    fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 13, color: C.dim,
                     textDecoration: 'none', transition: 'color 0.2s',
                   }}
                     onMouseEnter={e => e.target.style.color = C.silver}
