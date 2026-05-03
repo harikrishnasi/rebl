@@ -78,7 +78,6 @@ export default function AuthPage({ mode }) {
         <div style={{ textAlign: 'center', marginBottom: 56 }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'inline-block' }}>
             <div style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 40, color: T.white, letterSpacing: '-1px', lineHeight: 1 }}>Rēbl</div>
-            <div style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.25em', marginTop: 8 }}>MYTH. MACHINE. MOVEMENT.</div>
           </Link>
         </div>
 

@@ -65,9 +65,8 @@ function Navbar() {
       transition: 'all 0.3s ease', padding: '0 32px',
     }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 68 }}>
-        <Link to="/" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Link to="/" style={{ textDecoration: 'none' }}>
           <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 22, color: T.white, letterSpacing: '-0.5px', lineHeight: 1 }}>Rēbl</span>
-          <span style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.22em' }}>MYTH. MACHINE. MOVEMENT.</span>
         </Link>
         <div style={{ display: 'flex', gap: 36, alignItems: 'center' }}>
           {links.map(({ label, to }) => (
@@ -132,11 +131,6 @@ function Hero() {
           <div style={{ width: 32, height: 1, backgroundColor: T.gray }}/>
           <span style={{ fontFamily: MONO, fontSize: 10, color: T.gray, letterSpacing: '0.2em' }}>EST. MMXXV — INDIA'S COLLECTOR OS</span>
           <div style={{ width: 32, height: 1, backgroundColor: T.gray }}/>
-        </div>
-
-        {/* Tagline */}
-        <div style={{ fontFamily: DISPLAY, fontSize: 11, color: T.gray, letterSpacing: '0.35em', marginBottom: 28, textTransform: 'uppercase' }}>
-          Myth. Machine. Movement.
         </div>
 
         {/* Headline */}
@@ -316,10 +310,7 @@ function Mission() {
     <section style={{ backgroundColor: T.surface, padding: 'clamp(80px,10vw,140px) max(8vw,32px)', borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}` }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div style={{ marginBottom: 72, textAlign: 'center' }}>
-          <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(24px,4vw,52px)', fontWeight: 700, color: T.white, letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.1 }}>
-            Myth. Machine. Movement.
-          </div>
-          <div style={{ width: 48, height: 1, backgroundColor: T.gray, margin: '24px auto 0' }}/>
+          <div style={{ width: 48, height: 1, backgroundColor: T.gray, margin: '0 auto' }}/>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 0 }}>
           {cols.map((c, i) => (
@@ -528,8 +519,7 @@ function Footer() {
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr repeat(4,1fr)', gap: 40, marginBottom: 80, flexWrap: 'wrap' }}>
             <div>
-              <div style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 28, color: T.white, letterSpacing: '-0.5px', marginBottom: 6 }}>Rēbl</div>
-              <div style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.22em', marginBottom: 20 }}>MYTH. MACHINE. MOVEMENT.</div>
+              <div style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 28, color: T.white, letterSpacing: '-0.5px', marginBottom: 16 }}>Rēbl</div>
               <p style={{ fontFamily: BODY, fontSize: 13, color: T.grayMid, lineHeight: 1.7, margin: 0, maxWidth: 220 }}>From ancient roots, to infinite futures.</p>
             </div>
             {cols.map(col => (

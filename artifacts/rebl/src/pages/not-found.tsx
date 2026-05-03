@@ -49,9 +49,6 @@ export default function NotFound() {
             >Go to Dashboard</Link>
           </div>
 
-          <div style={{ marginTop: 80, fontFamily: MONO, fontSize: 9, color: T.borderVis, letterSpacing: '0.2em' }}>
-            MYTH. MACHINE. MOVEMENT.
-          </div>
         </div>
       </div>
     </div>
