@@ -432,7 +432,7 @@ function Pricing() {
 /* ─── FOOTER ─── */
 function Footer() {
   const cols = [
-    { label: 'Product', links: [{ text: 'How it works', to: '/#how-it-works' }, { text: 'The Vault', to: '/demo#step-1' }, { text: 'Add to Collection', to: '/add-item' }, { text: 'Drops', to: '/brand/vegnongveg' }] },
+    { label: 'Product', links: [{ text: 'How it works', to: '/demo' }, { text: 'The Vault', to: '/demo#step-1' }, { text: 'Add to Collection', to: '/add-item' }, { text: 'Drops', to: '/brand/vegnongveg' }] },
     { label: 'Brands', links: [{ text: 'Partner with us', to: '/brand/signup' }, { text: 'Brand Dashboard', to: '/brand-dashboard' }, { text: 'Pricing', to: '/#pricing' }] },
     { label: 'Community', links: [{ text: 'Find Your Tribe', to: '/tribe' }, { text: 'Blog', to: '/blog' }] },
     { label: 'Legal', links: [{ text: 'About', to: '/about' }, { text: 'Privacy', to: '/privacy' }, { text: 'Terms', to: '/terms' }] },
