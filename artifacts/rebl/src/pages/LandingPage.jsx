@@ -445,10 +445,10 @@ function UpcomingTech() {
   }, [])
 
   const items = [
-    { n: '01', label: 'NFC Authentication', icon: '◎', eta: 'Q3 2026', body: 'Tap your physical item with your phone. Ownership verified in under 1 second. No apps, no QR codes.', progress: 72 },
-    { n: '02', label: 'Blockchain Provenance', icon: '⬡', eta: 'Q3 2026', body: 'Every ownership transfer recorded on-chain. The item\'s full history, permanently and publicly verifiable.', progress: 55 },
-    { n: '03', label: 'NFT Vault Presence', icon: '◈', eta: 'Q4 2026', body: 'Every verified item in your vault gets a soulbound NFT. Non-transferable proof of ownership. Yours forever.', progress: 38 },
-    { n: '04', label: 'P2P Resale Market', icon: '⟳', eta: 'Q1 2027', body: 'Sell with full provenance attached. Buyers know exactly what they\'re getting. Royalties auto-distributed.', progress: 20 },
+    { n: '01', label: 'NFC Authentication', icon: '◎', eta: 'Late 2027', body: 'Tap your physical item with your phone. Ownership verified in under 1 second. No apps, no QR codes.' },
+    { n: '02', label: 'Blockchain Provenance', icon: '⬡', eta: 'Late 2027', body: 'Every ownership transfer recorded on-chain. The item\'s full history, permanently and publicly verifiable.' },
+    { n: '03', label: 'NFT Vault Presence', icon: '◈', eta: 'Late 2027', body: 'Every verified item in your vault gets a soulbound NFT. Non-transferable proof of ownership. Yours forever.' },
+    { n: '04', label: 'P2P Resale Market', icon: '⟳', eta: 'Late 2027', body: 'Sell with full provenance attached. Buyers know exactly what they\'re getting. Royalties auto-distributed.' },
   ]
   return (
     <section style={{ backgroundColor: T.bg, padding: 'clamp(80px,10vw,140px) max(8vw,32px)', position: 'relative', overflow: 'hidden', borderTop: `1px solid ${T.border}` }}>
@@ -489,22 +489,13 @@ function UpcomingTech() {
               {/* Body */}
               <p style={{ fontFamily: BODY, fontSize: 14, color: T.grayMid, lineHeight: 1.9, margin: '0 0 32px', flex: 1 }}>{item.body}</p>
 
-              {/* Progress */}
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <span style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.2em' }}>BUILD PROGRESS</span>
-                  <span style={{ fontFamily: MONO, fontSize: 8, color: T.gray, letterSpacing: '0.1em' }}>{item.progress}%</span>
+              {/* Status */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ width: 5, height: 5, border: `1px solid #CC0000` }} />
+                  <span style={{ fontFamily: MONO, fontSize: 8, color: '#CC0000', letterSpacing: '0.2em' }}>IN DEVELOPMENT</span>
                 </div>
-                <div style={{ height: 2, backgroundColor: T.border, width: '100%' }}>
-                  <div style={{ height: '100%', width: `${item.progress}%`, backgroundColor: T.gray, transition: 'width 1s ease' }} />
-                </div>
-                <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 5, height: 5, border: `1px solid #CC0000` }} />
-                    <span style={{ fontFamily: MONO, fontSize: 8, color: '#CC0000', letterSpacing: '0.2em' }}>IN DEVELOPMENT</span>
-                  </div>
-                  <span style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.1em' }}>ETA {item.eta}</span>
-                </div>
+                <span style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.1em' }}>ETA {item.eta}</span>
               </div>
             </div>
           ))}
