@@ -25,6 +25,7 @@ import Checkout from '@/pages/drops/Checkout'
 import BrandsLanding from '@/pages/brands/BrandsLanding'
 import BrandCreate from '@/pages/brands/BrandCreate'
 import BrandSupport from '@/pages/BrandSupport'
+import Waitlist from '@/pages/Waitlist'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import BrandRoute from '@/components/BrandRoute'
 import CartDrawer from '@/components/CartDrawer'
@@ -61,6 +62,7 @@ export default function App() {
           <Route path="/brands" element={<BrandsLanding />} />
           <Route path="/brand/create" element={<BrandCreate />} />
           <Route path="/brand-support" element={<BrandSupport />} />
+          <Route path="/waitlist" element={<Waitlist />} />
           <Route
             path="/add-item"
             element={

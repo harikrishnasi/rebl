@@ -563,8 +563,8 @@ function Footer() {
   const cols = [
     { label: 'Product', links: [{ text: 'How it works', to: '/demo' }, { text: 'The Vault', to: '/demo#step-1' }, { text: 'Add to Collection', to: '/add-item' }, { text: 'Drops', to: '/drops' }] },
     { label: 'Brands', links: [{ text: 'Partner with us', to: '/brand/signup' }, { text: 'Brand Dashboard', to: '/brand-dashboard' }, { text: 'Pricing', to: '/#pricing' }] },
-    { label: 'Community', links: [{ text: 'Find Your Tribe', to: '/tribe' }, { text: 'Blog', to: '/blog' }] },
-    { label: 'Legal', links: [{ text: 'About', to: '/about' }, { text: 'Privacy', to: '/privacy' }, { text: 'Terms', to: '/terms' }] },
+    { label: 'Community', links: [{ text: 'Find Your Tribe', to: '/tribe' }, { text: 'Blog', to: '/blog' }, { text: 'Join Waitlist', to: '/waitlist' }] },
+    { label: 'Support', links: [{ text: 'Contact Rebl', to: '/brand-support' }, { text: 'About', to: '/about' }, { text: 'Privacy', to: '/privacy' }, { text: 'Terms', to: '/terms' }] },
   ]
   return (
     <footer style={{ backgroundColor: T.bg, borderTop: `1px solid ${T.border}` }}>
