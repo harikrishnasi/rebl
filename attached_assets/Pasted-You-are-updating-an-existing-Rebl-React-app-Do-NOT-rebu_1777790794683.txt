@@ -1,0 +1,454 @@
+You are updating an existing Rebl React app. Do NOT rebuild from scratch. Apply these specific changes to the existing codebase.
+
+===========================================================
+CHANGE 1: COMPLETE UI REDESIGN — THEME OVERHAUL
+===========================================================
+
+REPLACE the entire color system. Go into tailwind.config.js and index.css and update everything:
+
+NEW COLOR PALETTE (space-exploration, geek meets modern):
+  --void:    #050508   (true near-black, deeper than before)
+  --cosmos:  #0A0A12   (page background)
+  --nebula:  #12121E   (card background)
+  --crater:  #1C1C2E   (elevated surfaces)
+  --silver:  #A8B2C4   (primary accent — silver, not red)
+  --silver-bright: #C8D4E8  (hover silver)
+  --ghost:   #2A2A3E   (borders, dividers)
+  --cream:   #F0F4FF   (primary text — slightly blue-white, not warm)
+  --dim:     #5A6380   (secondary text)
+  --star:    #E8F0FF   (highlight text)
+  --orbit:   #7B8FA8   (muted elements)
+
+REMOVE: All purple gradients, red accents (#E63946), warm tones.
+KEEP: The dark background philosophy. Just make it colder, starker, more precise.
+
+PRIMARY BUTTON: bg-transparent border border-[#A8B2C4] text-[#A8B2C4] hover:bg-[#A8B2C4] hover:text-[#050508] transition-all duration-200 font-mono text-sm tracking-widest uppercase px-8 py-3
+SECONDARY BUTTON: bg-[#A8B2C4] text-[#050508] hover:bg-[#C8D4E8] font-mono text-sm tracking-widest uppercase px-8 py-3
+GHOST: border border-[#2A2A3E] text-[#5A6380] hover:border-[#A8B2C4] hover:text-[#A8B2C4]
+
+TYPOGRAPHY SYSTEM:
+  Headlines: font-mono (Space Mono) — tight, technical, precise
+  Body: DM Sans or Inter — clean, modern
+  Labels: font-mono uppercase tracking-[0.2em] text-xs — like instrument readouts
+
+Add to index.html head:
+
+
+DESIGN LANGUAGE RULES (apply to every component):
+- No rounded-3xl or heavy border-radius. Use rounded or rounded-sm only.
+- No box shadows with color. Only shadow-sm or none.
+- No gradient backgrounds anywhere. Solid colors only.
+- Borders are thin (1px) and use --ghost color.
+- Spacing is generous — lots of whitespace, content breathes.
+- Numbers and data points use font-mono.
+- Section dividers: thin horizontal lines (border-t border-[#1C1C2E]), not colored.
+- Hover states: border color or text color changes only. No background floods.
+- Cards: bg-[#12121E] border border-[#1C1C2E] — flat, no shadows.
+
+SPACE ASSETS — create these as inline SVG components:
+
+1. StarField component (src/components/StarField.jsx):
+SVG with 80 small white circles (dots) randomly scattered, varying opacity (0.1 to 0.5), varying size (0.5px to 2px). Position absolute, fill entire container, pointer-events-none. Use this as background on hero and key sections.
+
+2. OrbitRing component (src/components/OrbitRing.jsx):
+A large SVG circle (stroke only, no fill), very thin stroke (0.5px), color #A8B2C41A (silver at 10% opacity). Slightly elliptical. Rotated 20deg. Used as decorative background element. Size: 600x600px. Position absolute, overflow hidden.
+
+3. CrossHair component (src/components/CrossHair.jsx):
+Small SVG crosshair icon (two lines crossing with small circle center). 16x16px. Color: #A8B2C4. Use as bullet points and decorative markers.
+
+4. CoordinateGrid (src/components/CoordinateGrid.jsx):
+Very subtle grid lines SVG. 40px spacing. Stroke #1C1C2E, opacity 0.6. Full width section background. Pointer-events-none, position absolute.
+
+===========================================================
+CHANGE 2: NAVBAR REDESIGN
+===========================================================
+
+Replace the existing navbar with this exact structure:
+
+const Navbar = () => (
+  
+    
+      
+      {/* LEFT: Logo */}
+      
+        Rēbl
+        COLLECTOR OS
+      
+
+      {/* CENTER: Nav links */}
+      
+        {['Drops','The Vault','Community'].map(item => (
+          e.target.style.color='#A8B2C4'} onMouseLeave={e=>e.target.style.color='#5A6380'}>{item}
+        ))}
+      
+
+      {/* RIGHT: Two distinct CTAs */}
+      
+        {e.target.style.color='#A8B2C4';e.target.style.borderColor='#A8B2C4'}} onMouseLeave={e=>{e.target.style.color='#5A6380';e.target.style.borderColor='#2A2A3E'}}>
+          For Brands
+        
+        e.target.style.background='#C8D4E8'} onMouseLeave={e=>e.target.style.background='#A8B2C4'}>
+          Join Free
+        
+      
+    
+  
+);
+
+===========================================================
+CHANGE 3: HERO SECTION REDESIGN
+===========================================================
+
+Replace the existing hero with this completely new version:
+
+HERO LAYOUT:
+- Full viewport height (100vh)
+- Background: #050508 (void)
+- StarField component as absolute background
+- OrbitRing component absolute right-side (-100px from right, centered vertically)
+- CoordinateGrid as subtle absolute background
+- Content centered, max-width 900px, left-aligned (not centered)
+- Padding-top: 120px (clears navbar)
+- Padding-left: 10% of viewport
+
+TOP LABEL (above headline):
+
+  
+  EST. 2025 — INDIA'S COLLECTOR OS
+
+
+HEADLINE (two lines):
+Line 1: "Own it." — font-mono, 96px, font-weight 700, color #F0F4FF, letter-spacing -4px, line-height 1
+Line 2: "Tell its story." — font-mono, 96px, font-weight 700, color #A8B2C4, letter-spacing -4px
+Line 3: "Find your orbit." — font-mono, 96px, font-weight 700, color #2A2A3E, letter-spacing -4px
+
+SUBHEADLINE below (mt-8):
+"Rebl is a vault for the things that define you. Limited drops, verified ownership, and a community of collectors who get it."
+Font: DM Sans, 18px, color #5A6380, max-width 480px, line-height 1.6
+
+SINGLE CTA BUTTON (mt-12) — personal only, no brand button here:
+"Start Your Collection →"
+Style: border border-[#A8B2C4] text-[#A8B2C4] font-mono text-xs tracking-widest uppercase px-10 py-4 hover:bg-[#A8B2C4] hover:text-[#050508] transition-all
+
+BELOW CTA — coordinate display (like a space mission readout):
+
+  {[{val:'500+',label:'COLLECTORS',coord:'01.A'},{val:'20+',label:'BRANDS',coord:'02.B'},{val:'1K+',label:'VERIFIED ITEMS',coord:'03.C'}].map(s => (
+    
+      {s.coord}
+      {s.val}
+      {s.label}
+    
+  ))}
+
+
+RIGHT SIDE of hero (absolute positioned, right 8%, centered vertically):
+A large circular SVG element showing a "collector's orbit" — concentric rings, very thin silver strokes, with small dot markers at different positions on the rings. Like a star map / orbit diagram. Size: 400x400px. This is the hero's visual anchor.
+
+===========================================================
+CHANGE 4: REWRITE ALL CONTENT SECTIONS
+===========================================================
+
+REPLACE the "Tired of..." section with this IDENTITY SECTION:
+
+Section background: #050508. Full width. py-32.
+Left: CoordinateGrid background.
+
+LAYOUT: Two columns. Left: large number + label. Right: statement text.
+
+Content rows (separated by thin border lines):
+
+ROW 1:
+Left: "01" in font-mono 64px color #1C1C2E
+Right headline: "Your collection is your identity."
+Right body: "Every piece you own is a signal — about where you've been, what you value, what you refuse to compromise on. Rebl is built for people who collect with intention, not impulse."
+
+ROW 2:
+Left: "02" 
+Right headline: "Stand out in a world of copies."
+Right body: "Limited editions exist because some things should never be mass-produced. We help you find them, own them, and build a profile that proves it — permanently."
+
+ROW 3:
+Left: "03"
+Right headline: "Find your orbit."
+Right body: "The 47 people in India who own the exact same piece as you exist. They care as much as you do. Rebl connects verified owners — not followers, not strangers. People who get it."
+
+REPLACE "How It Works" with MISSION SECTION:
+
+Section: "MISSION PARAMETERS" (in font-mono label style)
+Headline: "Three coordinates. One platform."
+
+Three items in a row (thin silver number + heading + body):
+→ 01 / ACQUIRE — "Drop-based marketplace. Limited quantities. Verified access. No bots, no bots, no bots."
+→ 02 / AUTHENTICATE — "Every item gets a permanent digital record. AI-generated provenance story. Verifiable ownership."  
+→ 03 / ORBIT — "Connect with verified owners of the same piece. Owner Rooms, community boards, shared culture."
+
+REPLACE "Post-Purchase" section with THE VAULT SECTION:
+
+Headline: "The Vault." font-mono 72px
+Sub: "Not a profile. Not a portfolio. A permanent record of who you are as a collector."
+
+Three feature cards — flat, bordered, no shadows:
+Card 1: "PROVENANCE ENGINE" — AI generates the story of each item the moment you add it. Cultural context, edition history, your personal chapter.
+Card 2: "OWNER ROOMS" — Private spaces for verified owners of the same piece. 100 people in the world own this. You're one of them.
+Card 3: "COLLECTOR DNA" — Your taste profile, auto-generated from your vault. Archetype. Signature phrase. The collector you actually are.
+
+REPLACE "For Brands" with BRAND MISSION:
+
+Background: #0A0A12. thin top border.
+Left column:
+  Label: "FOR BRANDS"
+  Headline: "Limited editions done right."
+  Body: "Rebl gives brands the infrastructure to make scarcity meaningful — not just a marketing trick. Launch drops, build verified communities, and know your most passionate buyers by name."
+  CTA: "Launch Your Brand ↗" (links to /brand/signup)
+
+Right column — 3 metrics in font-mono:
+  "61%" — "post-purchase story completion rate"
+  "3x"  — "higher retention vs standard e-commerce"
+  "₹0"  — "to launch your first drop"
+
+REPLACE "Coming Soon" with UPCOMING TECHNOLOGY:
+
+Section label: "CLASSIFIED // COMING SOON"
+Background: #050508, StarField background.
+
+4 items (not 3 — add NFT):
+1. NFC AUTHENTICATION — "Tap your physical item with your phone. Ownership verified in under 1 second. No apps, no QR codes."
+2. BLOCKCHAIN PROVENANCE — "Every ownership transfer recorded on-chain. The item's full history, permanently and publicly verifiable."
+3. NFT VAULT PRESENCE — "Every verified item in your vault gets a soulbound NFT. Non-transferable proof of ownership. Yours forever, on-chain."
+4. P2P RESALE MARKET — "Sell with full provenance attached. Buyers know exactly what they're getting. Royalties auto-distributed to original brands."
+
+Layout: 2x2 grid. Each card has: thin silver line at top, label in font-mono caps, body text, "STATUS: DEVELOPMENT" in dim monospace at bottom.
+
+===========================================================
+CHANGE 5: FOOTER — FULLY CONNECTED WITH REAL LINKS
+===========================================================
+
+Replace the footer. All links must actually route somewhere.
+
+FOOTER STRUCTURE:
+Top section: Rēbl logo + "COLLECTOR OS" tagline + short desc
+4 columns: PRODUCT | BRANDS | COMMUNITY | LEGAL
+
+PRODUCT links (all working routes):
+  How it works → scrolls to #how-it-works on landing page
+  The Vault → /vault/{username} or /dashboard if logged in
+  Add to Collection → /add-item
+  Drops → /brand/vegnongveg (demo brand page)
+
+BRANDS links:
+  Partner with us → /brand/signup
+  Brand Dashboard → /brand-dashboard
+  Pricing → scroll to #pricing or a simple pricing section on landing page
+
+COMMUNITY links:
+  Find Your Tribe → /tribe
+  Drops → /brand/vegnongveg
+  Blog → /blog
+
+LEGAL:
+  About → /about
+  Privacy Policy → /privacy (just a simple page)
+  Terms → /terms (simple page)
+
+CREATE THESE PAGES:
+
+--- PAGE: src/pages/Blog.jsx ---
+Route: /blog
+This is a real editorial blog. Clean, readable, like a tech publication.
+
+Layout: dark bg, max-width 800px centered, generous padding.
+Header: "REBL JOURNAL" in font-mono caps + tagline "On collecting, identity, and the end of mass market."
+
+Show 3 blog post cards as a list. Each card: title + date + read time + excerpt + "Read →" link.
+
+Post 1: "The Death of the Mass Market Aesthetic" 
+Date: May 2025 | 8 min read
+Excerpt: "For thirty years, brands competed on reach. The winner was whoever could put their logo in front of the most eyeballs. That era is over — and the collectors who knew it first are already building a different world."
+Link to: /blog/mass-market-death
+
+Post 2: "Why Limited Editions Actually Work: The Psychology of Scarcity"
+Date: April 2025 | 6 min read  
+Excerpt: "It's not about the item. It's about what owning the item says about you. The psychology behind why limited drops create more loyalty than any loyalty program ever could."
+Link to: /blog/limited-edition-psychology
+
+Post 3: "Find Your Orbit: Why Collector Communities Beat Social Media"
+Date: March 2025 | 5 min read
+Excerpt: "Twitter gives you followers. Instagram gives you likes. Rebl gives you the 23 other people in India who own the exact same Jordan as you. These are not the same thing."
+Link to: /blog/collector-communities
+
+--- PAGE: src/pages/BlogPost.jsx ---
+Route: /blog/:slug
+Dynamic blog post page. Render full article content based on slug.
+
+ARTICLE 1 slug: "mass-market-death"
+Full article (~600 words):
+Title: "The Death of the Mass Market Aesthetic"
+Content sections:
+  INTRO: For thirty years, brands competed on reach. The winner was whoever could put their logo in front of the most eyeballs. Pepsi. Nike. H&M. The game was simple: make something average, make it everywhere, repeat. That era is over — and the collectors who knew it first are already building a different world.
+
+  THE SIGNAL EVERYONE MISSED: In 2018, something quietly changed. Streetwear brands began selling out in seconds, not hours. Sneaker resale markets emerged with billion-dollar valuations. People started forming queues outside Supreme at 6am. The mainstream media called it a fad. They were wrong. It was a signal: that people were increasingly willing to pay more for things that were harder to get — not because of the objects themselves, but because of what ownership meant.
+
+  IDENTITY AS CURRENCY: When everything is available to everyone, nothing says anything about you. When you wear the same hoodie as ten million other people, the hoodie stops being an expression and becomes a uniform. A generation raised on social media — where identity is constantly performed and constantly evaluated — is acutely aware of this. The response has been predictable: find the things that aren't everywhere. The limited edition. The collab. The piece with a story.
+
+  WHAT THIS MEANS FOR BRANDS: The brands that understand this have stopped competing on scale and started competing on meaning. Nike doesn't just sell shoes anymore — it sells membership to a culture. Supreme doesn't just sell hoodies — it sells exclusivity itself. The smart brands are learning that their most valuable customers aren't the ones who buy the most frequently. They're the ones who care the most deeply. And caring deeply is something you can build. But only if you have the infrastructure for it.
+
+  THE PLATFORM PROBLEM: Here's the gap nobody has filled. Brands have Instagram, Shopify, and email lists. Collectors have Instagram stories and Discord servers. But there's no dedicated space that bridges both — where a brand can launch a drop, verify who bought it, and then build a lasting relationship with those buyers. Where collectors can prove they own what they say they own, tell the story behind each piece, and connect with others who get it. That's what Rebl is building.
+
+ARTICLE 2 slug: "limited-edition-psychology"
+Full article (~600 words) about psychological principles: scarcity value, identity signaling, tribal belonging, FOMO vs JOMO. Include references to Veblen goods, signaling theory, collector psychology research.
+
+ARTICLE 3 slug: "collector-communities"  
+Full article (~600 words) about why verified ownership-based communities are fundamentally different from follower-based social media. Include: the dunbar number applied to communities, why shared ownership creates deeper bonds than shared interest, how Rebl Owner Rooms work differently from Discord.
+
+--- PAGE: src/pages/About.jsx ---
+Route: /about
+Clean mission page.
+Headline: "We're building the infrastructure for the post-mass-market era."
+Story: Brief, editorial. Founded by a collector frustrated by the gap between how much they cared about their collection and how little the existing tools supported that care. India's collector culture is at an inflection point. Rebl exists to build the platform before the culture gets there.
+Team: Just "Team Rebl, India — 2025"
+Values: 3 short principles in font-mono style.
+
+--- PAGE: src/pages/Privacy.jsx and src/pages/Terms.jsx ---
+Simple clean pages with basic placeholder legal text. Properly formatted, readable.
+
+===========================================================
+CHANGE 6: DEMO SHOWCASE PAGE
+===========================================================
+
+Create: src/pages/Demo.jsx
+Route: /demo
+Add "See Demo" link to navbar (between nav items)
+
+This is a live walkthrough page. NOT a video. An interactive guided tour.
+
+LAYOUT: Single column, full dark page, each step is a large section.
+
+HEADER:
+Label: "INTERACTIVE DEMO"
+Headline: "See Rebl in 4 minutes."
+Sub: "A walkthrough of every core feature. No signup required."
+
+STEP 1 — THE VAULT (show a pre-populated demo profile):
+Heading: "Step 01 — Your Vault"
+Show a static mockup (styled divs, not real data) of a collector profile:
+  Profile: "Arjun K." | The Grail Hunter | 23 items | Score: 847
+  Item grid showing 6 item cards with placeholder colored squares + item names like:
+    "Air Jordan 1 Retro High OG Chicago" | "Nike Dunk Low Panda" | "Supreme Box Logo Hoodie FW23"
+    "New Balance 550 White Grey" | "Adidas Samba OG" | "Off-White x Nike Air Force 1"
+  Each card styled exactly as the real cards would look.
+  CTA: "Start Your Vault →" → /signup
+
+STEP 2 — AI STORY ENGINE:
+Heading: "Step 02 — AI Story Engine"
+Show an animation simulation (CSS animation):
+  Left side: Item card (Jordan 1 Chicago details)
+  Right side: A text box where text types itself out character by character (CSS animation using steps())
+  The text that types: "The Air Jordan 1 Chicago is not just a shoe. It is the document of a cultural collision — the moment basketball, rebellion, and style fused into a single object. When Michael Jordan wore this colorway in 1985, Nike was fined $5,000 per game. He wore it anyway. Your story with this piece begins — what does owning it say about you?"
+  Show a blinking cursor at the end.
+  Below: "Edit your story" placeholder input field
+  CTA: "Add Your First Item →" → /add-item
+
+STEP 3 — OWNER ROOMS:
+Heading: "Step 03 — Owner Rooms"
+Static mockup of a community channel:
+  Channel name: "# jordan-1-chicago-owners"
+  "347 verified owners"
+  3 mock messages:
+    "Ravi S. — Just copped at VegNonVeg drop. Condition is insane."
+    "Priya M. — Anyone know a good crep protect for these?"
+    "Arjun K. — 2 years and the toe box still holds. Zero crease."
+  Each message has avatar circle + username + message
+  "Only verified owners can post"
+  CTA: "Join Your First Owner Room →" → /signup
+
+STEP 4 — FOR BRANDS:
+Heading: "Step 04 — Brand Dashboard"
+Static mockup of brand dashboard overview:
+  "VegNonVeg Dashboard"
+  4 metric cards: 1,247 total sold | 89% story completion | 74% community join | ₹2.3Cr revenue
+  A simple bar chart mockup (just styled divs as bars) labeled "Post-Purchase Journey"
+  Showing bars: Buyers 100% → Story Done 89% → Community 74% → Returned 41%
+  CTA: "Launch Your Brand →" → /brand/signup
+
+STEP 5 — COMING NEXT:
+Heading: "Step 05 — What's Coming"
+3 cards: NFC tap demo | Blockchain record | NFT in vault
+Small animated elements (CSS only, no JS animation libs)
+CTA: "Get Early Access →" → /signup
+
+FINAL CTA at bottom of demo page:
+Full-width section:
+Headline: "Ready to start your vault?"
+Sub: "Join 500+ collectors already on Rebl."
+Two buttons: "Create Your Account" (silver) + "Launch a Brand" (ghost)
+
+===========================================================
+CHANGE 7: ADD /demo TO NAVBAR AND CONNECT ALL ROUTES
+===========================================================
+
+Update navbar center links to:
+['Drops', 'The Vault', 'Demo', 'Blog']
+Each linking to: ['/brand/vegnongveg', '/vault', '/demo', '/blog']
+
+Make "The Vault" in navbar go to /dashboard if user is logged in, else /demo#step-1.
+
+===========================================================
+CHANGE 8: LANDING PAGE PRICING SECTION
+===========================================================
+
+Add a pricing section before the footer (id="pricing"):
+Label: "PRICING"
+Headline: "Free to collect. Powerful to build."
+
+TWO CARDS ONLY (not three):
+
+CARD 1 — COLLECTOR (left):
+  "COLLECTOR" label font-mono caps
+  Price: "Free" font-mono 48px
+  "Forever" in dim text
+  Features list (CrossHair bullet):
+    Unlimited items in your vault
+    AI story for every item
+    Owner Rooms for verified pieces
+    Collector DNA profile
+    Public vault URL
+  CTA: "Start Free →" silver border button
+
+CARD 2 — BRAND (right, slightly highlighted with silver border):
+  "BRAND" label + "MOST POPULAR" chip
+  Price: "₹0" font-mono 48px
+  "For your first drop" in dim text
+  Features list:
+    Unlimited drops
+    Customer tier engine
+    Post-purchase contact center
+    Brand story builder
+    AI campaign tools
+    Subdomain: yourbrand.rebl.in
+    Analytics dashboard
+  Then: "Growth from ₹15,000/mo" in dim text
+  CTA: "Launch Free →" silver filled button → /brand/signup
+
+===========================================================
+BUILD ORDER FOR THIS UPDATE
+===========================================================
+
+Apply changes in this exact order:
+1. Update color system in tailwind.config.js and index.css
+2. Create SVG component files (StarField, OrbitRing, CrossHair, CoordinateGrid)
+3. Update Navbar component
+4. Update LandingPage — hero section
+5. Update LandingPage — all content sections (identity, mission, vault, brands, coming soon)
+6. Add pricing section to LandingPage
+7. Update footer with all real links
+8. Create Blog.jsx with 3 post cards
+9. Create BlogPost.jsx with all 3 full articles
+10. Create About.jsx
+11. Create Privacy.jsx and Terms.jsx
+12. Create Demo.jsx with all 5 steps
+13. Update App.jsx routes: add /blog, /blog/:slug, /about, /privacy, /terms, /demo
+14. Update navbar links to include Demo and Blog
+
+Do not change: Auth, AddItem, CollectorProfile, PostPurchase, Dashboard, Vault, BrandDashboard, BrandSignup, BrandSubdomainPage, TribePage, or any existing functional pages. Only change visual styling (colors, typography, spacing) to match the new design system.
+
+After applying all changes, verify the dev server runs with no console errors.
