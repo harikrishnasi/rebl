@@ -86,14 +86,14 @@ export default function BrandDashboard() {
     <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', display: 'flex', flexDirection: 'column' }}>
       {showWelcome && <WelcomeModal brand={brand} lang={lang} onClose={() => setShowWelcome(false)} />}
 
-      {/* ── Floating Contact Buyers button ── */}
+      {/* ── Floating Contact Rebl button ── */}
       <button
-        onClick={() => { setActiveTab('customers') }}
-        style={{ position: 'fixed', bottom: 80, right: 24, zIndex: 200, backgroundColor: C.cream, color: '#000', border: 'none', padding: '12px 22px', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontWeight: 600, fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, transition: 'background-color 0.15s' }}
+        onClick={() => navigate('/brand-support')}
+        style={{ position: 'fixed', bottom: 80, right: 24, zIndex: 200, backgroundColor: C.cream, color: '#000', border: 'none', padding: '12px 22px', fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, transition: 'background-color 0.15s' }}
         onMouseEnter={e => e.currentTarget.style.backgroundColor = '#E0E0E0'}
         onMouseLeave={e => e.currentTarget.style.backgroundColor = C.cream}
       >
-        ◎ Contact Buyers
+        ◈ Contact Rebl
       </button>
 
       {/* Top bar */}
