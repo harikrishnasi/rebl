@@ -203,12 +203,12 @@ function Portals() {
     <section style={{ borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}` }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: T.borderVis, gap: 1 }}>
         {/* PORTAL 1 — DROPS */}
-        <Link to="/drops" style={{ textDecoration: 'none', display: 'block', background: '#0A0A12', padding: 'max(6vw, 48px)', transition: 'background 0.2s', position: 'relative' }}
-          onMouseEnter={e => e.currentTarget.style.background = '#0D0D18'}
-          onMouseLeave={e => e.currentTarget.style.background = '#0A0A12'}
+        <Link to="/drops" style={{ textDecoration: 'none', display: 'block', background: T.surface, padding: 'max(6vw, 48px)', transition: 'background 0.2s', position: 'relative' }}
+          onMouseEnter={e => e.currentTarget.style.background = T.card}
+          onMouseLeave={e => e.currentTarget.style.background = T.surface}
         >
           <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.35em', marginBottom: 28 }}>DROPS.REBL.IN</div>
-          <h2 style={{ fontFamily: MONO, fontSize: 'clamp(22px, 3.5vw, 36px)', color: T.white, fontWeight: 700, lineHeight: 1.2, marginBottom: 20, letterSpacing: '-0.5px' }}>
+          <h2 style={{ fontFamily: DISPLAY, fontSize: 'clamp(22px, 3.5vw, 36px)', color: T.white, fontWeight: 700, lineHeight: 1.2, marginBottom: 20, letterSpacing: '-0.5px' }}>
             Limited editions.<br />Right now.
           </h2>
           <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.8, maxWidth: 400, marginBottom: 36 }}>
@@ -236,12 +236,12 @@ function Portals() {
         </Link>
 
         {/* PORTAL 2 — THE VAULT */}
-        <Link to="/dashboard" style={{ textDecoration: 'none', display: 'block', background: '#050508', padding: 'max(6vw, 48px)', transition: 'background 0.2s', position: 'relative' }}
-          onMouseEnter={e => e.currentTarget.style.background = '#080810'}
-          onMouseLeave={e => e.currentTarget.style.background = '#050508'}
+        <Link to="/dashboard" style={{ textDecoration: 'none', display: 'block', background: T.bg, padding: 'max(6vw, 48px)', transition: 'background 0.2s', position: 'relative' }}
+          onMouseEnter={e => e.currentTarget.style.background = T.surface}
+          onMouseLeave={e => e.currentTarget.style.background = T.bg}
         >
           <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.35em', marginBottom: 28 }}>VAULT.REBL.IN</div>
-          <h2 style={{ fontFamily: MONO, fontSize: 'clamp(22px, 3.5vw, 36px)', color: T.white, fontWeight: 700, lineHeight: 1.2, marginBottom: 20, letterSpacing: '-0.5px' }}>
+          <h2 style={{ fontFamily: DISPLAY, fontSize: 'clamp(22px, 3.5vw, 36px)', color: T.white, fontWeight: 700, lineHeight: 1.2, marginBottom: 20, letterSpacing: '-0.5px' }}>
             Your collection.<br />Permanent.
           </h2>
           <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.8, maxWidth: 400, marginBottom: 36 }}>
