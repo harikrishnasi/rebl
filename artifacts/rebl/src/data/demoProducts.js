@@ -1,3 +1,21 @@
+function genHistory(floor, ceiling, current, dropTime, noiseAmp, seed) {
+  const now = Date.now()
+  const durationMs = Math.max(1000 * 60 * 10, now - dropTime)
+  const intervalMs = Math.max(5 * 60 * 1000, Math.floor(durationMs / 28))
+  const points = Math.ceil(durationMs / intervalMs) + 1
+  const hist = []
+  let p = floor + (current - floor) * 0.06
+  for (let i = 0; i < points; i++) {
+    const t = dropTime + (i / Math.max(points - 1, 1)) * durationMs
+    const trend = (current - p) * 0.22
+    const n = p * noiseAmp * (Math.sin(seed + i * 1.8) * 0.55 + Math.cos(seed * 0.3 + i * 3.1) * 0.45)
+    p = Math.max(floor, Math.min(ceiling, p + trend + n))
+    hist.push({ t: Math.round(t), p: Math.round(p) })
+  }
+  if (hist.length) hist[hist.length - 1].p = current
+  return hist
+}
+
 export const demoProducts = [
   {
     id: "nike-aj1-chicago-2025",
@@ -7,8 +25,11 @@ export const demoProducts = [
     edition: "2025 Reissue — Limited to 500 pairs in India",
     price: 13995,
     originalPrice: null,
-    marketPrice: 22500,
-    priceTrend: 61,
+    pricing: {
+      floor: 11500,
+      ceiling: 16500,
+      full: genHistory(11500, 16500, 13995, Date.now() - 1000*60*60*2, 0.022, 1.4),
+    },
     units: 500,
     unitsSold: 453,
     status: "live",
@@ -48,8 +69,11 @@ export const demoProducts = [
     name: "Box Logo Crewneck FW24",
     edition: "Fall/Winter 2024 — 200 units globally via Rebl India allocation",
     price: 24500,
-    marketPrice: 38000,
-    priceTrend: 55,
+    pricing: {
+      floor: 20000,
+      ceiling: 30000,
+      full: genHistory(20000, 30000, 24500, Date.now() - 1000*60*60*6, 0.018, 2.1),
+    },
     units: 200,
     unitsSold: 187,
     status: "live",
@@ -88,8 +112,11 @@ export const demoProducts = [
     name: "1906R Protection Pack — Silver",
     edition: "Global Limited Release — 1500 pairs, 75 via Rebl",
     price: 16995,
-    marketPrice: 19500,
-    priceTrend: 15,
+    pricing: {
+      floor: 15000,
+      ceiling: 20500,
+      full: [],
+    },
     units: 75,
     unitsSold: 31,
     status: "upcoming",
@@ -128,8 +155,11 @@ export const demoProducts = [
     name: "Tri-Ferg Hoodie SS25",
     edition: "Spring/Summer 2025 — 300 units, 30 via Rebl",
     price: 18500,
-    marketPrice: 27000,
-    priceTrend: 46,
+    pricing: {
+      floor: 15500,
+      ceiling: 23000,
+      full: genHistory(15500, 23000, 18500, Date.now() - 1000*60*60*3, 0.026, 3.7),
+    },
     units: 30,
     unitsSold: 28,
     status: "live",
@@ -168,8 +198,11 @@ export const demoProducts = [
     name: "The Slow Rush World Tour — Mumbai",
     edition: "VIP Floor Experience — June 28, 2025 | Jio World Garden",
     price: 8500,
-    marketPrice: 14000,
-    priceTrend: 65,
+    pricing: {
+      floor: 7000,
+      ceiling: 11500,
+      full: genHistory(7000, 11500, 8500, Date.now() - 1000*60*60*12, 0.019, 0.9),
+    },
     units: 150,
     unitsSold: 122,
     status: "live",

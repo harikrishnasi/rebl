@@ -77,13 +77,29 @@ function DropCard({ product }) {
               <span style={{ fontFamily: MONO, fontSize: 9, color: '#CC0000', letterSpacing: '0.1em' }}>{countdown}</span>
             )}
           </div>
-          {product.marketPrice && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-              <span style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.15em' }}>MARKET</span>
-              <span style={{ fontFamily: MONO, fontSize: 9, color: T.gray }}>{formatINR(product.marketPrice)}</span>
-              <span style={{ fontFamily: MONO, fontSize: 8, color: '#4CAF50', letterSpacing: '0.05em' }}>↑{product.priceTrend}%</span>
-            </div>
-          )}
+          {product.pricing?.full?.length > 1 && (() => {
+            const pts = product.pricing.full.slice(-10)
+            const mn = Math.min(...pts.map(d => d.p))
+            const mx = Math.max(...pts.map(d => d.p))
+            const rng = mx - mn || 1
+            const polyPts = pts.map((d, i) =>
+              `${(i / (pts.length - 1)) * 54},${13 - ((d.p - mn) / rng) * 11}`
+            ).join(' ')
+            const up = pts[pts.length - 1].p >= pts[0].p
+            return (
+              <div style={{ marginBottom: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <span style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.2em' }}>LIVE PRICE</span>
+                  <svg width="54" height="14">
+                    <polyline points={polyPts} fill="none" stroke={up ? '#A8B2C4' : '#5A6380'} strokeWidth="1.2" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <div style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.1em' }}>
+                  {formatINR(product.pricing.floor)} — {formatINR(product.pricing.ceiling)}
+                </div>
+              </div>
+            )
+          })()}
           <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, marginBottom: 6 }}>
             {product.unitsSold} of {product.units} claimed
           </div>
@@ -126,13 +142,9 @@ function UpcomingCard({ product }) {
       <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid }}>{product.edition}</div>
       <div style={{ fontFamily: MONO, fontSize: 18, color: T.white, letterSpacing: '0.1em' }}>{countdown}</div>
       <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid }}>DROPS IN</div>
-      {product.marketPrice && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-          <span style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.15em' }}>MARKET</span>
-          <span style={{ fontFamily: MONO, fontSize: 9, color: T.gray }}>{formatINR(product.marketPrice)}</span>
-          <span style={{ fontFamily: MONO, fontSize: 8, color: '#4CAF50' }}>↑{product.priceTrend}%</span>
-        </div>
-      )}
+      <div style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.15em' }}>
+        STARTING PRICE · {formatINR(product.pricing?.floor)} — {formatINR(product.pricing?.ceiling)}
+      </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
         <span style={{ fontFamily: MONO, fontSize: 13, color: T.white }}>{formatINR(product.price)}</span>
         <button
@@ -183,11 +195,9 @@ function EventCard({ product }) {
           <div style={{ fontFamily: MONO, fontSize: 18, color: T.white }}>{countdown}</div>
           <div style={{ fontFamily: MONO, fontSize: 20, color: T.white, fontWeight: 700, marginTop: 16 }}>{formatINR(product.price)}</div>
           <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid }}>from</div>
-          {product.marketPrice && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 6, justifyContent: 'flex-end' }}>
-              <span style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.15em' }}>MARKET</span>
-              <span style={{ fontFamily: MONO, fontSize: 9, color: T.gray }}>{formatINR(product.marketPrice)}</span>
-              <span style={{ fontFamily: MONO, fontSize: 8, color: '#4CAF50' }}>↑{product.priceTrend}%</span>
+          {product.pricing && (
+            <div style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.12em', marginTop: 5, textAlign: 'right' }}>
+              LIVE · {formatINR(product.pricing.floor)}–{formatINR(product.pricing.ceiling)}
             </div>
           )}
         </div>
@@ -230,11 +240,12 @@ function FeaturedBanner({ product }) {
           <div style={{ display: 'flex', gap: 32, alignItems: 'flex-end', marginBottom: 24, flexWrap: 'wrap' }}>
             <div>
               <div style={{ fontFamily: MONO, fontSize: 32, color: T.white, fontWeight: 700 }}>{formatINR(product.price)}</div>
-              {product.marketPrice && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 6 }}>
-                  <span style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.2em' }}>MARKET</span>
-                  <span style={{ fontFamily: MONO, fontSize: 11, color: T.gray }}>{formatINR(product.marketPrice)}</span>
-                  <span style={{ fontFamily: MONO, fontSize: 10, color: '#4CAF50', fontWeight: 700 }}>↑{product.priceTrend}%</span>
+              {product.pricing && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
+                  <span style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.2em' }}>LIVE PRICE</span>
+                  <span style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid }}>
+                    {formatINR(product.pricing.floor)} — {formatINR(product.pricing.ceiling)}
+                  </span>
                 </div>
               )}
             </div>

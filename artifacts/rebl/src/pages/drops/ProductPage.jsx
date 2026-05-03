@@ -5,6 +5,7 @@ import { getDemoProduct, demoProducts } from '@/data/demoProducts'
 import { formatINR, useCountdown } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
 import toast from 'react-hot-toast'
+import PriceChart from '@/components/PriceChart'
 
 const T = {
   bg: '#000000', surface: '#050508', card: '#0A0A12',
@@ -39,6 +40,7 @@ export default function ProductPage() {
   const [selectedSize, setSelectedSize] = useState(null)
   const [selectedTier, setSelectedTier] = useState(null)
   const [activeDot, setActiveDot] = useState(0)
+  const [chartOpen, setChartOpen] = useState(false)
 
   const countdown = useCountdown(product?.endDate)
 
@@ -146,14 +148,38 @@ export default function ProductPage() {
             <div style={{ marginBottom: 24 }}>
               <div style={{ fontFamily: MONO, fontSize: 40, color: T.white, fontWeight: 700, letterSpacing: '-1px' }}>{formatINR(product.price)}</div>
               <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, marginTop: 4, letterSpacing: '0.1em' }}>INCLUDES AI VAULT STORY</div>
-              {product.marketPrice && (
-                <div style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 10, marginTop: 12,
-                  padding: '8px 14px', border: `1px solid ${T.border}`, background: T.card,
-                }}>
-                  <span style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.25em' }}>MARKET VALUE</span>
-                  <span style={{ fontFamily: MONO, fontSize: 13, color: T.white }}>{formatINR(product.marketPrice)}</span>
-                  <span style={{ fontFamily: MONO, fontSize: 10, color: '#4CAF50', fontWeight: 700 }}>↑ {product.priceTrend}% ABOVE RETAIL</span>
+              {product.pricing && (
+                <div style={{ marginTop: 14 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#4CAF50', opacity: 0.85 }} />
+                      <span style={{ fontFamily: MONO, fontSize: 8, color: T.gray, letterSpacing: '0.2em' }}>LIVE DYNAMIC PRICE</span>
+                    </div>
+                    <button
+                      onClick={() => setChartOpen(true)}
+                      style={{
+                        background: 'none', border: `1px solid ${T.border}`, color: T.grayMid,
+                        fontFamily: MONO, fontSize: 7, letterSpacing: '0.2em',
+                        padding: '4px 10px', cursor: 'pointer', textTransform: 'uppercase',
+                      }}
+                    >VIEW CHART ↗</button>
+                  </div>
+                  <div style={{ position: 'relative', height: 3, background: T.border, marginBottom: 6 }}>
+                    <div style={{
+                      position: 'absolute', left: 0, top: 0, height: '100%',
+                      width: `${((product.price - product.pricing.floor) / (product.pricing.ceiling - product.pricing.floor)) * 100}%`,
+                      background: T.borderVis,
+                    }} />
+                    <div style={{
+                      position: 'absolute', top: '50%', transform: 'translate(-50%, -50%)',
+                      left: `${((product.price - product.pricing.floor) / (product.pricing.ceiling - product.pricing.floor)) * 100}%`,
+                      width: 8, height: 8, background: T.white, borderRadius: '50%',
+                    }} />
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.1em' }}>FLOOR {formatINR(product.pricing.floor)}</span>
+                    <span style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.1em' }}>CEILING {formatINR(product.pricing.ceiling)}</span>
+                  </div>
                 </div>
               )}
             </div>
@@ -357,6 +383,7 @@ export default function ProductPage() {
           </div>
         </div>
       </div>
+      {chartOpen && <PriceChart product={product} onClose={() => setChartOpen(false)} />}
     </div>
   )
 }
