@@ -3,15 +3,13 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 
-const C = {
-  primary: '#000000',
-  accent: '#A6A6A6',
-  cream: '#FFFFFF',
-  muted: '#555555',
-  gold: '#A6A6A6',
-  card: '#0D0D0D',
-  border: '#1A1A1A',
+const T = {
+  bg: '#000000', card: '#0D0D0D', border: '#1A1A1A', borderVis: '#2D2D2D',
+  white: '#FFFFFF', gray: '#A6A6A6', grayMid: '#555555',
 }
+const DISPLAY = '"Cinzel", Georgia, serif'
+const BODY = '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif'
+const MONO = '"Space Mono", monospace'
 
 export default function CollectorProfile() {
   const { username } = useParams()
@@ -32,24 +30,16 @@ export default function CollectorProfile() {
     async function load() {
       setLoading(true)
       const { data: prof, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('username', username)
-        .single()
-
+        .from('profiles').select('*').eq('username', username).single()
       if (error || !prof) {
         toast.error('Profile not found')
         setLoading(false)
         return
       }
       setProfile(prof)
-
       const { data: its } = await supabase
-        .from('items')
-        .select('*, product_stories(*)')
-        .eq('owner_id', prof.id)
-        .order('created_at', { ascending: false })
-
+        .from('items').select('*, product_stories(*)')
+        .eq('owner_id', prof.id).order('created_at', { ascending: false })
       setItems(its ?? [])
       setLoading(false)
     }
@@ -62,28 +52,25 @@ export default function CollectorProfile() {
   if (loading) return <LoadingScreen />
 
   if (!profile) return (
-    <div style={{ minHeight: '100vh', backgroundColor: C.primary, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ color: C.muted }}>Profile not found.</p>
+    <div style={{ minHeight: '100vh', backgroundColor: T.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <p style={{ fontFamily: BODY, color: T.grayMid }}>Profile not found.</p>
     </div>
   )
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: T.bg, color: T.white, fontFamily: BODY }}>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}} @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}`}</style>
+
       {/* Nav */}
-      <nav style={{ backgroundColor: C.primary, borderBottom: `1px solid ${C.border}`, padding: '0 24px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 50 }}>
-        <Link to="/dashboard" style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 18, letterSpacing: '-0.5px', color: C.cream, textDecoration: 'none' }}>Rēbl</Link>
-        <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontSize: 11, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', letterSpacing: '0.1em', textTransform: 'uppercase', padding: 0 }}>← Back</button>
+      <nav style={{ backgroundColor: T.bg, borderBottom: `1px solid ${T.border}`, padding: '0 24px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 50 }}>
+        <Link to="/dashboard" style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 18, letterSpacing: '-0.5px', color: T.white, textDecoration: 'none' }}>Rēbl</Link>
+        <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', color: T.grayMid, cursor: 'pointer', fontFamily: MONO, fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', padding: 0 }}>← Back</button>
       </nav>
 
-      <div style={{ maxWidth: 960, margin: '0 auto', padding: '32px 20px' }}>
+      <div style={{ maxWidth: 960, margin: '0 auto', padding: '44px 20px 80px' }}>
         <ProfileHeader profile={profile} items={items} verifiedCount={verifiedCount} isOwn={isOwn} />
-
-        <div style={{ marginTop: 40 }}>
-          {items.length === 0 ? (
-            <EmptyState isOwn={isOwn} />
-          ) : (
-            <CollectionGrid items={items} onSelect={setSelectedItem} />
-          )}
+        <div style={{ marginTop: 48 }}>
+          {items.length === 0 ? <EmptyState isOwn={isOwn} /> : <CollectionGrid items={items} onSelect={setSelectedItem} />}
         </div>
       </div>
 
@@ -102,7 +89,7 @@ export default function CollectorProfile() {
   )
 }
 
-/* ─── PROFILE HEADER ─── */
+/* ── Profile Header ── */
 function ProfileHeader({ profile, items, verifiedCount, isOwn }) {
   const initials = (profile.display_name || profile.username || '?')
     .split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
@@ -112,62 +99,66 @@ function ProfileHeader({ profile, items, verifiedCount, isOwn }) {
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 24, flexWrap: 'wrap' }}>
         {/* Avatar */}
         <div style={{
-          width: 80, height: 80, borderRadius: '50%', flexShrink: 0,
-          backgroundColor: 'rgba(230,57,70,0.2)', border: '2px solid rgba(230,57,70,0.4)',
+          width: 72, height: 72, flexShrink: 0,
+          backgroundColor: T.card, border: `1px solid ${T.borderVis}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          overflow: 'hidden', position: 'relative',
+          overflow: 'hidden',
         }}>
           {profile.avatar_url ? (
             <img src={profile.avatar_url} alt={profile.display_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
-            <span style={{ fontSize: 26, fontWeight: 800, color: C.accent }}>{initials}</span>
+            <span style={{ fontFamily: DISPLAY, fontSize: 22, fontWeight: 700, color: T.gray }}>{initials}</span>
           )}
         </div>
 
         {/* Info */}
         <div style={{ flex: 1, minWidth: 200 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-            <h1 style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 800, margin: 0 }}>
+          {profile.archetype && (
+            <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 10 }}>
+              {profile.archetype}
+            </div>
+          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 4 }}>
+            <h1 style={{ fontFamily: DISPLAY, fontSize: 'clamp(18px, 4vw, 26px)', fontWeight: 700, margin: 0, textTransform: 'uppercase', letterSpacing: '-0.3px' }}>
               {profile.display_name || profile.username}
             </h1>
             {profile.is_pro && (
               <span style={{
-                backgroundColor: C.gold, color: C.primary, fontSize: 11, fontWeight: 800,
-                padding: '3px 9px', borderRadius: 100, letterSpacing: 0.5, textTransform: 'uppercase',
+                fontFamily: MONO, backgroundColor: T.white, color: T.bg, fontSize: 9,
+                fontWeight: 700, padding: '3px 10px', letterSpacing: '0.1em', textTransform: 'uppercase',
               }}>PRO</span>
             )}
           </div>
-          <p style={{ color: C.muted, fontSize: 14, margin: '4px 0 8px' }}>@{profile.username}</p>
+          <p style={{ fontFamily: BODY, color: T.grayMid, fontSize: 13, margin: '0 0 8px' }}>@{profile.username}</p>
           {profile.bio && (
-            <p style={{ color: C.cream, fontSize: 15, lineHeight: 1.6, margin: '0 0 12px', maxWidth: 500 }}>{profile.bio}</p>
+            <p style={{ fontFamily: BODY, color: T.white, fontSize: 14, lineHeight: 1.65, margin: '0 0 16px', maxWidth: 500 }}>{profile.bio}</p>
           )}
 
-          {/* Stats row */}
-          <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginTop: 8 }}>
+          {/* Stats */}
+          <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', marginTop: 8 }}>
             {[
               { label: 'Items', value: items.length },
               { label: 'Verified', value: verifiedCount },
               { label: 'Score', value: profile.collector_score ?? 0 },
             ].map(s => (
-              <div key={s.label}>
-                <span style={{ fontWeight: 800, fontSize: 18 }}>{s.value}</span>
-                <span style={{ color: C.muted, fontSize: 13, marginLeft: 5 }}>{s.label}</span>
+              <div key={s.label} style={{ textAlign: 'center' }}>
+                <div style={{ fontFamily: DISPLAY, fontSize: 22, fontWeight: 700, color: T.white, lineHeight: 1 }}>{s.value}</div>
+                <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, marginTop: 5, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{s.label}</div>
               </div>
             ))}
           </div>
 
-          {/* DNA archetype badge */}
-          {profile.archetype && (
+          {/* Archetype + signature */}
+          {(profile.archetype || profile.signature_phrase) && (
             <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 16,
-              backgroundColor: 'rgba(255,183,3,0.1)', border: '1px solid rgba(255,183,3,0.25)',
-              borderRadius: 12, padding: '10px 16px',
+              marginTop: 20, border: `1px solid ${T.borderVis}`,
+              padding: '14px 18px', display: 'inline-flex', alignItems: 'flex-start', gap: 12,
             }}>
-              <span style={{ fontSize: 18 }}>🧬</span>
+              <div style={{ fontFamily: DISPLAY, fontSize: 16, color: T.grayMid, lineHeight: 1, marginTop: 2 }}>◎</div>
               <div>
-                <div style={{ fontWeight: 700, fontSize: 13, color: C.gold }}>{profile.archetype}</div>
+                {profile.archetype && <div style={{ fontFamily: DISPLAY, fontSize: 11, fontWeight: 700, color: T.white, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>{profile.archetype}</div>}
                 {profile.signature_phrase && (
-                  <div style={{ fontSize: 12, color: C.muted, fontStyle: 'italic', marginTop: 2 }}>
+                  <div style={{ fontFamily: BODY, fontSize: 13, color: T.grayMid, fontStyle: 'italic' }}>
                     "{profile.signature_phrase}"
                   </div>
                 )}
@@ -180,7 +171,7 @@ function ProfileHeader({ profile, items, verifiedCount, isOwn }) {
         {isOwn && (
           <div style={{ display: 'flex', gap: 10, flexShrink: 0, flexWrap: 'wrap' }}>
             <Link to="/dashboard" style={ghostBtn}>Edit Profile</Link>
-            <Link to="/add-item" style={redBtn}>+ Add Item</Link>
+            <Link to="/add-item" style={solidBtn}>+ Add Item</Link>
           </div>
         )}
       </div>
@@ -188,18 +179,15 @@ function ProfileHeader({ profile, items, verifiedCount, isOwn }) {
   )
 }
 
-/* ─── COLLECTION GRID ─── */
+/* ── Collection Grid ── */
 function CollectionGrid({ items, onSelect }) {
   return (
     <div>
-      <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 20, color: C.cream }}>
-        Collection <span style={{ color: C.muted, fontWeight: 400, fontSize: 15 }}>({items.length})</span>
-      </h2>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 260px), 1fr))',
-        gap: 16,
-      }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 28 }}>
+        <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.gray, letterSpacing: '0.28em', textTransform: 'uppercase' }}>Collection</div>
+        <span style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.06em' }}>{items.length} pieces</span>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 240px), 1fr))', gap: 1, backgroundColor: T.borderVis }}>
         {items.map(item => (
           <ItemCard key={item.id} item={item} onClick={() => onSelect(item)} />
         ))}
@@ -218,53 +206,51 @@ function ItemCard({ item, onClick }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: 'none', border: `1px solid ${hovered ? 'rgba(230,57,70,0.4)' : C.border}`,
-        borderRadius: 16, overflow: 'hidden', cursor: 'pointer', textAlign: 'left',
-        backgroundColor: C.card, transition: 'border-color 0.2s, transform 0.15s',
-        transform: hovered ? 'translateY(-3px)' : 'none', padding: 0,
+        background: 'none', border: 'none',
+        backgroundColor: hovered ? T.card : T.bg,
+        overflow: 'hidden', cursor: 'pointer', textAlign: 'left',
+        transition: 'background 0.15s', padding: 0, display: 'block', width: '100%',
       }}
     >
-      {/* Image */}
-      <div style={{ aspectRatio: '1/1', backgroundColor: 'rgba(99,44,180,0.15)', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ aspectRatio: '1/1', backgroundColor: T.card, position: 'relative', overflow: 'hidden' }}>
         {item.image_url ? (
           <img src={item.image_url} alt={item.name}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', transform: hovered ? 'scale(1.05)' : 'scale(1)', transition: 'transform 0.3s' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', transform: hovered ? 'scale(1.04)' : 'scale(1)', transition: 'transform 0.3s', display: 'block' }}
           />
         ) : (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40 }}>
-            📦
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: DISPLAY, fontSize: 36, color: T.borderVis }}>
+            ◈
           </div>
         )}
         {item.verified && (
           <div style={{
             position: 'absolute', top: 10, right: 10,
-            backgroundColor: C.accent, borderRadius: 100, width: 26, height: 26,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 12,
-          }}>✓</div>
+            backgroundColor: T.bg, border: `1px solid ${T.gray}`,
+            padding: '3px 8px', fontFamily: MONO, fontSize: 8, fontWeight: 700, color: T.gray,
+            letterSpacing: '0.08em', textTransform: 'uppercase',
+          }}>◈ VFD</div>
         )}
         {item.rarity_score >= 90 && (
           <div style={{
             position: 'absolute', top: 10, left: 10,
-            backgroundColor: C.gold, color: C.primary, borderRadius: 100,
-            padding: '3px 8px', fontSize: 10, fontWeight: 800,
+            backgroundColor: T.white, color: T.bg,
+            padding: '3px 8px', fontFamily: MONO, fontSize: 8, fontWeight: 800, letterSpacing: '0.1em',
           }}>RARE</div>
         )}
       </div>
 
-      {/* Info */}
-      <div style={{ padding: '14px 16px' }}>
-        <div style={{ fontWeight: 700, fontSize: 15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: C.cream }}>
+      <div style={{ padding: '14px 16px 18px' }}>
+        <div style={{ fontFamily: BODY, fontWeight: 700, fontSize: 14, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: T.white, marginBottom: 4 }}>
           {item.name}
         </div>
-        <div style={{ color: C.muted, fontSize: 13, marginTop: 3 }}>{item.brand}</div>
+        <div style={{ fontFamily: MONO, color: T.grayMid, fontSize: 9, letterSpacing: '0.06em', textTransform: 'uppercase' }}>{item.brand}</div>
 
         {tags.length > 0 && (
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 10 }}>
             {tags.slice(0, 3).map(tag => (
               <span key={tag} style={{
-                backgroundColor: 'rgba(141,153,174,0.12)', color: C.muted,
-                borderRadius: 100, padding: '3px 10px', fontSize: 11, fontWeight: 500,
+                fontFamily: MONO, color: T.grayMid, border: `1px solid ${T.border}`,
+                padding: '2px 8px', fontSize: 8, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase',
               }}>{tag}</span>
             ))}
           </div>
@@ -274,7 +260,7 @@ function ItemCard({ item, onClick }) {
   )
 }
 
-/* ─── ITEM MODAL ─── */
+/* ── Item Modal ── */
 function ItemModal({ item, isOwn, onClose, onStoryUpdated }) {
   const [editingStory, setEditingStory] = useState(false)
   const [storyText, setStoryText] = useState(item.user_story || '')
@@ -294,10 +280,7 @@ function ItemModal({ item, isOwn, onClose, onStoryUpdated }) {
 
   async function saveStory() {
     setSaving(true)
-    const { error } = await supabase
-      .from('items')
-      .update({ user_story: storyText })
-      .eq('id', item.id)
+    const { error } = await supabase.from('items').update({ user_story: storyText }).eq('id', item.id)
     setSaving(false)
     if (error) { toast.error('Failed to save'); return }
     toast.success('Story saved!')
@@ -308,145 +291,121 @@ function ItemModal({ item, isOwn, onClose, onStoryUpdated }) {
   const rarityPct = item.rarity_score ?? 0
 
   return (
-    <div
-      ref={overlayRef}
-      onClick={handleOverlayClick}
-      style={{
-        position: 'fixed', inset: 0, zIndex: 200,
-        backgroundColor: 'rgba(0,0,0,0.7)',
-        backdropFilter: 'blur(4px)',
-        display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-        // On wider screens center it
-        padding: 'clamp(0px, 5vw, 60px)',
-      }}
-    >
+    <div ref={overlayRef} onClick={handleOverlayClick} style={{
+      position: 'fixed', inset: 0, zIndex: 200,
+      backgroundColor: 'rgba(0,0,0,0.82)',
+      display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+      padding: 'clamp(0px, 5vw, 60px)',
+    }}>
       <div style={{
-        backgroundColor: C.card, borderRadius: 'clamp(20px, 3vw, 24px)',
-        width: '100%', maxWidth: 640,
+        backgroundColor: T.card, width: '100%', maxWidth: 640,
         maxHeight: '90vh', overflowY: 'auto',
-        border: `1px solid ${C.border}`,
-        // On mobile full-width bottom sheet feel
-        marginBottom: 0,
+        border: `1px solid ${T.borderVis}`, borderBottom: 'none',
       }}>
-        {/* Close handle / button */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px 0' }}>
-          <div style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.15)', margin: '0 auto' }} />
+        {/* Close */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '14px 18px 0' }}>
+          <button onClick={onClose} style={{
+            background: 'rgba(255,255,255,0.06)', border: `1px solid ${T.borderVis}`, color: T.white,
+            width: 32, height: 32, cursor: 'pointer', fontSize: 16, fontFamily: MONO,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>×</button>
         </div>
-        <button onClick={onClose} style={{
-          position: 'absolute', top: 16, right: 20,
-          background: 'rgba(255,255,255,0.08)', border: 'none', color: C.cream,
-          width: 32, height: 32, borderRadius: '50%', cursor: 'pointer', fontSize: 16,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>×</button>
 
         {/* Image */}
-        <div style={{ aspectRatio: '16/9', backgroundColor: 'rgba(99,44,180,0.15)', overflow: 'hidden' }}>
+        <div style={{ aspectRatio: '16/9', backgroundColor: T.bg, overflow: 'hidden', margin: '0 0 0' }}>
           {item.image_url ? (
-            <img src={item.image_url} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={item.image_url} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           ) : (
-            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 60 }}>◈</div>
+            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: DISPLAY, fontSize: 56, color: T.borderVis }}>◈</div>
           )}
         </div>
 
         <div style={{ padding: '24px 24px 32px' }}>
           {/* Header */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap', marginBottom: 20 }}>
             <div>
-              <h2 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 4px' }}>{item.name}</h2>
-              <p style={{ color: C.muted, margin: 0, fontSize: 14 }}>{item.brand}{item.edition ? ` · ${item.edition}` : ''}</p>
+              <h2 style={{ fontFamily: DISPLAY, fontSize: 20, fontWeight: 700, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: '-0.3px' }}>{item.name}</h2>
+              <p style={{ fontFamily: BODY, color: T.grayMid, margin: 0, fontSize: 13 }}>{item.brand}{item.edition ? ` · ${item.edition}` : ''}</p>
               {item.serial_number && (
-                <p style={{ color: C.muted, fontSize: 12, margin: '4px 0 0', fontFamily: 'monospace' }}>
-                  #{item.serial_number}
-                </p>
+                <p style={{ fontFamily: MONO, color: T.grayMid, fontSize: 10, margin: '4px 0 0', letterSpacing: '0.06em' }}>#{item.serial_number}</p>
               )}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
-              {item.verified && (
-                <div style={{
-                  display: 'flex', alignItems: 'center', gap: 6,
-                  backgroundColor: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.25)',
-                  borderRadius: 100, padding: '5px 12px',
-                }}>
-                  <div style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#4ade80' }} />
-                  <span style={{ fontSize: 12, fontWeight: 700, color: '#4ade80' }}>Verified</span>
-                </div>
-              )}
-              {item.estimated_value && (
-                <span style={{ fontWeight: 700, fontSize: 18, color: C.gold }}>
-                  ${item.estimated_value.toLocaleString()}
-                </span>
-              )}
-            </div>
+            {item.verified && (
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                border: `1px solid ${T.borderVis}`, padding: '5px 12px',
+              }}>
+                <div style={{ width: 6, height: 6, backgroundColor: T.gray }} />
+                <span style={{ fontFamily: MONO, fontSize: 9, fontWeight: 700, color: T.gray, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Verified</span>
+              </div>
+            )}
           </div>
 
-          {/* Rarity bar */}
+          {/* Rarity */}
           {rarityPct > 0 && (
-            <div style={{ marginTop: 20 }}>
+            <div style={{ marginBottom: 24 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                <span style={{ fontSize: 12, color: C.muted, fontWeight: 600 }}>RARITY SCORE</span>
-                <span style={{ fontSize: 12, fontWeight: 800, color: rarityPct >= 90 ? C.gold : C.cream }}>{rarityPct}/100</span>
+                <span style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Rarity Score</span>
+                <span style={{ fontFamily: MONO, fontSize: 9, fontWeight: 800, color: rarityPct >= 90 ? T.white : T.gray }}>{rarityPct}/100</span>
               </div>
-              <div style={{ height: 6, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 3 }}>
+              <div style={{ height: 2, backgroundColor: T.borderVis }}>
                 <div style={{
-                  height: '100%', borderRadius: 3, transition: 'width 0.6s ease',
-                  width: `${rarityPct}%`,
-                  backgroundColor: rarityPct >= 90 ? C.gold : rarityPct >= 70 ? C.accent : C.muted,
+                  height: '100%', transition: 'width 0.6s ease',
+                  width: `${rarityPct}%`, backgroundColor: T.white,
                 }} />
               </div>
             </div>
           )}
 
-          <Divider />
+          <div style={{ height: 1, backgroundColor: T.border, margin: '0 0 24px' }} />
 
           {/* Brand Story */}
           {story && (
             <div style={{ marginBottom: 28 }}>
-              <SectionLabel>Brand Story</SectionLabel>
-              {story.headline && (
-                <h3 style={{ fontSize: 20, fontWeight: 800, margin: '12px 0 10px', lineHeight: 1.2 }}>{story.headline}</h3>
-              )}
-              {story.origin && (
-                <p style={{ color: C.muted, fontSize: 15, lineHeight: 1.7, margin: '0 0 10px' }}>{story.origin}</p>
-              )}
+              <div style={{ fontFamily: MONO, fontSize: 9, fontWeight: 700, color: T.grayMid, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 16, height: 1, backgroundColor: T.grayMid }} /> Brand Story
+              </div>
+              {story.headline && <h3 style={{ fontFamily: DISPLAY, fontSize: 17, fontWeight: 700, margin: '0 0 10px', lineHeight: 1.3, textTransform: 'uppercase', letterSpacing: '-0.2px' }}>{story.headline}</h3>}
+              {story.origin && <p style={{ fontFamily: BODY, color: T.grayMid, fontSize: 14, lineHeight: 1.7, margin: '0 0 10px' }}>{story.origin}</p>}
               {story.why_limited && (
-                <p style={{ color: C.cream, fontSize: 14, lineHeight: 1.7, fontStyle: 'italic', borderLeft: `3px solid ${C.accent}`, paddingLeft: 14, margin: 0 }}>
+                <p style={{ fontFamily: BODY, color: T.white, fontSize: 13, lineHeight: 1.7, fontStyle: 'italic', borderLeft: `2px solid ${T.gray}`, paddingLeft: 14, margin: 0 }}>
                   {story.why_limited}
                 </p>
               )}
-              <Divider />
+              <div style={{ height: 1, backgroundColor: T.border, margin: '24px 0' }} />
             </div>
           )}
 
           {/* Collector Story */}
           <div style={{ marginBottom: 24 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <SectionLabel>Collector Story</SectionLabel>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+              <div style={{ fontFamily: MONO, fontSize: 9, fontWeight: 700, color: T.grayMid, letterSpacing: '0.15em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 16, height: 1, backgroundColor: T.grayMid }} /> Collector Story
+              </div>
               {isOwn && !item.user_story && !editingStory && (
                 <button onClick={() => setEditingStory(true)} style={{
-                  backgroundColor: 'rgba(230,57,70,0.12)', border: '1px solid rgba(230,57,70,0.25)',
-                  color: C.accent, borderRadius: 8, padding: '6px 14px', fontSize: 13,
-                  fontWeight: 600, cursor: 'pointer',
-                }}>Edit Your Story</button>
+                  fontFamily: MONO, border: `1px solid ${T.borderVis}`,
+                  backgroundColor: 'transparent', color: T.gray, padding: '5px 12px', fontSize: 9,
+                  fontWeight: 600, cursor: 'pointer', letterSpacing: '0.06em', textTransform: 'uppercase',
+                }}>Edit Story ◈</button>
               )}
             </div>
 
             {editingStory ? (
               <div>
                 <textarea
-                  value={storyText}
-                  onChange={e => setStoryText(e.target.value)}
+                  value={storyText} onChange={e => setStoryText(e.target.value)}
                   placeholder="Write your personal story about this piece..."
                   rows={5}
                   style={{
-                    width: '100%', backgroundColor: C.primary, color: C.cream,
-                    border: `1px solid rgba(230,57,70,0.4)`, borderRadius: 10,
-                    padding: '12px 14px', fontSize: 14, lineHeight: 1.65,
-                    resize: 'vertical', outline: 'none', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif',
-                    boxSizing: 'border-box',
+                    width: '100%', backgroundColor: T.bg, color: T.white,
+                    border: `1px solid ${T.borderVis}`, padding: '12px 14px',
+                    fontSize: 14, lineHeight: 1.65, resize: 'vertical', outline: 'none',
+                    fontFamily: BODY, boxSizing: 'border-box',
                   }}
                 />
                 <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
-                  <button onClick={saveStory} disabled={saving} style={{ ...redBtn, flex: 1, cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1, border: 'none' }}>
+                  <button onClick={saveStory} disabled={saving} style={{ ...solidBtn, flex: 1, cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1, border: 'none' }}>
                     {saving ? 'Saving…' : 'Save Story'}
                   </button>
                   <button onClick={() => setEditingStory(false)} style={{ ...ghostBtn, flex: 1, cursor: 'pointer' }}>Cancel</button>
@@ -454,56 +413,48 @@ function ItemModal({ item, isOwn, onClose, onStoryUpdated }) {
               </div>
             ) : displayStory ? (
               <div>
-                <p style={{ color: C.cream, fontSize: 15, lineHeight: 1.75, margin: 0 }}>{displayStory}</p>
+                <p style={{ fontFamily: BODY, color: T.white, fontSize: 14, lineHeight: 1.75, margin: 0 }}>{displayStory}</p>
                 {item.user_story && isOwn && (
                   <button onClick={() => { setEditingStory(true); setStoryText(item.user_story) }} style={{
-                    background: 'none', border: 'none', color: C.muted, fontSize: 13,
-                    cursor: 'pointer', padding: 0, marginTop: 8, textDecoration: 'underline',
-                  }}>Edit</button>
+                    background: 'none', border: 'none', color: T.grayMid, fontFamily: MONO, fontSize: 9,
+                    cursor: 'pointer', padding: 0, marginTop: 10, letterSpacing: '0.06em', textTransform: 'uppercase',
+                  }}>◈ Edit</button>
                 )}
               </div>
             ) : (
-              <p style={{ color: C.muted, fontSize: 14, fontStyle: 'italic' }}>No story yet.</p>
+              <p style={{ fontFamily: BODY, color: T.grayMid, fontSize: 14, fontStyle: 'italic' }}>No story yet.</p>
             )}
           </div>
 
-          {/* Meta row */}
-          <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginBottom: 20 }}>
-            {item.acquired_date && (
-              <div>
-                <div style={{ fontSize: 11, color: C.muted, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 3 }}>Acquired</div>
-                <div style={{ fontSize: 14, fontWeight: 600 }}>{new Date(item.acquired_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
-              </div>
-            )}
-          </div>
+          {/* Meta */}
+          {item.acquired_date && (
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Acquired</div>
+              <div style={{ fontFamily: MONO, fontSize: 12, fontWeight: 600 }}>{new Date(item.acquired_date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+            </div>
+          )}
 
           {/* Vibe tags */}
           {item.vibe_tags?.length > 0 && (
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 24 }}>
               {item.vibe_tags.map(tag => (
                 <span key={tag} style={{
-                  backgroundColor: 'rgba(141,153,174,0.12)', color: C.muted,
-                  borderRadius: 100, padding: '5px 14px', fontSize: 13, fontWeight: 500,
+                  fontFamily: MONO, color: T.grayMid, border: `1px solid ${T.border}`,
+                  padding: '4px 12px', fontSize: 9, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase',
                 }}>{tag}</span>
               ))}
             </div>
           )}
 
           {/* Owner Room CTA */}
-          <a
-            href={item.owner_room_url || '#'}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-              width: '100%', backgroundColor: 'rgba(88,101,242,0.15)',
-              border: '1px solid rgba(88,101,242,0.3)',
-              color: '#818cf8', textDecoration: 'none', borderRadius: 12,
-              padding: '14px', fontWeight: 700, fontSize: 15,
-              boxSizing: 'border-box',
-            }}
-          >
-            <span style={{ fontSize: 18 }}>🏠</span> Join Owner Room
+          <a href={item.owner_room_url || '#'} target="_blank" rel="noopener noreferrer" style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+            width: '100%', backgroundColor: T.white, border: 'none',
+            color: T.bg, textDecoration: 'none', padding: '14px',
+            fontFamily: MONO, fontWeight: 700, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase',
+            boxSizing: 'border-box',
+          }}>
+            ◎ Join Owner Room
           </a>
         </div>
       </div>
@@ -511,68 +462,47 @@ function ItemModal({ item, isOwn, onClose, onStoryUpdated }) {
   )
 }
 
-/* ─── EMPTY STATE ─── */
+/* ── Empty State ── */
 function EmptyState({ isOwn }) {
   return (
     <div style={{ textAlign: 'center', padding: '80px 24px' }}>
-      <div style={{ fontSize: 56, marginBottom: 20 }}>◈</div>
-      <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>
+      <div style={{ fontFamily: DISPLAY, fontSize: 48, color: T.grayMid, marginBottom: 20 }}>◈</div>
+      <h2 style={{ fontFamily: DISPLAY, fontSize: 18, fontWeight: 700, marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
         {isOwn ? 'Your collection starts here.' : 'Nothing here yet.'}
       </h2>
-      <p style={{ color: C.muted, fontSize: 15, marginBottom: 32 }}>
-        {isOwn ? 'Add your first item and start building your vault.' : 'This collector hasn\'t added anything yet.'}
+      <p style={{ fontFamily: BODY, color: T.grayMid, fontSize: 14, marginBottom: 32 }}>
+        {isOwn ? 'Add your first item and start building your vault.' : "This collector hasn't added anything yet."}
       </p>
       {isOwn && (
-        <Link to="/add-item" style={redBtn}>Add First Item</Link>
+        <Link to="/add-item" style={solidBtn}>Add First Item</Link>
       )}
     </div>
   )
 }
 
-/* ─── HELPERS ─── */
+/* ── Loading ── */
 function LoadingScreen() {
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: C.primary, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: T.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-        <div style={{
-          width: 36, height: 36, border: `3px solid rgba(230,57,70,0.2)`,
-          borderTopColor: C.accent, borderRadius: '50%',
-          animation: 'spin 0.7s linear infinite',
-        }} />
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        <span style={{ color: C.muted, fontSize: 14 }}>Loading profile…</span>
+        <div style={{ width: 28, height: 28, border: `1px solid #2D2D2D`, borderTopColor: T.gray, borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+        <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: T.grayMid, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Loading profile…</span>
       </div>
     </div>
   )
 }
 
-function Divider() {
-  return <div style={{ height: 1, backgroundColor: C.border, margin: '24px 0' }} />
-}
-
-function SectionLabel({ children }) {
-  return (
-    <div style={{
-      display: 'inline-flex', alignItems: 'center', gap: 8,
-      fontSize: 11, fontWeight: 700, color: C.accent,
-      letterSpacing: 1.5, textTransform: 'uppercase',
-    }}>
-      <div style={{ width: 16, height: 2, backgroundColor: C.accent }} />
-      {children}
-    </div>
-  )
-}
-
-const redBtn = {
-  display: 'inline-block', backgroundColor: C.accent, color: C.cream,
-  textDecoration: 'none', fontWeight: 700, fontSize: 14,
-  padding: '10px 20px', borderRadius: 10, border: 'none',
-  textAlign: 'center',
+const solidBtn = {
+  display: 'inline-block', backgroundColor: T.white, color: T.bg,
+  textDecoration: 'none', fontFamily: '"Space Mono", monospace', fontWeight: 700, fontSize: 11,
+  padding: '11px 22px', border: 'none', textAlign: 'center',
+  letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer',
 }
 
 const ghostBtn = {
-  display: 'inline-block', color: C.cream, textDecoration: 'none',
-  fontWeight: 600, fontSize: 14, padding: '10px 20px', borderRadius: 10,
-  border: `1px solid rgba(255,255,255,0.18)`, backgroundColor: 'transparent',
-  textAlign: 'center',
+  display: 'inline-block', backgroundColor: 'transparent', color: T.gray,
+  textDecoration: 'none', fontFamily: '"Space Mono", monospace', fontWeight: 600, fontSize: 10,
+  padding: '10px 20px', border: `1px solid #2D2D2D`, textAlign: 'center',
+  letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer',
 }

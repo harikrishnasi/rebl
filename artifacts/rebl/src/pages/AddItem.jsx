@@ -1,23 +1,25 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { supabase } from '@/lib/supabase'
 import { callGeminiAPI } from '@/lib/gemini'
 
-const C = {
-  primary: '#000000', accent: '#A6A6A6', cream: '#FFFFFF',
-  muted: '#555555', gold: '#A6A6A6', card: '#0D0D0D',
-  border: '#1A1A1A',
+const T = {
+  bg: '#000000', card: '#0D0D0D', border: '#1A1A1A', borderVis: '#2D2D2D',
+  white: '#FFFFFF', gray: '#A6A6A6', grayMid: '#555555',
 }
+const DISPLAY = '"Cinzel", Georgia, serif'
+const BODY = '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif'
+const MONO = '"Space Mono", monospace'
 
 const CATEGORIES = [
   { value: 'sneakers',        label: 'Sneakers' },
-  { value: 'streetwear',      label: '🧢 Streetwear' },
+  { value: 'streetwear',      label: 'Streetwear' },
   { value: 'luxury_fashion',  label: 'Luxury Fashion' },
   { value: 'watches',         label: 'Watches' },
   { value: 'art',             label: 'Art' },
-  { value: 'electronics',     label: '📱 Electronics' },
-  { value: 'concert_tickets', label: '🎫 Concert Tickets' },
+  { value: 'electronics',     label: 'Electronics' },
+  { value: 'concert_tickets', label: 'Concert Tickets' },
   { value: 'trading_cards',   label: 'Trading Cards' },
   { value: 'vinyl',           label: 'Vinyl' },
   { value: 'other',           label: 'Other' },
@@ -29,22 +31,26 @@ const VIBE_TAGS = [
   'Statement Piece', 'Heritage', 'Underrated', 'Collab Alert', 'One of a Kind',
 ]
 
-/* Verification overlay messages */
 const VERIFY_STEPS = [
-  { icon: '📡', label: 'Confirming with brand partner…',       ms: 2400 },
-  { icon: '🔍', label: 'Verifying photo with AI…',             ms: 2200 },
-  { icon: '🔐', label: 'Cross-checking authenticity signals…', ms: 2000 },
-  { icon: '⚡', label: 'Only real Rebls make it past this.',   ms: 1800, gold: true },
+  { sym: '◈', label: 'Confirming with brand partner…',       ms: 2400 },
+  { sym: '◎', label: 'Verifying photo with AI…',             ms: 2200 },
+  { sym: '⊕', label: 'Cross-checking authenticity signals…', ms: 2000 },
+  { sym: '✦', label: 'Only real Rebls make it past this.',   ms: 1800, gold: true },
 ]
 
-/* ══════════════════════════════════════════════════════ */
+const inputStyle = {
+  width: '100%', backgroundColor: T.card, color: T.white,
+  border: `1px solid ${T.border}`,
+  padding: '11px 14px', fontSize: 14, outline: 'none',
+  fontFamily: BODY, boxSizing: 'border-box',
+  transition: 'border-color 0.2s',
+}
 
 export default function AddItem() {
   const navigate = useNavigate()
   const [step, setStep]       = useState(1)
   const [profile, setProfile] = useState(null)
 
-  /* Step 1 */
   const [form, setForm] = useState({
     name: '', brand: '', edition: '', serialNumber: '',
     category: '', purchaseDate: '', purchasePrice: '',
@@ -54,17 +60,15 @@ export default function AddItem() {
   const [vibeTags, setVibeTags]         = useState([])
   const [customTag, setCustomTag]       = useState('')
 
-  /* Step 2 */
-  const [userStory, setUserStory]   = useState('')     // what the user typed
-  const [aiStory, setAiStory]       = useState('')     // AI-enhanced version
-  const [finalStory, setFinalStory] = useState('')     // what gets saved
+  const [userStory, setUserStory]   = useState('')
+  const [aiStory, setAiStory]       = useState('')
+  const [finalStory, setFinalStory] = useState('')
   const [enhancing, setEnhancing]   = useState(false)
 
-  /* Verification overlay */
   const [verifying, setVerifying]   = useState(false)
   const [verifyStep, setVerifyStep] = useState(0)
   const [verifyDone, setVerifyDone] = useState(false)
-  const saveResultRef               = useRef(null)     // {ok, err}
+  const saveResultRef               = useRef(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
@@ -75,7 +79,6 @@ export default function AddItem() {
     })
   }, [])
 
-  /* ── helpers ── */
   function setField(k, v) { setForm(f => ({ ...f, [k]: v })) }
 
   function handleImageChange(e) {
@@ -96,14 +99,12 @@ export default function AddItem() {
     setCustomTag('')
   }
 
-  /* ── Step 1 → 2 ── */
   function handleStep1Submit(e) {
     e.preventDefault()
-    if (!imageFile) { toast.error('Photo is required — tap the camera to take a shot.'); return }
+    if (!imageFile) { toast.error('Photo is required — tap the camera icon to take a shot.'); return }
     setStep(2)
   }
 
-  /* ── AI Enhance ── */
   async function handleEnhance() {
     if (!userStory.trim()) { toast.error('Write your story first, then let AI build on it.'); return }
     setEnhancing(true)
@@ -111,7 +112,6 @@ export default function AddItem() {
       const system = `You are a story enhancer for Rebl, a premium collector platform in India. 
 You receive a collector's personal story and enrich it — preserving their exact voice, memories, and feelings. 
 Never change perspective. Add 2-3 sentences of cultural/historical context about the item or brand. Max 220 words.`
-
       const prompt = `Item: ${form.name} by ${form.brand}${form.edition ? ` (${form.edition})` : ''}
 Category: ${form.category || 'collectible'}
 
@@ -119,7 +119,6 @@ Collector's own story:
 "${userStory.trim()}"
 
 Enhance this. Keep their voice and every personal detail. Add cultural context. Output only the enriched story — no labels, no headers.`
-
       const enhanced = await callGeminiAPI(prompt, system)
       setAiStory(enhanced)
       setFinalStory(enhanced)
@@ -130,12 +129,10 @@ Enhance this. Keep their voice and every personal detail. Add cultural context. 
     }
   }
 
-  /* ── Save (runs in background during verification overlay) ── */
   async function doSave() {
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) throw new Error('Not logged in')
-
       let imageUrl = null
       if (imageFile) {
         const ext = imageFile.name.split('.').pop()
@@ -146,9 +143,7 @@ Enhance this. Keep their voice and every personal detail. Add cultural context. 
         const { data: urlData } = supabase.storage.from('item-images').getPublicUrl(path)
         imageUrl = urlData.publicUrl
       }
-
       const storyToSave = finalStory || userStory
-
       const { error } = await supabase.from('items').insert({
         owner_id:      session.user.id,
         name:          form.name,
@@ -164,7 +159,6 @@ Enhance this. Keep their voice and every personal detail. Add cultural context. 
         vibe_tags:     vibeTags,
         verified:      false,
       })
-
       if (error) throw error
       saveResultRef.current = { ok: true }
     } catch (err) {
@@ -172,7 +166,6 @@ Enhance this. Keep their voice and every personal detail. Add cultural context. 
     }
   }
 
-  /* ── Trigger verification overlay ── */
   function handleAddToVault() {
     if (!userStory.trim() && !finalStory.trim()) {
       toast.error('Write at least a few words about your piece.')
@@ -182,24 +175,17 @@ Enhance this. Keep their voice and every personal detail. Add cultural context. 
     setVerifyStep(0)
     setVerifyDone(false)
     setVerifying(true)
-
-    // Start actual save immediately in background
     doSave()
-
-    // Run through verification step timers
     let elapsed = 0
     VERIFY_STEPS.forEach((vs, i) => {
       setTimeout(() => setVerifyStep(i), elapsed)
       elapsed += vs.ms
     })
-    // After all steps, mark done
     setTimeout(() => setVerifyDone(true), elapsed + 400)
   }
 
-  /* ── After verification animation completes ── */
   useEffect(() => {
     if (!verifyDone) return
-    // Poll until save finishes (usually already done)
     const poll = setInterval(() => {
       if (saveResultRef.current !== null) {
         clearInterval(poll)
@@ -219,52 +205,51 @@ Enhance this. Keep their voice and every personal detail. Add cultural context. 
     return () => clearInterval(poll)
   }, [verifyDone])
 
-  /* ── Render ── */
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: T.bg, color: T.white, fontFamily: BODY }}>
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
         @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
-        @keyframes barGrow { from { width:0; } to { width:100%; } }
+        input::placeholder, textarea::placeholder { color: ${T.grayMid}; }
+        select option { background: ${T.card}; }
       `}</style>
 
-      {/* ── Verification Overlay ── */}
       {verifying && <VerifyOverlay step={verifyStep} done={verifyDone} />}
 
       {/* ── Nav ── */}
-      <div style={{ padding: '16px 20px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', gap: 16 }}>
-        <button
-          onClick={() => step > 1 ? setStep(s => s - 1) : navigate(-1)}
-          style={{ background: 'none', border: 'none', color: C.muted, cursor: 'pointer', fontSize: 14, padding: 0 }}>
+      <div style={{ padding: '0 20px', borderBottom: `1px solid ${T.border}`, height: 56, display: 'flex', alignItems: 'center', gap: 16 }}>
+        <button onClick={() => step > 1 ? setStep(s => s - 1) : navigate(-1)}
+          style={{ background: 'none', border: 'none', color: T.grayMid, cursor: 'pointer', fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', padding: 0 }}>
           ← Back
         </button>
-        <span style={{ fontWeight: 700, fontSize: 16 }}>Add to Vault</span>
+        <span style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Add to Vault</span>
       </div>
 
-      {/* ── Progress bar ── */}
-      <div style={{ padding: '14px 20px', backgroundColor: C.card, borderBottom: `1px solid ${C.border}` }}>
+      {/* ── Progress ── */}
+      <div style={{ padding: '16px 20px', backgroundColor: T.card, borderBottom: `1px solid ${T.border}` }}>
         <div style={{ maxWidth: 600, margin: '0 auto', display: 'flex', alignItems: 'center' }}>
           {['Your Piece', 'Your Story'].map((label, i) => {
             const s = i + 1
             return (
               <div key={s} style={{ display: 'flex', alignItems: 'center', flex: i < 1 ? 1 : 'none' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <div style={{
-                    width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
-                    backgroundColor: step >= s ? C.accent : 'rgba(255,255,255,0.08)',
+                    width: 26, height: 26, flexShrink: 0,
+                    backgroundColor: step >= s ? T.white : 'rgba(255,255,255,0.06)',
+                    border: `1px solid ${step >= s ? T.white : T.borderVis}`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 12, fontWeight: 800, color: step > s ? C.cream : step === s ? C.cream : C.muted,
-                    transition: 'all 0.3s',
+                    fontFamily: MONO, fontSize: 10, fontWeight: 700,
+                    color: step >= s ? T.bg : T.grayMid, transition: 'all 0.3s',
                   }}>
-                    {step > s ? '✓' : s}
+                    {step > s ? '◈' : s}
                   </div>
-                  <span style={{ fontSize: 12, fontWeight: step === s ? 700 : 400, color: step >= s ? C.cream : C.muted }}>
+                  <span style={{ fontFamily: BODY, fontSize: 12, fontWeight: step === s ? 600 : 400, color: step >= s ? T.white : T.grayMid }}>
                     {label}
                   </span>
                 </div>
                 {i < 1 && (
-                  <div style={{ flex: 1, height: 2, margin: '0 12px', backgroundColor: step > s ? C.accent : 'rgba(255,255,255,0.08)', transition: 'background 0.3s' }} />
+                  <div style={{ flex: 1, height: 1, margin: '0 14px', backgroundColor: step > s ? T.white : T.borderVis, transition: 'background 0.3s' }} />
                 )}
               </div>
             )
@@ -272,7 +257,7 @@ Enhance this. Keep their voice and every personal detail. Add cultural context. 
         </div>
       </div>
 
-      <div style={{ maxWidth: 600, margin: '0 auto', padding: '32px 20px 100px' }}>
+      <div style={{ maxWidth: 600, margin: '0 auto', padding: '36px 20px 100px' }}>
         {step === 1 && (
           <Step1
             form={form} setField={setField}
@@ -296,9 +281,7 @@ Enhance this. Keep their voice and every personal detail. Add cultural context. 
   )
 }
 
-/* ══════════════════════════════════════════════════════
-   VERIFICATION OVERLAY
-══════════════════════════════════════════════════════ */
+/* ── Verification Overlay ── */
 function VerifyOverlay({ step, done }) {
   const total = VERIFY_STEPS.length
   const progress = done ? 100 : Math.round(((step + 0.5) / total) * 100)
@@ -306,52 +289,40 @@ function VerifyOverlay({ step, done }) {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 999,
-      backgroundColor: '#08080f',
+      backgroundColor: '#060606',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       padding: 32,
     }}>
-      {/* Wordmark */}
-      <div style={{ fontFamily: '"Poppins", sans-serif', fontSize: 20, fontWeight: 800, letterSpacing: '-0.5px', marginBottom: 56, opacity: 0.5, color: '#FFFFFF' }}>Rēbl</div>
+      <div style={{ fontFamily: '"Poppins", sans-serif', fontSize: 20, fontWeight: 800, letterSpacing: '-0.5px', marginBottom: 56, opacity: 0.5, color: T.white }}>Rēbl</div>
 
-      {/* Icon ring */}
-      <div style={{ position: 'relative', width: 88, height: 88, marginBottom: 40 }}>
-        <div style={{
-          width: 88, height: 88, borderRadius: '50%',
-          border: `3px solid rgba(230,57,70,0.15)`,
-          borderTopColor: done ? C.gold : C.accent,
-          animation: done ? 'none' : 'spin 1s linear infinite',
-          transition: 'border-top-color 0.4s',
-        }} />
-        <div style={{
-          position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 32,
-          animation: 'fadeUp 0.3s ease',
-          key: step,
-        }}>
-          {done ? '✦' : VERIFY_STEPS[step]?.icon}
+      {/* Symbol */}
+      <div style={{ width: 80, height: 80, border: `1px solid ${T.borderVis}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 40, position: 'relative' }}>
+        <div style={{ position: 'absolute', inset: -4, border: `1px solid ${done ? T.white : T.gray}`, opacity: done ? 1 : 0.4, transition: 'opacity 0.4s' }} />
+        <div style={{ fontFamily: DISPLAY, fontSize: 32, color: done ? T.white : T.gray, transition: 'color 0.4s', animation: 'fadeUp 0.3s ease' }}>
+          {done ? '✦' : VERIFY_STEPS[step]?.sym}
         </div>
       </div>
 
-      {/* Message sequence */}
+      {/* Message */}
       <div style={{ minHeight: 80, textAlign: 'center', marginBottom: 40 }}>
         {done ? (
           <div style={{ animation: 'fadeUp 0.4s ease' }}>
-            <div style={{ fontSize: 22, fontWeight: 900, color: C.gold, letterSpacing: -0.3, marginBottom: 6 }}>
+            <div style={{ fontFamily: DISPLAY, fontSize: 20, fontWeight: 700, color: T.white, letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 8 }}>
               Verified. ✦
             </div>
-            <div style={{ color: C.muted, fontSize: 14 }}>Adding to your vault…</div>
+            <div style={{ fontFamily: BODY, color: T.grayMid, fontSize: 14 }}>Adding to your vault…</div>
           </div>
         ) : (
           <div key={step} style={{ animation: 'fadeUp 0.35s ease' }}>
             <div style={{
-              fontSize: 18, fontWeight: 700,
-              color: VERIFY_STEPS[step]?.gold ? C.gold : C.cream,
-              marginBottom: 8, lineHeight: 1.3,
+              fontFamily: BODY, fontSize: 16, fontWeight: 600,
+              color: VERIFY_STEPS[step]?.gold ? T.gray : T.white,
+              marginBottom: 8, lineHeight: 1.4,
             }}>
               {VERIFY_STEPS[step]?.label}
             </div>
             {VERIFY_STEPS[step]?.gold && (
-              <div style={{ color: C.muted, fontSize: 13, fontStyle: 'italic', animation: 'pulse 1.5s ease infinite' }}>
+              <div style={{ fontFamily: MONO, color: T.grayMid, fontSize: 11, animation: 'pulse 1.5s ease infinite', letterSpacing: '0.06em' }}>
                 Authenticating your ownership…
               </div>
             )}
@@ -360,95 +331,80 @@ function VerifyOverlay({ step, done }) {
       </div>
 
       {/* Progress bar */}
-      <div style={{ width: '100%', maxWidth: 280, height: 3, backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 4, overflow: 'hidden' }}>
+      <div style={{ width: '100%', maxWidth: 280, height: 2, backgroundColor: T.borderVis, overflow: 'hidden' }}>
         <div style={{
-          height: '100%',
-          width: `${progress}%`,
-          backgroundColor: done ? C.gold : C.accent,
-          borderRadius: 4,
-          transition: 'width 0.6s ease, background-color 0.4s',
+          height: '100%', width: `${progress}%`, backgroundColor: T.white,
+          transition: 'width 0.6s ease',
         }} />
       </div>
 
       {/* Step dots */}
-      <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
+      <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
         {VERIFY_STEPS.map((_, i) => (
           <div key={i} style={{
-            width: 6, height: 6, borderRadius: '50%',
-            backgroundColor: i <= step || done ? (done ? C.gold : C.accent) : 'rgba(255,255,255,0.15)',
+            width: 5, height: 5,
+            backgroundColor: i <= step || done ? T.white : T.borderVis,
             transition: 'background-color 0.3s',
           }} />
         ))}
       </div>
 
-      {/* Disclaimer */}
-      <div style={{ position: 'absolute', bottom: 32, fontSize: 11, color: 'rgba(255,255,255,0.2)', textAlign: 'center' }}>
+      <div style={{ position: 'absolute', bottom: 32, fontFamily: MONO, fontSize: 9, color: T.grayMid, textAlign: 'center', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
         Powered by Rebl Authenticity Engine
       </div>
     </div>
   )
 }
 
-/* ══════════════════════════════════════════════════════
-   STEP 1 — Item Details + Camera Photo
-══════════════════════════════════════════════════════ */
+/* ── Step 1 ── */
 function Step1({ form, setField, imagePreview, onImageChange, vibeTags, toggleTag, customTag, setCustomTag, addCustomTag, onSubmit }) {
   const cameraRef = useRef(null)
 
   return (
     <form onSubmit={onSubmit}>
-      <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 6 }}>Tell us about your piece</h2>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 28 }}>Every detail helps build your provenance.</p>
+      <h2 style={{ fontFamily: DISPLAY, fontSize: 18, fontWeight: 700, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tell us about your piece</h2>
+      <p style={{ fontFamily: BODY, color: T.grayMid, fontSize: 14, marginBottom: 32 }}>Every detail builds your provenance record.</p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
 
-        {/* ── Camera Photo (mandatory) ── */}
+        {/* Photo */}
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 }}>
-            Photo <span style={{ color: C.accent }}>*</span>
+          <div style={{ fontFamily: MONO, fontSize: 9, fontWeight: 700, color: T.grayMid, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>
+            Photo <span style={{ color: T.white }}>*</span>
           </div>
           <div
             onClick={() => cameraRef.current?.click()}
             style={{
-              border: `2px dashed ${imagePreview ? C.accent : 'rgba(255,255,255,0.18)'}`,
-              borderRadius: 16, cursor: 'pointer', overflow: 'hidden',
-              backgroundColor: imagePreview ? 'transparent' : 'rgba(255,255,255,0.02)',
+              border: `1px solid ${imagePreview ? T.gray : T.borderVis}`,
+              cursor: 'pointer', overflow: 'hidden',
+              backgroundColor: imagePreview ? 'transparent' : T.card,
               minHeight: 200, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'border-color 0.2s',
-              position: 'relative',
+              transition: 'border-color 0.2s', position: 'relative',
             }}>
             {imagePreview ? (
               <>
                 <img src={imagePreview} alt="Item" style={{ width: '100%', maxHeight: 320, objectFit: 'contain', display: 'block' }} />
                 <div style={{
                   position: 'absolute', bottom: 10, right: 10,
-                  backgroundColor: 'rgba(0,0,0,0.7)', borderRadius: 8, padding: '4px 10px',
-                  fontSize: 11, fontWeight: 700, color: C.cream,
+                  backgroundColor: 'rgba(0,0,0,0.75)', border: `1px solid ${T.borderVis}`,
+                  padding: '4px 12px', fontFamily: MONO, fontSize: 9, fontWeight: 700, color: T.white,
+                  letterSpacing: '0.08em', textTransform: 'uppercase',
                 }}>
-                  📷 Retake
+                  ◈ Retake
                 </div>
               </>
             ) : (
-              <div style={{ textAlign: 'center', padding: 32 }}>
-                <div style={{ fontSize: 44, marginBottom: 12 }}>📷</div>
-                <div style={{ color: C.cream, fontWeight: 700, fontSize: 15, marginBottom: 6 }}>Take a photo</div>
-                <div style={{ color: C.muted, fontSize: 13 }}>Camera access required for authenticity</div>
+              <div style={{ textAlign: 'center', padding: 40 }}>
+                <div style={{ fontFamily: DISPLAY, fontSize: 40, color: T.grayMid, marginBottom: 14 }}>◈</div>
+                <div style={{ fontFamily: DISPLAY, fontSize: 12, color: T.white, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Take a Photo</div>
+                <div style={{ fontFamily: BODY, color: T.grayMid, fontSize: 13 }}>Camera access required for authenticity</div>
               </div>
             )}
           </div>
-          {/* capture="environment" forces camera on mobile */}
-          <input
-            ref={cameraRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={onImageChange}
-            style={{ display: 'none' }}
-          />
+          <input ref={cameraRef} type="file" accept="image/*" capture="environment" onChange={onImageChange} style={{ display: 'none' }} />
           {!imagePreview && (
-            <div style={{ marginTop: 8, fontSize: 12, color: 'rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span style={{ fontSize: 10 }}>🔒</span>
-              Camera-only. Photos preserve genuine ownership.
+            <div style={{ marginTop: 8, fontFamily: MONO, fontSize: 9, color: T.grayMid, display: 'flex', alignItems: 'center', gap: 6, letterSpacing: '0.06em' }}>
+              ◈ Camera-only. Photos preserve genuine ownership.
             </div>
           )}
         </div>
@@ -473,7 +429,7 @@ function Step1({ form, setField, imagePreview, onImageChange, vibeTags, toggleTa
 
         <Field label="Category">
           <select value={form.category} onChange={e => setField('category', e.target.value)}
-            style={{ ...inputStyle, appearance: 'none' }}>
+            style={{ ...inputStyle, appearance: 'none', cursor: 'pointer' }}>
             <option value="">Select a category</option>
             {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
           </select>
@@ -488,13 +444,13 @@ function Step1({ form, setField, imagePreview, onImageChange, vibeTags, toggleTa
           </Field>
         </Row>
 
-        {/* Vibe tags */}
+        {/* Vibe Tags */}
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 }}>
+          <div style={{ fontFamily: MONO, fontSize: 9, fontWeight: 700, color: T.grayMid, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
             What does this piece say about you?
           </div>
-          <div style={{ fontSize: 12, color: C.muted, marginBottom: 12 }}>
-            Pick up to 5 {vibeTags.length > 0 && <span style={{ color: C.accent }}>({vibeTags.length}/5)</span>}
+          <div style={{ fontFamily: BODY, fontSize: 12, color: T.grayMid, marginBottom: 14 }}>
+            Pick up to 5 {vibeTags.length > 0 && <span style={{ color: T.gray }}>({vibeTags.length}/5)</span>}
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {VIBE_TAGS.map(tag => {
@@ -502,13 +458,15 @@ function Step1({ form, setField, imagePreview, onImageChange, vibeTags, toggleTa
               return (
                 <button key={tag} type="button" onClick={() => toggleTag(tag)}
                   style={{
-                    padding: '7px 14px', borderRadius: 100, fontSize: 13, fontWeight: 500,
+                    padding: '7px 14px', fontSize: 11, fontWeight: 600,
+                    fontFamily: MONO, letterSpacing: '0.04em',
                     cursor: vibeTags.length >= 5 && !sel ? 'not-allowed' : 'pointer',
-                    border: `1px solid ${sel ? C.accent : 'rgba(255,255,255,0.15)'}`,
-                    backgroundColor: sel ? 'rgba(230,57,70,0.15)' : 'transparent',
-                    color: sel ? C.accent : C.muted,
+                    border: `1px solid ${sel ? T.white : T.borderVis}`,
+                    backgroundColor: sel ? T.white : 'transparent',
+                    color: sel ? T.bg : T.grayMid,
                     opacity: vibeTags.length >= 5 && !sel ? 0.4 : 1,
                     transition: 'all 0.15s',
+                    textTransform: 'uppercase',
                   }}>{tag}</button>
               )
             })}
@@ -519,13 +477,14 @@ function Step1({ form, setField, imagePreview, onImageChange, vibeTags, toggleTa
               onChange={e => setCustomTag(e.target.value.slice(0, 20))}
               onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addCustomTag())}
               placeholder="Add custom tag…"
-              style={{ ...inputStyle, flex: 1, fontSize: 13 }}
+              style={{ ...inputStyle, flex: 1, fontSize: 12 }}
               disabled={vibeTags.length >= 5}
             />
             <button type="button" onClick={addCustomTag} disabled={vibeTags.length >= 5 || !customTag.trim()}
               style={{
-                backgroundColor: 'rgba(255,255,255,0.08)', border: 'none', color: C.cream,
-                padding: '0 16px', borderRadius: 10, cursor: 'pointer', fontSize: 13, fontWeight: 600,
+                backgroundColor: T.white, border: 'none', color: T.bg,
+                padding: '0 18px', cursor: 'pointer', fontSize: 11, fontWeight: 700,
+                fontFamily: MONO, letterSpacing: '0.06em', textTransform: 'uppercase',
                 opacity: vibeTags.length >= 5 || !customTag.trim() ? 0.4 : 1,
               }}>Add</button>
           </div>
@@ -533,9 +492,10 @@ function Step1({ form, setField, imagePreview, onImageChange, vibeTags, toggleTa
 
         <button type="submit"
           style={{
-            backgroundColor: C.accent, color: C.cream, border: 'none',
-            borderRadius: 12, padding: '15px', width: '100%',
-            fontWeight: 700, fontSize: 16, cursor: 'pointer', marginTop: 8,
+            backgroundColor: T.white, color: T.bg, border: 'none',
+            padding: '15px', width: '100%',
+            fontFamily: MONO, fontWeight: 700, fontSize: 12, cursor: 'pointer', marginTop: 8,
+            letterSpacing: '0.1em', textTransform: 'uppercase',
           }}>
           Write Your Story →
         </button>
@@ -544,9 +504,7 @@ function Step1({ form, setField, imagePreview, onImageChange, vibeTags, toggleTa
   )
 }
 
-/* ══════════════════════════════════════════════════════
-   STEP 2 — Your Story + AI Enhancement
-══════════════════════════════════════════════════════ */
+/* ── Step 2 ── */
 function Step2({ form, userStory, setUserStory, aiStory, finalStory, setFinalStory, enhancing, onEnhance, onSave }) {
   const userRef  = useRef(null)
   const finalRef = useRef(null)
@@ -565,28 +523,30 @@ function Step2({ form, userStory, setUserStory, aiStory, finalStory, setFinalSto
     }
   }, [finalStory])
 
+  const catLabel = CATEGORIES.find(c => c.value === form.category)?.label || ''
+
   return (
     <div>
-      <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 6 }}>Your Story</h2>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 28 }}>
+      <h2 style={{ fontFamily: DISPLAY, fontSize: 18, fontWeight: 700, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Your Story</h2>
+      <p style={{ fontFamily: BODY, color: T.grayMid, fontSize: 14, marginBottom: 32 }}>
         Write it yourself. Then let AI build on it.
       </p>
 
       {/* Item recap */}
-      <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: '12px 16px', marginBottom: 28, display: 'flex', gap: 12, alignItems: 'center' }}>
-        <div style={{ fontSize: 22 }}>
-          {CATEGORIES.find(c => c.value === form.category)?.label?.split(' ')[0] || '◈'}
-        </div>
+      <div style={{ backgroundColor: T.card, border: `1px solid ${T.borderVis}`, padding: '14px 18px', marginBottom: 28, display: 'flex', gap: 14, alignItems: 'center' }}>
+        <div style={{ fontFamily: DISPLAY, fontSize: 20, color: T.grayMid }}>◈</div>
         <div>
-          <div style={{ fontWeight: 700, fontSize: 14 }}>{form.name}</div>
-          <div style={{ color: C.muted, fontSize: 12 }}>{form.brand}{form.edition ? ` · ${form.edition}` : ''}</div>
+          <div style={{ fontFamily: BODY, fontWeight: 600, fontSize: 14, color: T.white }}>{form.name}</div>
+          <div style={{ fontFamily: MONO, color: T.grayMid, fontSize: 10, marginTop: 3, letterSpacing: '0.06em' }}>
+            {form.brand}{form.edition ? ` · ${form.edition}` : ''}{catLabel ? ` · ${catLabel}` : ''}
+          </div>
         </div>
       </div>
 
-      {/* User's own story */}
+      {/* User story */}
       <div style={{ marginBottom: 20 }}>
-        <label style={{ fontSize: 13, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: 0.8, display: 'block', marginBottom: 10 }}>
-          Your words *
+        <label style={{ fontFamily: MONO, fontSize: 9, fontWeight: 700, color: T.grayMid, textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 10 }}>
+          Your Words *
         </label>
         <textarea
           ref={userRef}
@@ -596,10 +556,10 @@ function Step2({ form, userStory, setUserStory, aiStory, finalStory, setFinalSto
           style={{
             ...inputStyle,
             width: '100%', minHeight: 140, resize: 'none', lineHeight: 1.8,
-            fontSize: 15, boxSizing: 'border-box', overflow: 'hidden',
+            fontSize: 14, boxSizing: 'border-box', overflow: 'hidden',
           }}
         />
-        <div style={{ fontSize: 12, color: C.muted, marginTop: 6, textAlign: 'right' }}>
+        <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, marginTop: 6, textAlign: 'right', letterSpacing: '0.06em' }}>
           {userStory.length} chars
         </div>
       </div>
@@ -609,32 +569,33 @@ function Step2({ form, userStory, setUserStory, aiStory, finalStory, setFinalSto
         onClick={onEnhance}
         disabled={enhancing || !userStory.trim()}
         style={{
-          width: '100%', padding: '13px', borderRadius: 12, marginBottom: 28,
-          border: `1px solid ${C.gold}`,
-          backgroundColor: enhancing ? 'rgba(255,183,3,0.08)' : 'rgba(255,183,3,0.1)',
-          color: C.gold, fontWeight: 700, fontSize: 14, cursor: enhancing || !userStory.trim() ? 'not-allowed' : 'pointer',
-          opacity: !userStory.trim() ? 0.45 : 1,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-          transition: 'all 0.15s',
+          width: '100%', padding: '14px', marginBottom: 28,
+          border: `1px solid ${T.borderVis}`,
+          backgroundColor: enhancing ? T.card : 'transparent',
+          color: T.gray, fontFamily: MONO, fontWeight: 700, fontSize: 11,
+          cursor: enhancing || !userStory.trim() ? 'not-allowed' : 'pointer',
+          opacity: !userStory.trim() ? 0.4 : 1,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+          transition: 'all 0.15s', letterSpacing: '0.1em', textTransform: 'uppercase',
         }}>
         {enhancing ? (
           <>
-            <div style={{ width: 14, height: 14, border: `2px solid rgba(255,183,3,0.2)`, borderTopColor: C.gold, borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
+            <div style={{ width: 12, height: 12, border: `1px solid ${T.grayMid}`, borderTopColor: T.white, borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
             AI is building on your story…
           </>
         ) : (
-          <>{aiStory ? '↺ Re-enhance with AI' : '✦ Enhance with AI'}</>
+          <>{aiStory ? '◈ Re-enhance with AI' : '✦ Enhance with AI'}</>
         )}
       </button>
 
       {/* AI-enhanced version */}
       {aiStory && (
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ color: C.gold }}>✦</span> AI-Enhanced — Edit Before Saving
+          <div style={{ fontFamily: MONO, fontSize: 9, fontWeight: 700, color: T.gray, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>✦</span> AI-Enhanced — Edit Before Saving
           </div>
-          <div style={{ backgroundColor: '#0d0d1a', borderLeft: `3px solid ${C.gold}`, borderRadius: '0 12px 12px 0', padding: '18px 20px', marginBottom: 12 }}>
-            <p style={{ color: C.muted, fontSize: 12, fontStyle: 'italic', margin: '0 0 10px' }}>Your original, enriched with context:</p>
+          <div style={{ backgroundColor: T.card, borderLeft: `2px solid ${T.gray}`, padding: '18px 20px', marginBottom: 12 }}>
+            <p style={{ fontFamily: BODY, color: T.grayMid, fontSize: 12, fontStyle: 'italic', margin: '0 0 10px' }}>Your original, enriched with context:</p>
             <textarea
               ref={finalRef}
               value={finalStory}
@@ -642,13 +603,13 @@ function Step2({ form, userStory, setUserStory, aiStory, finalStory, setFinalSto
               style={{
                 ...inputStyle,
                 width: '100%', minHeight: 120, resize: 'none', lineHeight: 1.8,
-                fontSize: 15, boxSizing: 'border-box', overflow: 'hidden',
+                fontSize: 14, boxSizing: 'border-box', overflow: 'hidden',
                 backgroundColor: 'transparent', border: 'none', padding: 0,
-                color: C.cream,
+                color: T.white,
               }}
             />
           </div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.25)' }}>
+          <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.06em' }}>
             Tip: Edit freely — this is what goes into your vault.
           </div>
         </div>
@@ -659,22 +620,21 @@ function Step2({ form, userStory, setUserStory, aiStory, finalStory, setFinalSto
         onClick={onSave}
         disabled={!userStory.trim() && !finalStory.trim()}
         style={{
-          width: '100%', backgroundColor: C.accent, color: C.cream, border: 'none',
-          borderRadius: 12, padding: '16px', fontWeight: 800, fontSize: 16, cursor: 'pointer',
-          opacity: !userStory.trim() && !finalStory.trim() ? 0.5 : 1,
-          letterSpacing: -0.2,
+          width: '100%', backgroundColor: T.white, color: T.bg, border: 'none',
+          padding: '16px', fontFamily: MONO, fontWeight: 800, fontSize: 12,
+          cursor: 'pointer', letterSpacing: '0.1em', textTransform: 'uppercase',
+          opacity: !userStory.trim() && !finalStory.trim() ? 0.4 : 1,
         }}>
         Add to Vault →
       </button>
 
-      <p style={{ textAlign: 'center', color: C.muted, fontSize: 12, marginTop: 14 }}>
+      <p style={{ textAlign: 'center', fontFamily: MONO, color: T.grayMid, fontSize: 9, marginTop: 14, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
         All items go through our authenticity check
       </p>
     </div>
   )
 }
 
-/* ── Helpers ── */
 function Row({ children }) {
   return <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>{children}</div>
 }
@@ -682,7 +642,7 @@ function Row({ children }) {
 function Field({ label, children }) {
   return (
     <div>
-      <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: C.muted, marginBottom: 7 }}>{label}</label>
+      <label style={{ display: 'block', fontFamily: MONO, fontSize: 9, fontWeight: 700, color: T.grayMid, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{label}</label>
       {children}
     </div>
   )
@@ -693,12 +653,4 @@ function Input({ value, onChange, type = 'text', placeholder, required }) {
     <input type={type} value={value} onChange={e => onChange(e.target.value)}
       placeholder={placeholder} required={required} style={inputStyle} />
   )
-}
-
-const inputStyle = {
-  width: '100%', backgroundColor: C.card, color: C.cream,
-  border: `1px solid ${C.border}`, borderRadius: 10,
-  padding: '11px 14px', fontSize: 14, outline: 'none',
-  fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', boxSizing: 'border-box',
-  transition: 'border-color 0.2s',
 }
