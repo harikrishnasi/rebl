@@ -61,9 +61,23 @@ export default function BrandSignup() {
     if (!loginEmail.trim() || !loginPassword) { toast.error('Enter your email and password'); return }
     setLoginLoading(true)
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email: loginEmail, password: loginPassword })
+      const { data: authData, error } = await supabase.auth.signInWithPassword({ email: loginEmail, password: loginPassword })
       if (error) throw error
-      navigate('/brand-dashboard')
+
+      const userId = authData.user.id
+
+      // Check if this account has a brand
+      const { data: brand } = await supabase.from('brands').select('id').eq('owner_id', userId).single()
+
+      if (brand?.id) {
+        // Ensure role is set
+        await supabase.from('profiles').update({ role: 'brand' }).eq('id', userId)
+        navigate('/brand-dashboard')
+      } else {
+        // Logged in but no brand found — may be a collector account
+        toast.error('No brand found for this account. Use "Create Brand" to set one up, or log in with your collector account.')
+        await supabase.auth.signOut()
+      }
     } catch (err) {
       toast.error(err.message || 'Login failed')
     } finally {
