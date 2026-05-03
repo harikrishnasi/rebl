@@ -359,19 +359,6 @@ export default function Dashboard() {
                   </Link>
                 ))}
               </div>
-              {profile?.username && (
-                <div style={{ marginTop: 1, backgroundColor: T.card, border: `1px solid ${T.borderVis}`, borderTop: 'none', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div>
-                    <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.gray, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 4 }}>Full Vault View</div>
-                    <div style={{ fontFamily: BODY, fontSize: 13, color: T.grayMid }}>Wall · By Brand · By Category · Timeline</div>
-                  </div>
-                  <Link to={`/vault/${profile.username}`} style={{
-                    fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.bg,
-                    textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase',
-                    padding: '10px 20px', backgroundColor: T.white, flexShrink: 0,
-                  }}>Open Vault →</Link>
-                </div>
-              )}
             </>
           )}
         </div>
