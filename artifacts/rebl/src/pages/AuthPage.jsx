@@ -76,8 +76,9 @@ export default function AuthPage({ mode }) {
       <div style={{ width: '100%', maxWidth: 400 }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 56 }}>
-          <Link to="/" style={{ textDecoration: 'none', display: 'inline-block' }}>
-            <div style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 40, color: T.white, letterSpacing: '-1px', lineHeight: 1 }}>Rēbl</div>
+          <Link to="/" style={{ textDecoration: 'none', display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+            <div style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 44, color: T.white, letterSpacing: '-1px', lineHeight: 1 }}>Rēbl</div>
+            <div style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.22em', textTransform: 'uppercase' }}>Own the rare. Tell its story.</div>
           </Link>
         </div>
 
