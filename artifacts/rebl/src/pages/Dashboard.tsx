@@ -379,19 +379,24 @@ export default function Dashboard() {
         {/* ══ DISCOVER ══ */}
         <div style={{ paddingTop: 40, borderTop: `1px solid ${T.border}` }}>
           {SL('Discover')}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px,1fr))', gap: 1, backgroundColor: T.borderVis }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0 }}>
             {[
               { sym: '✦', label: 'Latest Drops', sub: 'New releases from verified brand partners', to: '/drops' },
               { sym: '⊕', label: 'Collector Tribe', sub: 'Find your people. Compare vaults.', to: '/tribe' },
               { sym: '◎', label: 'Profile Settings', sub: 'Edit your collector identity', to: profile?.username ? `/profile/${profile.username}` : '/dashboard' },
-            ].map(d => (
-              <Link key={d.label} to={d.to} style={{ textDecoration: 'none', backgroundColor: T.bg, padding: '26px 22px', display: 'flex', flexDirection: 'column', gap: 6, transition: 'background 0.15s' }}
+            ].map((d, i) => (
+              <Link key={d.label} to={d.to} style={{
+                textDecoration: 'none', backgroundColor: T.bg,
+                padding: '48px 32px', display: 'flex', flexDirection: 'column', gap: 10,
+                transition: 'background 0.15s',
+                borderLeft: i > 0 ? `1px solid ${T.border}` : 'none',
+              }}
                 onMouseEnter={e => (e.currentTarget as HTMLElement).style.backgroundColor = T.card}
                 onMouseLeave={e => (e.currentTarget as HTMLElement).style.backgroundColor = T.bg}
               >
-                <div style={{ fontFamily: DISPLAY, fontSize: 18, color: T.grayMid, marginBottom: 4 }}>{d.sym}</div>
-                <div style={{ fontFamily: DISPLAY, fontSize: 11, fontWeight: 700, color: T.white, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{d.label}</div>
-                <div style={{ fontFamily: BODY, fontSize: 12, color: T.grayMid, lineHeight: 1.6 }}>{d.sub}</div>
+                <div style={{ fontFamily: DISPLAY, fontSize: 28, color: T.grayMid, marginBottom: 8, lineHeight: 1 }}>{d.sym}</div>
+                <div style={{ fontFamily: DISPLAY, fontSize: 13, fontWeight: 700, color: T.white, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{d.label}</div>
+                <div style={{ fontFamily: BODY, fontSize: 13, color: T.grayMid, lineHeight: 1.65 }}>{d.sub}</div>
               </Link>
             ))}
           </div>
