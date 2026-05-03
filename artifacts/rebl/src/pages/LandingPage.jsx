@@ -4,6 +4,10 @@ import { supabase } from '@/lib/supabase'
 import StarField from '@/components/StarField'
 import CrossHair from '@/components/CrossHair'
 import GreekBorder from '@/components/GreekBorder'
+import imgAstronaut from '@assets/ChatGPT_Image_May_3,_2026,_03_31_35_PM_1777804308026.png'
+import imgAres from '@assets/ChatGPT_Image_May_3,_2026,_03_40_35_PM_1777804308024.png'
+import imgIcarus from '@assets/ChatGPT_Image_May_3,_2026,_03_35_30_PM_1777804308025.png'
+import imgTelescope from '@assets/ChatGPT_Image_May_3,_2026,_03_32_18_PM_1777804308025.png'
 
 /* ─── Design Tokens ─── */
 const T = {
@@ -109,22 +113,8 @@ function Hero() {
     <section style={{ minHeight: '100vh', backgroundColor: T.bg, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', paddingTop: 120, paddingBottom: 80, paddingLeft: 'max(8vw,32px)', paddingRight: 32 }}>
       <StarField />
 
-      {/* Orbital ring graphic */}
-      <div style={{ position: 'absolute', right: '6%', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', opacity: 0.12 }}>
-        <svg width="500" height="500" viewBox="0 0 500 500" fill="none">
-          <circle cx="250" cy="250" r="240" stroke={T.white} strokeWidth="0.5"/>
-          <circle cx="250" cy="250" r="180" stroke={T.white} strokeWidth="0.5"/>
-          <circle cx="250" cy="250" r="120" stroke={T.white} strokeWidth="0.5"/>
-          <circle cx="250" cy="250" r="60" stroke={T.white} strokeWidth="0.5"/>
-          <circle cx="250" cy="10" r="5" fill={T.white}/>
-          <circle cx="490" cy="250" r="4" fill={T.white}/>
-          <circle cx="116" cy="116" r="3" fill={T.white}/>
-          <circle cx="384" cy="96" r="3" fill={T.white}/>
-          <line x1="248" y1="248" x2="252" y2="252" stroke={T.white} strokeWidth="1.5"/>
-          <line x1="248" y1="252" x2="252" y2="248" stroke={T.white} strokeWidth="1.5"/>
-          <ellipse cx="250" cy="250" rx="240" ry="60" stroke={T.white} strokeWidth="0.5" transform="rotate(-30 250 250)"/>
-        </svg>
-      </div>
+      {/* Astronaut backdrop */}
+      <img src={imgAstronaut} alt="" style={{ position: 'absolute', right: 0, top: 0, height: '100%', width: '55%', objectFit: 'cover', objectPosition: 'center top', opacity: 0.18, pointerEvents: 'none', maskImage: 'linear-gradient(to right, transparent 0%, black 30%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%)' }} />
 
       <div style={{ maxWidth: 680, position: 'relative', zIndex: 1 }}>
         {/* Label */}
@@ -277,8 +267,9 @@ function Identity() {
     { n: '03', title: 'Find your orbit.', body: 'The 47 people in India who own the exact same piece as you exist. They care as much as you do. Rebl connects verified owners — not followers, not strangers. People who get it.' },
   ]
   return (
-    <section style={{ backgroundColor: T.bg, padding: 'clamp(80px,10vw,140px) max(8vw,32px)', borderTop: `1px solid ${T.border}` }}>
-      <div style={{ maxWidth: 960, margin: '0 auto' }}>
+    <section style={{ backgroundColor: T.bg, padding: 'clamp(80px,10vw,140px) max(8vw,32px)', borderTop: `1px solid ${T.border}`, position: 'relative', overflow: 'hidden' }}>
+      <img src={imgAres} alt="" style={{ position: 'absolute', right: '-4%', top: '50%', transform: 'translateY(-50%)', height: '110%', width: '50%', objectFit: 'cover', objectPosition: 'center', opacity: 0.10, pointerEvents: 'none', maskImage: 'linear-gradient(to right, transparent 0%, black 40%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 40%)' }} />
+      <div style={{ maxWidth: 960, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.grayMid, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 64 }}>
           The Collector
         </div>
@@ -376,8 +367,9 @@ function TheVault() {
     { label: 'Collector DNA', icon: '◉', body: 'Your taste profile, auto-generated from your vault. Archetype. Signature phrase. The collector you actually are, in data.' },
   ]
   return (
-    <section style={{ backgroundColor: T.bg, padding: 'clamp(80px,10vw,140px) max(8vw,32px)' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <section style={{ backgroundColor: T.bg, padding: 'clamp(80px,10vw,140px) max(8vw,32px)', position: 'relative', overflow: 'hidden' }}>
+      <img src={imgIcarus} alt="" style={{ position: 'absolute', right: '-2%', top: '50%', transform: 'translateY(-50%)', height: '120%', width: '48%', objectFit: 'cover', objectPosition: 'center', opacity: 0.10, pointerEvents: 'none', maskImage: 'linear-gradient(to right, transparent 0%, black 35%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 35%)' }} />
+      <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <div style={{ marginBottom: 72 }}>
           <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.grayMid, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 20 }}>The Vault</div>
           <h2 style={{ fontFamily: DISPLAY, fontSize: 'clamp(36px,5.5vw,72px)', fontWeight: 700, color: T.white, margin: 0, letterSpacing: '-1px', textTransform: 'uppercase', lineHeight: 1 }}>Your permanent record.</h2>
@@ -455,6 +447,7 @@ function UpcomingTech() {
   return (
     <section style={{ backgroundColor: T.bg, padding: 'clamp(80px,10vw,140px) max(8vw,32px)', position: 'relative', overflow: 'hidden', borderTop: `1px solid ${T.border}` }}>
       <StarField />
+      <img src={imgTelescope} alt="" style={{ position: 'absolute', right: '0%', bottom: 0, height: '90%', width: '50%', objectFit: 'cover', objectPosition: 'center bottom', opacity: 0.11, pointerEvents: 'none', maskImage: 'linear-gradient(to right, transparent 0%, black 35%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 35%)' }} />
       <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <div style={{ marginBottom: 72 }}>
           <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.grayMid, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 20 }}>Classified // Coming Soon</div>
