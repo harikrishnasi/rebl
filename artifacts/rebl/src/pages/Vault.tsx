@@ -112,9 +112,9 @@ export default function Vault() {
 
   if (!profile) return (
     <div style={{ minHeight: '100vh', backgroundColor: C.primary, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, color: C.cream }}>
-      <div style={{ fontSize: 48 }}>🔍</div>
-      <div style={{ fontSize: 18, fontWeight: 700 }}>Vault not found</div>
-      <Link to="/" style={{ color: C.accent, fontSize: 14 }}>← Back to Rebl</Link>
+      <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 48, color: C.muted }}>◎</div>
+      <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 16, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Vault not found</div>
+      <Link to="/" style={{ color: C.accent, fontSize: 13, fontFamily: '"Space Mono", monospace', letterSpacing: '0.08em' }}>← Back to Rebl</Link>
     </div>
   )
 
@@ -126,7 +126,7 @@ export default function Vault() {
         .vault-wall{column-count:2;column-gap:12px}
         @media(min-width:560px){.vault-wall{column-count:3}}
         @media(min-width:900px){.vault-wall{column-count:4}}
-        .wall-card{break-inside:avoid;margin-bottom:12px;cursor:pointer;border-radius:14px;overflow:hidden;position:relative;animation:fadeUp 0.5s ease both}
+        .wall-card{break-inside:avoid;margin-bottom:12px;cursor:pointer;overflow:hidden;position:relative;animation:fadeUp 0.5s ease both}
         .wall-card img{width:100%;display:block;transition:transform 0.35s ease}
         .wall-card:hover img{transform:scale(1.03)}
         .wall-overlay{position:absolute;bottom:0;left:0;right:0;padding:12px 10px 10px;background:linear-gradient(transparent,rgba(0,0,0,0.82));transition:opacity 0.2s}
@@ -252,13 +252,13 @@ export default function Vault() {
 function EmptyVault({ isOwn }) {
   return (
     <div style={{ textAlign: 'center', padding: '80px 24px' }}>
-      <div style={{ fontSize: 56, marginBottom: 20 }}>🏛</div>
-      <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 10 }}>The vault is empty.</div>
-      <div style={{ color: C.muted, fontSize: 15, marginBottom: 28 }}>
+      <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 56, color: C.muted, marginBottom: 20 }}>◈</div>
+      <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 18, fontWeight: 700, marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.08em' }}>The vault is empty.</div>
+      <div style={{ color: C.muted, fontSize: 14, marginBottom: 28, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
         {isOwn ? 'Start adding pieces to build your collection.' : 'Nothing here yet.'}
       </div>
       {isOwn && (
-        <Link to="/add-item" style={{ backgroundColor: C.accent, color: C.cream, borderRadius: 12, padding: '13px 28px', textDecoration: 'none', fontWeight: 700, fontSize: 15 }}>
+        <Link to="/add-item" style={{ backgroundColor: C.cream, color: C.primary, padding: '13px 28px', textDecoration: 'none', fontWeight: 700, fontSize: 13, fontFamily: '"Space Mono", monospace', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
           Add Your First Item
         </Link>
       )}
@@ -286,7 +286,7 @@ function WallView({ items, onSelect, isOwn }) {
               <span style={{ fontSize: 12, fontWeight: 700, lineHeight: 1.3 }}>{item.name}</span>
             </div>
             {item.vibe_tags?.slice(0, 2).map(tag => (
-              <span key={tag} style={{ display: 'inline-block', marginRight: 4, marginBottom: 2, padding: '2px 7px', borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.12)', fontSize: 10, fontWeight: 600 }}>{tag}</span>
+              <span key={tag} style={{ display: 'inline-block', marginRight: 4, marginBottom: 2, padding: '2px 7px', backgroundColor: 'rgba(255,255,255,0.12)', fontSize: 10, fontWeight: 600 }}>{tag}</span>
             ))}
           </div>
 
@@ -326,16 +326,16 @@ function ByBrandView({ items, onSelect, memberships }) {
         return (
           <div key={group.brandName}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
-              <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: C.card, border: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700 }}>{group.brandName[0]}</div>
+              <div style={{ width: 36, height: 36, backgroundColor: C.card, border: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, fontFamily: '"Cinzel", Georgia, serif' }}>{group.brandName[0]}</div>
               <div>
-                <div style={{ fontWeight: 800, fontSize: 17 }}>{group.brandName}</div>
+                <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontWeight: 700, fontSize: 15, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{group.brandName}</div>
                 {memb?.customer_tiers && (
-                  <span style={{ fontSize: 11, fontWeight: 700, color: `#${memb.customer_tiers.color || 'FFB703'}` }}>
+                  <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, fontWeight: 700, color: C.accent, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                     {memb.customer_tiers.name}
                   </span>
                 )}
               </div>
-              <span style={{ marginLeft: 'auto', fontSize: 12, color: C.muted }}>{group.items.length} piece{group.items.length !== 1 ? 's' : ''}</span>
+              <span style={{ marginLeft: 'auto', fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.muted, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{group.items.length} piece{group.items.length !== 1 ? 's' : ''}</span>
             </div>
             <div className="hscroll">
               {group.items.map(item => (
@@ -351,7 +351,7 @@ function ByBrandView({ items, onSelect, memberships }) {
 
 function HScrollCard({ item, onSelect }) {
   return (
-    <div onClick={() => onSelect(item)} style={{ flexShrink: 0, width: 160, cursor: 'pointer', borderRadius: 12, overflow: 'hidden', border: `1px solid ${C.border}`, backgroundColor: C.card, transition: 'border-color 0.15s' }}
+    <div onClick={() => onSelect(item)} style={{ flexShrink: 0, width: 160, cursor: 'pointer', overflow: 'hidden', border: `1px solid ${C.border}`, backgroundColor: C.card, transition: 'border-color 0.15s' }}
       onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'}
       onMouseLeave={e => e.currentTarget.style.borderColor = C.border}>
       <div style={{ height: 160, backgroundColor: 'rgba(255,255,255,0.04)', overflow: 'hidden' }}>
@@ -359,12 +359,12 @@ function HScrollCard({ item, onSelect }) {
           ? <img src={item.image_url} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.3s' }}
               onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.06)'}
               onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'} />
-          : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}>◈</div>
+          : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, fontFamily: '"Cinzel", Georgia, serif', color: C.muted }}>◈</div>
         }
       </div>
       <div style={{ padding: '10px 10px' }}>
-        <div style={{ fontSize: 12, fontWeight: 700, lineHeight: 1.3, marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</div>
-        {item.verified && <span style={{ fontSize: 10, color: '#22c55e', fontWeight: 700 }}>✓ Verified</span>}
+        <div style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontSize: 12, fontWeight: 700, lineHeight: 1.3, marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</div>
+        {item.verified && <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.accent, fontWeight: 700, letterSpacing: '0.06em' }}>◈ VERIFIED</span>}
       </div>
     </div>
   )
@@ -438,8 +438,8 @@ function TimelineView({ items, onSelect }) {
                 </div>
               )}
               <div style={{ display: 'flex', gap: 16, marginBottom: 20, cursor: 'pointer', alignItems: 'flex-start' }} onClick={() => onSelect(item)}>
-                <div style={{ width: 72, height: 72, borderRadius: 10, overflow: 'hidden', flexShrink: 0, backgroundColor: 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>
-                  {item.image_url ? <img src={item.image_url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : '📦'}
+                <div style={{ width: 72, height: 72, overflow: 'hidden', flexShrink: 0, backgroundColor: 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontFamily: '"Cinzel", Georgia, serif', color: C.muted }}>
+                  {item.image_url ? <img src={item.image_url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : '◈'}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
@@ -512,7 +512,7 @@ function ItemDetailModal({ item, isOwn, onClose, onRemove, onStorySaved }) {
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.82)' }}
       onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={{ backgroundColor: C.primary, width: '100%', maxWidth: 620, maxHeight: '94vh', borderRadius: '24px 24px 0 0', overflow: 'hidden', display: 'flex', flexDirection: 'column', animation: 'fadeUp 0.3s ease' }}>
+      <div style={{ backgroundColor: C.primary, width: '100%', maxWidth: 620, maxHeight: '94vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', animation: 'fadeUp 0.3s ease', borderTop: `1px solid #2D2D2D` }}>
 
         {/* ── Image top ── */}
         <div style={{ position: 'relative', height: 280, flexShrink: 0, backgroundColor: 'rgba(255,255,255,0.04)' }}>
@@ -521,14 +521,14 @@ function ItemDetailModal({ item, isOwn, onClose, onRemove, onStorySaved }) {
             : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 56 }}>◈</div>
           }
           {/* Close */}
-          <button onClick={onClose} style={{ position: 'absolute', top: 14, right: 14, width: 32, height: 32, borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.55)', border: 'none', color: C.cream, fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
+          <button onClick={onClose} style={{ position: 'absolute', top: 14, right: 14, width: 32, height: 32, backgroundColor: 'rgba(0,0,0,0.7)', border: `1px solid #2D2D2D`, color: C.cream, fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '"Space Mono", monospace' }}>×</button>
           {/* Verified badge */}
           {item.verified && (
-            <div style={{ position: 'absolute', top: 14, left: 14, padding: '4px 10px', borderRadius: 20, backgroundColor: 'rgba(34,197,94,0.9)', fontSize: 11, fontWeight: 800, color: '#fff' }}>✓ Verified</div>
+            <div style={{ position: 'absolute', top: 14, left: 14, padding: '4px 10px', backgroundColor: 'rgba(0,0,0,0.8)', border: `1px solid ${C.accent}`, fontSize: 9, fontWeight: 700, color: C.accent, fontFamily: '"Space Mono", monospace', letterSpacing: '0.1em', textTransform: 'uppercase' }}>◈ VERIFIED</div>
           )}
           {/* Display only badge */}
           {item.display_only && (
-            <div style={{ position: 'absolute', bottom: 14, left: 14, padding: '4px 10px', borderRadius: 20, backgroundColor: 'rgba(0,0,0,0.6)', fontSize: 10, fontWeight: 700, color: C.muted }}>Display Only</div>
+            <div style={{ position: 'absolute', bottom: 14, left: 14, padding: '4px 10px', backgroundColor: 'rgba(0,0,0,0.7)', border: `1px solid #2D2D2D`, fontSize: 9, fontWeight: 700, color: C.muted, fontFamily: '"Space Mono", monospace', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Display Only</div>
           )}
         </div>
 
@@ -548,7 +548,7 @@ function ItemDetailModal({ item, isOwn, onClose, onRemove, onStorySaved }) {
           {item.vibe_tags?.length > 0 && (
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 18 }}>
               {item.vibe_tags.map(tag => (
-                <span key={tag} style={{ padding: '4px 10px', borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.07)', fontSize: 11, fontWeight: 600 }}>{tag}</span>
+                <span key={tag} style={{ padding: '4px 10px', backgroundColor: 'rgba(255,255,255,0.07)', border: `1px solid #1A1A1A`, fontSize: 10, fontWeight: 600, fontFamily: '"Space Mono", monospace', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{tag}</span>
               ))}
             </div>
           )}
@@ -560,9 +560,9 @@ function ItemDetailModal({ item, isOwn, onClose, onRemove, onStorySaved }) {
               item.purchase_price ? { label: 'Paid', val: `₹${Number(item.purchase_price).toLocaleString('en-IN')}` } : null,
               item.serial_number ? { label: 'Serial', val: `#${item.serial_number}` } : null,
             ].filter(Boolean).map(s => (
-              <div key={s.label} style={{ backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '10px 12px' }}>
-                <div style={{ fontSize: 10, color: C.muted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.6, marginBottom: 4 }}>{s.label}</div>
-                <div style={{ fontSize: 13, fontWeight: 700 }}>{s.val}</div>
+              <div key={s.label} style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: `1px solid #1A1A1A`, padding: '10px 12px' }}>
+                <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.muted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>{s.label}</div>
+                <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 13, fontWeight: 700 }}>{s.val}</div>
               </div>
             ))}
           </div>
@@ -594,8 +594,8 @@ function ItemDetailModal({ item, isOwn, onClose, onRemove, onStorySaved }) {
               <div style={{ fontSize: 10, fontWeight: 800, color: C.muted, textTransform: 'uppercase', letterSpacing: 2 }}>Your Story</div>
               {isOwn && !editingStory && (
                 <button onClick={() => { setStoryDraft(item.user_story || item.ai_story || ''); setEditingStory(true) }}
-                  style={{ fontSize: 11, fontWeight: 700, color: C.accent, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
-                  Edit Story ✏
+                  style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, fontWeight: 700, color: C.accent, background: 'none', border: 'none', cursor: 'pointer', padding: 0, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                  Edit Story ◈
                 </button>
               )}
             </div>
@@ -603,29 +603,29 @@ function ItemDetailModal({ item, isOwn, onClose, onRemove, onStorySaved }) {
             {editingStory ? (
               <div>
                 <textarea value={storyDraft} onChange={e => setStoryDraft(e.target.value)} rows={5}
-                  style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid rgba(255,255,255,0.12)`, borderRadius: 10, padding: '12px 14px', color: C.cream, fontSize: 13, lineHeight: 1.7, resize: 'none', outline: 'none', boxSizing: 'border-box' }} />
+                  style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid rgba(255,255,255,0.12)`, padding: '12px 14px', color: C.cream, fontSize: 13, lineHeight: 1.7, resize: 'none', outline: 'none', boxSizing: 'border-box', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }} />
                 <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
                   <button onClick={saveStory} disabled={savingStory}
-                    style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 8, padding: '10px', fontWeight: 700, fontSize: 13, cursor: 'pointer', opacity: savingStory ? 0.7 : 1 }}>
+                    style={{ flex: 2, backgroundColor: C.cream, color: C.primary, border: 'none', padding: '10px', fontWeight: 700, fontSize: 12, cursor: 'pointer', opacity: savingStory ? 0.7 : 1, fontFamily: '"Space Mono", monospace', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                     {savingStory ? 'Saving…' : 'Save Story'}
                   </button>
                   <button onClick={() => setEditingStory(false)}
-                    style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 8, padding: '10px', cursor: 'pointer', fontSize: 13 }}>
+                    style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, padding: '10px', cursor: 'pointer', fontSize: 12, fontFamily: '"Space Mono", monospace', letterSpacing: '0.06em' }}>
                     Cancel
                   </button>
                 </div>
               </div>
             ) : item.user_story || item.ai_story ? (
-              <p style={{ fontSize: 13, color: 'rgba(241,250,238,0.75)', lineHeight: 1.75, margin: 0 }}>
+              <p style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.7)', lineHeight: 1.75, margin: 0 }}>
                 {item.user_story || item.ai_story}
               </p>
             ) : isOwn ? (
               <button onClick={() => setEditingStory(true)}
-                style={{ width: '100%', padding: '14px', backgroundColor: 'rgba(255,255,255,0.04)', border: `1px dashed rgba(255,255,255,0.12)`, borderRadius: 10, color: C.muted, fontSize: 13, cursor: 'pointer', fontWeight: 600 }}>
+                style={{ width: '100%', padding: '14px', backgroundColor: 'rgba(255,255,255,0.04)', border: `1px dashed rgba(255,255,255,0.12)`, color: C.muted, fontSize: 12, cursor: 'pointer', fontWeight: 600, fontFamily: '"Space Mono", monospace', letterSpacing: '0.06em' }}>
                 + Add Your Story
               </button>
             ) : (
-              <div style={{ color: C.muted, fontSize: 13, fontStyle: 'italic' }}>No story yet.</div>
+              <div style={{ color: C.muted, fontSize: 13, fontStyle: 'italic', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>No story yet.</div>
             )}
           </div>
 
@@ -633,7 +633,7 @@ function ItemDetailModal({ item, isOwn, onClose, onRemove, onStorySaved }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {item.brand && (
               <Link to={`/brand/${item.brand.toLowerCase().replace(/\s+/g, '-')}#owner-room`}
-                style={{ display: 'block', textAlign: 'center', backgroundColor: C.accent, color: C.cream, borderRadius: 12, padding: '13px', textDecoration: 'none', fontWeight: 700, fontSize: 14 }}>
+                style={{ display: 'block', textAlign: 'center', backgroundColor: C.cream, color: C.primary, padding: '13px', textDecoration: 'none', fontWeight: 700, fontSize: 12, fontFamily: '"Space Mono", monospace', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                 Join Owner Room ↗
               </Link>
             )}
@@ -641,12 +641,12 @@ function ItemDetailModal({ item, isOwn, onClose, onRemove, onStorySaved }) {
             {isOwn && (
               <div style={{ display: 'flex', gap: 8 }}>
                 <button onClick={toggleDisplayOnly}
-                  style={{ flex: 1, padding: '11px', backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid ${C.border}`, borderRadius: 10, color: C.muted, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
-                  {item.display_only ? '🔓 Mark for Sale' : '🏛 Display Only'}
+                  style={{ flex: 1, padding: '11px', backgroundColor: 'rgba(255,255,255,0.04)', border: `1px solid ${C.border}`, color: C.muted, fontSize: 10, fontWeight: 700, cursor: 'pointer', fontFamily: '"Space Mono", monospace', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                  {item.display_only ? '⊕ Mark for Sale' : '◎ Display Only'}
                 </button>
                 <button onClick={handleRemove} disabled={removing}
-                  style={{ flex: 1, padding: '11px', backgroundColor: 'rgba(230,57,70,0.08)', border: `1px solid rgba(230,57,70,0.2)`, borderRadius: 10, color: C.accent, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
-                  {removing ? 'Removing…' : '🗑 Remove'}
+                  style={{ flex: 1, padding: '11px', backgroundColor: 'rgba(255,255,255,0.02)', border: `1px solid rgba(255,255,255,0.08)`, color: C.muted, fontSize: 10, fontWeight: 700, cursor: 'pointer', fontFamily: '"Space Mono", monospace', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                  {removing ? 'Removing…' : '✦ Remove'}
                 </button>
               </div>
             )}
@@ -669,14 +669,19 @@ function ItemVisibilityRow({ item }) {
     setVis(v)
     await supabase.from('items').update({ visibility: v }).eq('id', item.id)
   }
+  const OPTS = [
+    { v: 'public', sym: '◎', label: 'Public' },
+    { v: 'connections', sym: '⊕', label: 'Network' },
+    { v: 'private', sym: '◈', label: 'Private' },
+  ]
   return (
     <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid ${C.border}` }}>
-      <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 }}>Item Visibility</div>
+      <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, fontWeight: 700, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Item Visibility</div>
       <div style={{ display: 'flex', gap: 6 }}>
-        {['public', 'connections', 'private'].map(v => (
+        {OPTS.map(({ v, sym, label }) => (
           <button key={v} onClick={() => change(v)}
-            style={{ flex: 1, padding: '8px', borderRadius: 8, backgroundColor: vis === v ? 'rgba(255,255,255,0.1)' : 'transparent', border: `1px solid ${vis === v ? 'rgba(255,255,255,0.2)' : C.border}`, color: vis === v ? C.cream : C.muted, fontSize: 11, fontWeight: 700, cursor: 'pointer', textTransform: 'capitalize', transition: 'all 0.15s' }}>
-            {v === 'public' ? '🌐' : v === 'connections' ? '👥' : '🔒'} {v}
+            style={{ flex: 1, padding: '8px', backgroundColor: vis === v ? 'rgba(255,255,255,0.08)' : 'transparent', border: `1px solid ${vis === v ? 'rgba(255,255,255,0.2)' : C.border}`, color: vis === v ? C.cream : C.muted, fontSize: 9, fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s', fontFamily: '"Space Mono", monospace', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+            {sym} {label}
           </button>
         ))}
       </div>
@@ -700,27 +705,27 @@ function VaultSettingsPanel({ profile, onClose }) {
   }
 
   return (
-    <div style={{ marginTop: 24, backgroundColor: C.card, borderRadius: 16, border: `1px solid ${C.border}`, padding: '20px 22px' }}>
+    <div style={{ marginTop: 24, backgroundColor: C.card, border: `1px solid ${C.border}`, padding: '20px 22px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-        <div style={{ fontSize: 13, fontWeight: 800 }}>Vault Privacy</div>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', color: C.muted, fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>×</button>
+        <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Vault Privacy</div>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', color: C.muted, fontSize: 20, cursor: 'pointer', lineHeight: 1, fontFamily: '"Space Mono", monospace' }}>×</button>
       </div>
-      <div style={{ fontSize: 12, color: C.muted, marginBottom: 14 }}>Who can see your vault?</div>
+      <div style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontSize: 12, color: C.muted, marginBottom: 14 }}>Who can see your vault?</div>
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
         {[
-          { v: 'public',      icon: '🌐', label: 'Public' },
-          { v: 'connections', icon: '👥', label: 'Connections' },
-          { v: 'private',     icon: '🔒', label: 'Private' },
+          { v: 'public',      sym: '◎', label: 'Public' },
+          { v: 'connections', sym: '⊕', label: 'Network' },
+          { v: 'private',     sym: '◈', label: 'Private' },
         ].map(opt => (
           <button key={opt.v} onClick={() => setVis(opt.v)}
-            style={{ flex: 1, padding: '12px 8px', borderRadius: 10, backgroundColor: vis === opt.v ? C.accent : 'rgba(255,255,255,0.05)', border: `1px solid ${vis === opt.v ? 'transparent' : C.border}`, color: C.cream, fontSize: 12, fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s', textAlign: 'center' }}>
-            <div style={{ fontSize: 18, marginBottom: 4 }}>{opt.icon}</div>
+            style={{ flex: 1, padding: '12px 8px', backgroundColor: vis === opt.v ? 'rgba(255,255,255,0.08)' : 'transparent', border: `1px solid ${vis === opt.v ? 'rgba(255,255,255,0.25)' : C.border}`, color: vis === opt.v ? C.cream : C.muted, fontSize: 9, fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s', textAlign: 'center', fontFamily: '"Space Mono", monospace', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: 16, marginBottom: 6 }}>{opt.sym}</div>
             {opt.label}
           </button>
         ))}
       </div>
       <button onClick={save} disabled={saving}
-        style={{ width: '100%', backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '12px', fontWeight: 700, cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
+        style={{ width: '100%', backgroundColor: C.cream, color: C.primary, border: 'none', padding: '12px', fontWeight: 700, cursor: 'pointer', opacity: saving ? 0.7 : 1, fontFamily: '"Space Mono", monospace', fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
         {saving ? 'Saving…' : 'Save Settings'}
       </button>
     </div>

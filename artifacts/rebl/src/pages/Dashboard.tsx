@@ -168,7 +168,20 @@ export default function Dashboard() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
             <div style={sectionLabel('Your Collection')}>Your Collection</div>
-            <Link to="/add-item" style={{ fontFamily: MONO, fontSize: 10, color: T.gray, textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>+ Add Item</Link>
+            <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+              <Link to="/add-item" style={{ fontFamily: MONO, fontSize: 10, color: T.gray, textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase' }}>+ Add Item</Link>
+              {profile?.username && (
+                <Link to={`/vault/${profile.username}`} style={{
+                  fontFamily: MONO, fontSize: 10, fontWeight: 600,
+                  color: T.bg, textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase',
+                  padding: '7px 16px', backgroundColor: T.white, display: 'inline-block',
+                  transition: 'opacity 0.15s',
+                }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = '0.85'}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = '1'}
+                >Open Vault ◈</Link>
+              )}
+            </div>
           </div>
 
           {items.length === 0 ? (
@@ -199,29 +212,50 @@ export default function Dashboard() {
               </div>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px,1fr))', gap: 1, backgroundColor: T.borderVis }}>
-              {items.map(item => (
-                <div key={item.id} style={{ backgroundColor: T.bg, overflow: 'hidden' }}>
-                  {item.image_url
-                    ? <img src={item.image_url} alt={item.name} style={{ width: '100%', height: 160, objectFit: 'cover', display: 'block' }} />
-                    : <div style={{ width: '100%', height: 160, backgroundColor: T.card, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <div style={{ fontFamily: DISPLAY, fontSize: 32, color: T.borderVis }}>◈</div>
-                      </div>
-                  }
-                  <div style={{ padding: '14px 16px 18px' }}>
-                    <div style={{ fontFamily: BODY, fontWeight: 600, fontSize: 13, color: T.white, marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</div>
-                    {item.brand && <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.1em' }}>{item.brand}</div>}
+            <>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px,1fr))', gap: 1, backgroundColor: T.borderVis }}>
+                {items.map(item => (
+                  <Link
+                    key={item.id}
+                    to={profile?.username ? `/vault/${profile.username}` : '/dashboard'}
+                    style={{ backgroundColor: T.bg, overflow: 'hidden', textDecoration: 'none', display: 'block', cursor: 'pointer', transition: 'background 0.15s' }}
+                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.backgroundColor = T.card}
+                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.backgroundColor = T.bg}
+                  >
+                    {item.image_url
+                      ? <img src={item.image_url} alt={item.name} style={{ width: '100%', height: 160, objectFit: 'cover', display: 'block' }} />
+                      : <div style={{ width: '100%', height: 160, backgroundColor: T.card, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <div style={{ fontFamily: DISPLAY, fontSize: 32, color: T.borderVis }}>◈</div>
+                        </div>
+                    }
+                    <div style={{ padding: '14px 16px 18px' }}>
+                      <div style={{ fontFamily: BODY, fontWeight: 600, fontSize: 13, color: T.white, marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</div>
+                      {item.brand && <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.1em' }}>{item.brand}</div>}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              {/* Vault CTA below items */}
+              {profile?.username && (
+                <div style={{ marginTop: 1, backgroundColor: T.card, border: `1px solid ${T.borderVis}`, borderTop: 'none', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.gray, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 4 }}>Full Vault View</div>
+                    <div style={{ fontFamily: BODY, fontSize: 13, color: T.grayMid }}>Wall · By Brand · By Category · Timeline</div>
                   </div>
+                  <Link to={`/vault/${profile.username}`} style={{
+                    fontFamily: MONO, fontSize: 10, fontWeight: 600, color: T.bg,
+                    textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase',
+                    padding: '10px 20px', backgroundColor: T.white, flexShrink: 0,
+                  }}>Open Vault →</Link>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
 
         {/* Quick links */}
         <div style={{ marginTop: 56, paddingTop: 40, borderTop: `1px solid ${T.border}`, display: 'flex', gap: 24, flexWrap: 'wrap' }}>
           {[
-            { label: 'View Full Vault', to: profile?.username ? `/vault/${profile.username}` : '/dashboard' },
             { label: 'Find Your Tribe', to: '/tribe' },
             { label: 'Profile Settings', to: profile?.username ? `/profile/${profile.username}` : '/dashboard' },
           ].map(link => (
