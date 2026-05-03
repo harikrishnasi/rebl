@@ -67,7 +67,7 @@ function Navbar() {
       <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 68 }}>
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 3 }}>
           <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 26, color: T.white, letterSpacing: '-0.5px', lineHeight: 1 }}>Rēbl</span>
-          <span style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.2em', textTransform: 'uppercase' }}>Own the rare. Tell its story.</span>
+          <span style={{ fontFamily: DISPLAY, fontSize: 7, color: T.grayMid, letterSpacing: '0.28em', textTransform: 'uppercase' }}>Own the rare. Tell its story.</span>
         </Link>
         <div style={{ display: 'flex', gap: 36, alignItems: 'center' }}>
           {links.map(({ label, to }) => (
@@ -555,7 +555,7 @@ function Footer() {
           <div style={{ display: 'grid', gridTemplateColumns: '2fr repeat(4,1fr)', gap: 40, marginBottom: 80, flexWrap: 'wrap' }}>
             <div>
               <div style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 32, color: T.white, letterSpacing: '-0.5px', marginBottom: 6 }}>Rēbl</div>
-              <div style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 16 }}>Own the rare. Tell its story.</div>
+              <div style={{ fontFamily: DISPLAY, fontSize: 7, color: T.grayMid, letterSpacing: '0.28em', textTransform: 'uppercase', marginBottom: 16 }}>Own the rare. Tell its story.</div>
               <p style={{ fontFamily: BODY, fontSize: 13, color: T.grayMid, lineHeight: 1.7, margin: 0, maxWidth: 220 }}>From ancient roots, to infinite futures.</p>
             </div>
             {cols.map(col => (
