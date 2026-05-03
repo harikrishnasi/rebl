@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import DropsNav from '@/components/DropsNav'
 import { demoProducts, getLiveDrops, getUpcomingDrops } from '@/data/demoProducts'
-import { formatINR, useCountdown } from '@/lib/utils'
+import { formatINR, useCountdown, useWindowWidth } from '@/lib/utils'
 import { supabase } from '@/lib/supabase'
 
 const FALLBACK_COLORS = ['#C0392B','#2980B9','#27AE60','#8E44AD','#D35400','#16A085','#2C3E50','#F39C12']
@@ -232,11 +232,13 @@ function EventCard({ product }) {
 function FeaturedBanner({ product }) {
   const countdown = useCountdown(product.endDate)
   const navigate = useNavigate()
+  const w = useWindowWidth()
+  const isMobile = w < 640
   const pct = (product.unitsSold / product.units) * 100
 
   return (
     <div style={{
-      height: '70vh', minHeight: 500, position: 'relative', overflow: 'hidden',
+      height: isMobile ? '60vh' : '70vh', minHeight: isMobile ? 400 : 500, position: 'relative', overflow: 'hidden',
       background: `radial-gradient(ellipse at 60% 50%, ${product.mainColor}20 0%, ${T.bg} 70%)`,
       display: 'flex', alignItems: 'flex-end',
     }}>
@@ -244,11 +246,11 @@ function FeaturedBanner({ product }) {
         position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none',
       }}>
         <span style={{
-          fontFamily: MONO, fontSize: 'clamp(80px, 18vw, 220px)', color: `${product.mainColor}08`,
+          fontFamily: MONO, fontSize: 'clamp(60px, 18vw, 220px)', color: `${product.mainColor}08`,
           fontWeight: 700, userSelect: 'none', lineHeight: 1,
         }}>{product.brand.split(' ')[0].toUpperCase()}</span>
       </div>
-      <div style={{ position: 'relative', maxWidth: 1200, margin: '0 auto', padding: '64px 40px', width: '100%' }}>
+      <div style={{ position: 'relative', maxWidth: 1200, margin: '0 auto', padding: isMobile ? '32px 20px' : '64px 40px', width: '100%' }}>
         <div style={{ maxWidth: 600 }}>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -346,7 +348,7 @@ export default function DropsHome() {
 
       <FeaturedBanner product={featured} />
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '80px 40px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: 'clamp(40px,6vw,80px) clamp(16px,4vw,40px)' }}>
         {(activeFilter === 'All' || activeFilter === 'Sneakers' || activeFilter === 'Streetwear') && (
           <section style={{ marginBottom: 80 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 32 }}>

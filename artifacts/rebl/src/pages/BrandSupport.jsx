@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useWindowWidth } from '@/lib/utils'
 
 const T = {
   bg: '#000000', card: '#0D0D0D', border: '#1A1A1A', borderVis: '#2D2D2D',
@@ -178,6 +179,8 @@ function AIChat() {
 
 export default function BrandSupport() {
   const navigate = useNavigate()
+  const w = useWindowWidth()
+  const isMobile = w < 768
   const [form, setForm] = useState({ name: '', email: '', category: '', subject: '', message: '' })
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
@@ -199,8 +202,8 @@ export default function BrandSupport() {
       <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}`}</style>
 
       {/* Top bar */}
-      <div style={{ borderBottom: `1px solid ${T.border}`, padding: '14px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+      <div style={{ borderBottom: `1px solid ${T.border}`, padding: isMobile ? '14px 16px' : '14px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', color: T.gray, cursor: 'pointer', fontFamily: MONO, fontSize: 10, letterSpacing: '0.1em', padding: 0 }}>← BACK</button>
           <span style={{ color: T.border }}>|</span>
           <span style={{ fontFamily: MONO, fontSize: 9, color: T.mid, letterSpacing: '0.2em' }}>BRAND.SUPPORT</span>
@@ -209,30 +212,30 @@ export default function BrandSupport() {
       </div>
 
       {/* Hero */}
-      <div style={{ maxWidth: 900, margin: '0 auto', padding: '72px 32px 48px' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: isMobile ? '40px 16px 32px' : '72px 32px 48px' }}>
         <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.3em', marginBottom: 10 }}>HELP & SUPPORT</div>
         <h1 style={{ fontFamily: DISPLAY, fontSize: 'clamp(28px, 5vw, 52px)', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', lineHeight: 1.1, marginBottom: 16 }}>We're Here<br />For You</h1>
-        <p style={{ color: T.gray, fontSize: 14, lineHeight: 1.75, maxWidth: 500, marginBottom: 48 }}>
+        <p style={{ color: T.gray, fontSize: 14, lineHeight: 1.75, maxWidth: 500, marginBottom: 40 }}>
           Questions about your brand dashboard, drops, payouts, or anything else — reach us below. Our team responds within 4 business hours.
         </p>
 
         {/* Stats bar */}
-        <div style={{ display: 'flex', gap: 0, borderTop: `1px solid ${T.border}`, borderLeft: `1px solid ${T.border}`, marginBottom: 72 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: 0, borderTop: `1px solid ${T.border}`, borderLeft: `1px solid ${T.border}`, marginBottom: isMobile ? 48 : 72 }}>
           {[
             { label: 'Avg response time', val: '< 4 hrs' },
             { label: 'Satisfaction rate', val: '98.2%' },
             { label: 'Support hours', val: '9am–9pm IST' },
             { label: 'Days a week', val: '7 days' },
           ].map((s, i) => (
-            <div key={i} style={{ flex: 1, padding: '18px 20px', borderRight: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}` }}>
-              <div style={{ fontFamily: MONO, fontSize: 18, color: T.white, letterSpacing: '0.05em', marginBottom: 4 }}>{s.val}</div>
-              <div style={{ fontFamily: MONO, fontSize: 8, color: T.mid, letterSpacing: '0.15em', textTransform: 'uppercase' }}>{s.label}</div>
+            <div key={i} style={{ padding: isMobile ? '14px 12px' : '18px 20px', borderRight: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}` }}>
+              <div style={{ fontFamily: MONO, fontSize: isMobile ? 14 : 18, color: T.white, letterSpacing: '0.05em', marginBottom: 4 }}>{s.val}</div>
+              <div style={{ fontFamily: MONO, fontSize: 8, color: T.mid, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{s.label}</div>
             </div>
           ))}
         </div>
 
-        {/* Two-col: form + AI */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32, marginBottom: 80, alignItems: 'start' }}>
+        {/* Two-col: form + AI — stack on mobile */}
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 48 : 32, marginBottom: 80, alignItems: 'start' }}>
 
           {/* ── Support Form ── */}
           <div>
