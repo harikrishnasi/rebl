@@ -78,7 +78,7 @@ export default function AuthPage({ mode }) {
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 48 }}>
           <Link to="/" style={{ textDecoration: 'none' }}>
-            <img src="/rebl-logo.png" alt="Rebl" style={{ height: 36, width: 'auto', filter: 'brightness(0) invert(1)', marginBottom: 4 }} />
+            <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 36, color: C.cream, letterSpacing: '-1px', lineHeight: 1 }}>Rēbl</span>
             <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.dim, letterSpacing: '0.25em', marginTop: 4 }}>COLLECTOR OS</div>
           </Link>
         </div>

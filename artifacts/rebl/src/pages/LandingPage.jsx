@@ -67,8 +67,8 @@ function Navbar() {
     }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 68 }}>
         {/* Logo */}
-        <Link to="/" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <img src="/rebl-logo.png" alt="Rebl" style={{ height: 26, width: 'auto', display: 'block', filter: 'brightness(0) invert(1)' }} />
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 22, color: C.cream, letterSpacing: '-0.5px', lineHeight: 1 }}>Rēbl</span>
           <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 7, color: C.dim, letterSpacing: '0.22em', textTransform: 'uppercase' }}>COLLECTOR OS</span>
         </Link>
 
@@ -500,8 +500,8 @@ function Footer() {
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '2fr repeat(4, 1fr)', gap: 40, marginBottom: 64, flexWrap: 'wrap' }}>
           <div>
-            <img src="/rebl-logo.png" alt="Rebl" style={{ height: 28, width: 'auto', display: 'block', filter: 'brightness(0) invert(1)', marginBottom: 8 }} />
-            <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 7, color: C.dim, letterSpacing: '0.22em', marginBottom: 14 }}>COLLECTOR OS</div>
+            <div style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 24, color: C.cream, letterSpacing: '-0.5px', lineHeight: 1 }}>Rēbl</div>
+            <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 7, color: C.dim, letterSpacing: '0.22em', marginBottom: 14, marginTop: 4 }}>COLLECTOR OS</div>
             <p style={{ fontSize: 13, color: C.dim, lineHeight: 1.65, margin: 0, maxWidth: 220 }}>The platform for collectors who refuse to blend in.</p>
           </div>
           {cols.map(col => (
