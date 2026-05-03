@@ -4,13 +4,13 @@ import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 
 const C = {
-  primary: '#0A0A12',
-  accent: '#A8B2C4',
-  cream: '#F0F4FF',
-  muted: '#5A6380',
-  gold: '#FFB703',
-  card: '#12121E',
-  border: '#2A2A3E',
+  primary: '#000000',
+  accent: '#A6A6A6',
+  cream: '#FFFFFF',
+  muted: '#555555',
+  gold: '#A6A6A6',
+  card: '#0D0D0D',
+  border: '#1A1A1A',
 }
 
 export default function CollectorProfile() {
@@ -68,7 +68,7 @@ export default function CollectorProfile() {
   )
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Plus Jakarta Sans", Inter, sans-serif' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
       {/* Back nav */}
       <div style={{ padding: '16px 20px', borderBottom: `1px solid ${C.border}` }}>
         <button onClick={() => navigate(-1)} style={{
@@ -445,7 +445,7 @@ function ItemModal({ item, isOwn, onClose, onStoryUpdated }) {
                     width: '100%', backgroundColor: C.primary, color: C.cream,
                     border: `1px solid rgba(230,57,70,0.4)`, borderRadius: 10,
                     padding: '12px 14px', fontSize: 14, lineHeight: 1.65,
-                    resize: 'vertical', outline: 'none', fontFamily: '"Plus Jakarta Sans", Inter, sans-serif',
+                    resize: 'vertical', outline: 'none', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif',
                     boxSizing: 'border-box',
                   }}
                 />

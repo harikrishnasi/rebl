@@ -6,13 +6,13 @@ import { supabase } from '@/lib/supabase'
 import { callGeminiAPI } from '@/lib/gemini'
 
 const C = {
-  primary: '#0A0A12',
-  accent: '#A8B2C4',
-  cream: '#F0F4FF',
-  muted: '#5A6380',
-  gold: '#FFB703',
-  card: '#12121E',
-  border: '#2A2A3E',
+  primary: '#000000',
+  accent: '#A6A6A6',
+  cream: '#FFFFFF',
+  muted: '#555555',
+  gold: '#A6A6A6',
+  card: '#0D0D0D',
+  border: '#1A1A1A',
 }
 
 export default function PostPurchase() {
@@ -73,7 +73,7 @@ export default function PostPurchase() {
   return (
     <div style={{
       minHeight: '100vh', backgroundColor: C.primary, overflow: 'hidden',
-      position: 'relative', fontFamily: '"Plus Jakarta Sans", Inter, sans-serif', color: C.cream,
+      position: 'relative', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', color: C.cream,
     }}>
       <ProgressDots current={screen} />
       <div style={{
@@ -120,11 +120,11 @@ function WelcomeScreen({ item, onAdvance }) {
       particleCount: 120,
       spread: 80,
       origin: { y: 0.5 },
-      colors: ['#E63946', '#FFB703', '#F1FAEE', '#a855f7'],
+      colors: ['#E63946', '#A6A6A6', '#F1FAEE', '#a855f7'],
     })
     setTimeout(() => confetti({
       particleCount: 60, spread: 100, origin: { y: 0.4, x: 0.3 },
-      colors: ['#E63946', '#FFB703'],
+      colors: ['#E63946', '#A6A6A6'],
     }), 300)
     setTimeout(() => confetti({
       particleCount: 60, spread: 100, origin: { y: 0.4, x: 0.7 },
@@ -304,7 +304,7 @@ Write in second person. No headers. No labels. Just the story.`
                   width: '100%', backgroundColor: C.card, color: C.cream,
                   border: `1px solid ${C.border}`, borderRadius: 12,
                   padding: '14px 16px', fontSize: 15, lineHeight: 1.75,
-                  resize: 'none', outline: 'none', fontFamily: '"Plus Jakarta Sans", Inter, sans-serif',
+                  resize: 'none', outline: 'none', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif',
                   boxSizing: 'border-box', minHeight: 140, overflow: 'hidden',
                 }}
               />

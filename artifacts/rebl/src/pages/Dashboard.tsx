@@ -4,9 +4,9 @@ import toast from 'react-hot-toast'
 import { supabase } from '@/lib/supabase'
 
 const C = {
-  primary: '#0A0A12', accent: '#A8B2C4', cream: '#F0F4FF',
-  muted: '#5A6380', gold: '#FFB703', card: '#12121E',
-  border: '#2A2A3E', sidebar: '#050508',
+  primary: '#000000', accent: '#A6A6A6', cream: '#FFFFFF',
+  muted: '#555555', gold: '#A6A6A6', card: '#0D0D0D',
+  border: '#1A1A1A', sidebar: '#000000',
 }
 
 const IS = {
@@ -69,7 +69,7 @@ export default function Dashboard() {
   const backstageBrands = brandMemberships.filter(m => m.customer_tiers?.has_backstage_access)
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: 'system-ui, sans-serif' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
       {/* Top nav */}
       <div style={{ backgroundColor: C.sidebar, borderBottom: `1px solid ${C.border}`, padding: '0 24px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: -0.5 }}>Rebl</span>

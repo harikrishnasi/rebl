@@ -2,27 +2,30 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import StarField from '@/components/StarField'
-import OrbitRing from '@/components/OrbitRing'
 import CrossHair from '@/components/CrossHair'
-import CoordinateGrid from '@/components/CoordinateGrid'
+import GreekBorder from '@/components/GreekBorder'
 
-const C = {
-  void: '#050508',
-  cosmos: '#0A0A12',
-  nebula: '#12121E',
-  crater: '#1C1C2E',
-  silver: '#A8B2C4',
-  silverBright: '#C8D4E8',
-  ghost: '#2A2A3E',
-  cream: '#F0F4FF',
-  dim: '#5A6380',
-  star: '#E8F0FF',
-  orbit: '#7B8FA8',
+/* ─── Design Tokens ─── */
+const T = {
+  bg: '#000000',
+  surface: '#080808',
+  card: '#0D0D0D',
+  border: '#1A1A1A',
+  borderVis: '#2D2D2D',
+  white: '#FFFFFF',
+  gray: '#A6A6A6',
+  grayMid: '#555555',
+  grayDark: '#2A2A2A',
 }
+const DISPLAY = '"Cinzel", Georgia, serif'
+const BODY = '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif'
+const MONO = '"Space Mono", monospace'
+
+const sep = { height: 1, backgroundColor: T.border, margin: 0 }
 
 export default function LandingPage() {
   return (
-    <div style={{ backgroundColor: C.cosmos, color: C.cream, fontFamily: '"Plus Jakarta Sans", "Plus Jakarta Sans", Inter, sans-serif' }}>
+    <div style={{ backgroundColor: T.bg, color: T.white, fontFamily: BODY }}>
       <Navbar />
       <Hero />
       <Identity />
@@ -40,71 +43,58 @@ export default function LandingPage() {
 function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [user, setUser] = useState(null)
-  const navigate = useNavigate()
-
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', onScroll)
     supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user || null))
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
-
-  const navLinks = [
-    { label: 'Drops', to: '/brand/vegnongveg' },
-    { label: 'The Vault', to: user ? '/dashboard' : '/demo#step-1' },
-    { label: 'Demo', to: '/demo' },
-    { label: 'Blog', to: '/blog' },
+  const links = [
+    { label: 'DROPS', to: '/brand/vegnongveg' },
+    { label: 'THE VAULT', to: user ? '/dashboard' : '/demo#step-1' },
+    { label: 'DEMO', to: '/demo' },
+    { label: 'BLOG', to: '/blog' },
   ]
-
   return (
     <nav style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-      backgroundColor: scrolled ? 'rgba(5,5,8,0.95)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(12px)' : 'none',
-      borderBottom: scrolled ? `1px solid ${C.ghost}` : 'none',
-      transition: 'all 0.3s ease',
-      padding: '0 32px',
+      backgroundColor: scrolled ? 'rgba(0,0,0,0.96)' : 'transparent',
+      backdropFilter: scrolled ? 'blur(16px)' : 'none',
+      borderBottom: scrolled ? `1px solid ${T.border}` : 'none',
+      transition: 'all 0.3s ease', padding: '0 32px',
     }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 68 }}>
-        {/* Logo */}
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 22, color: C.cream, letterSpacing: '-0.5px', lineHeight: 1 }}>Rēbl</span>
-          <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 7, color: C.dim, letterSpacing: '0.22em', textTransform: 'uppercase' }}>COLLECTOR OS</span>
+          <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 22, color: T.white, letterSpacing: '-0.5px', lineHeight: 1 }}>Rēbl</span>
+          <span style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.22em' }}>MYTH. MACHINE. MOVEMENT.</span>
         </Link>
-
-        {/* Center nav */}
         <div style={{ display: 'flex', gap: 36, alignItems: 'center' }}>
-          {navLinks.map(({ label, to }) => (
+          {links.map(({ label, to }) => (
             <Link key={label} to={to} style={{
-              fontFamily: '"Space Mono", monospace', fontSize: 11, color: C.dim,
-              textDecoration: 'none', letterSpacing: '0.12em', textTransform: 'uppercase',
-              transition: 'color 0.2s',
+              fontFamily: BODY, fontSize: 12, fontWeight: 500, color: T.gray,
+              textDecoration: 'none', letterSpacing: '0.08em', textTransform: 'uppercase', transition: 'color 0.2s',
             }}
-              onMouseEnter={e => e.target.style.color = C.silver}
-              onMouseLeave={e => e.target.style.color = C.dim}
+              onMouseEnter={e => e.target.style.color = T.white}
+              onMouseLeave={e => e.target.style.color = T.gray}
             >{label}</Link>
           ))}
         </div>
-
-        {/* CTAs */}
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <Link to="/brand/signup" style={{
-            fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.dim,
-            textDecoration: 'none', letterSpacing: '0.15em', textTransform: 'uppercase',
-            padding: '8px 16px', border: `1px solid ${C.ghost}`,
-            transition: 'all 0.2s',
+            fontFamily: BODY, fontSize: 12, fontWeight: 500, color: T.gray,
+            textDecoration: 'none', letterSpacing: '0.08em', textTransform: 'uppercase',
+            padding: '8px 18px', border: `1px solid ${T.borderVis}`, transition: 'all 0.2s',
           }}
-            onMouseEnter={e => { e.currentTarget.style.color = C.silver; e.currentTarget.style.borderColor = C.silver }}
-            onMouseLeave={e => { e.currentTarget.style.color = C.dim; e.currentTarget.style.borderColor = C.ghost }}
+            onMouseEnter={e => { e.currentTarget.style.color = T.white; e.currentTarget.style.borderColor = T.gray }}
+            onMouseLeave={e => { e.currentTarget.style.color = T.gray; e.currentTarget.style.borderColor = T.borderVis }}
           >For Brands</Link>
           <Link to="/signup" style={{
-            fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.void,
-            textDecoration: 'none', letterSpacing: '0.15em', textTransform: 'uppercase',
-            padding: '8px 16px', backgroundColor: C.silver,
-            transition: 'background 0.2s',
+            fontFamily: BODY, fontSize: 12, fontWeight: 600, color: T.bg,
+            textDecoration: 'none', letterSpacing: '0.08em', textTransform: 'uppercase',
+            padding: '8px 18px', backgroundColor: T.white, transition: 'background 0.2s',
           }}
-            onMouseEnter={e => e.currentTarget.style.backgroundColor = C.silverBright}
-            onMouseLeave={e => e.currentTarget.style.backgroundColor = C.silver}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = '#E0E0E0'}
+            onMouseLeave={e => e.currentTarget.style.backgroundColor = T.white}
           >Join Free</Link>
         </div>
       </div>
@@ -115,90 +105,86 @@ function Navbar() {
 /* ─── HERO ─── */
 function Hero() {
   return (
-    <section style={{
-      minHeight: '100vh', backgroundColor: C.void,
-      position: 'relative', overflow: 'hidden',
-      display: 'flex', alignItems: 'center',
-      paddingTop: 120, paddingBottom: 80,
-      paddingLeft: 'max(10vw, 32px)', paddingRight: 32,
-    }}>
+    <section style={{ minHeight: '100vh', backgroundColor: T.bg, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', paddingTop: 120, paddingBottom: 80, paddingLeft: 'max(8vw,32px)', paddingRight: 32 }}>
       <StarField />
-      <CoordinateGrid />
 
-      {/* Orbit ring — right side */}
-      <div style={{ position: 'absolute', right: -100, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', opacity: 0.7 }}>
-        <OrbitRing size={600} />
-      </div>
-
-      {/* Collector orbit — visual anchor */}
-      <div style={{ position: 'absolute', right: '8%', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
-        <svg width="400" height="400" viewBox="0 0 400 400">
-          <circle cx="200" cy="200" r="180" fill="none" stroke="#A8B2C408" strokeWidth="0.5" />
-          <circle cx="200" cy="200" r="130" fill="none" stroke="#A8B2C412" strokeWidth="0.5" />
-          <circle cx="200" cy="200" r="80" fill="none" stroke="#A8B2C418" strokeWidth="0.5" />
-          <circle cx="200" cy="200" r="30" fill="none" stroke="#A8B2C425" strokeWidth="0.8" />
-          <circle cx="200" cy="20" r="4" fill="#A8B2C440" />
-          <circle cx="380" cy="200" r="3" fill="#A8B2C430" />
-          <circle cx="91" cy="109" r="2.5" fill="#A8B2C435" />
-          <circle cx="309" cy="91" r="2" fill="#A8B2C428" />
-          <circle cx="135" cy="335" r="2" fill="#A8B2C420" />
-          <line x1="200" y1="198" x2="200" y2="202" stroke="#A8B2C460" strokeWidth="1" />
-          <line x1="198" y1="200" x2="202" y2="200" stroke="#A8B2C460" strokeWidth="1" />
+      {/* Orbital ring graphic */}
+      <div style={{ position: 'absolute', right: '6%', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', opacity: 0.12 }}>
+        <svg width="500" height="500" viewBox="0 0 500 500" fill="none">
+          <circle cx="250" cy="250" r="240" stroke={T.white} strokeWidth="0.5"/>
+          <circle cx="250" cy="250" r="180" stroke={T.white} strokeWidth="0.5"/>
+          <circle cx="250" cy="250" r="120" stroke={T.white} strokeWidth="0.5"/>
+          <circle cx="250" cy="250" r="60" stroke={T.white} strokeWidth="0.5"/>
+          <circle cx="250" cy="10" r="5" fill={T.white}/>
+          <circle cx="490" cy="250" r="4" fill={T.white}/>
+          <circle cx="116" cy="116" r="3" fill={T.white}/>
+          <circle cx="384" cy="96" r="3" fill={T.white}/>
+          <line x1="248" y1="248" x2="252" y2="252" stroke={T.white} strokeWidth="1.5"/>
+          <line x1="248" y1="252" x2="252" y2="248" stroke={T.white} strokeWidth="1.5"/>
+          <ellipse cx="250" cy="250" rx="240" ry="60" stroke={T.white} strokeWidth="0.5" transform="rotate(-30 250 250)"/>
         </svg>
       </div>
 
-      {/* Content */}
-      <div style={{ maxWidth: 640, position: 'relative', zIndex: 1 }}>
-        {/* Top label */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
-          <div style={{ width: 24, height: 1, backgroundColor: C.silver }} />
-          <span style={{
-            fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver,
-            letterSpacing: '0.25em', textTransform: 'uppercase',
-          }}>EST. 2025 — INDIA'S COLLECTOR OS</span>
+      <div style={{ maxWidth: 680, position: 'relative', zIndex: 1 }}>
+        {/* Label */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 40 }}>
+          <div style={{ width: 32, height: 1, backgroundColor: T.gray }}/>
+          <span style={{ fontFamily: MONO, fontSize: 10, color: T.gray, letterSpacing: '0.2em' }}>EST. MMXXV — INDIA'S COLLECTOR OS</span>
+          <div style={{ width: 32, height: 1, backgroundColor: T.gray }}/>
+        </div>
+
+        {/* Tagline */}
+        <div style={{ fontFamily: DISPLAY, fontSize: 11, color: T.gray, letterSpacing: '0.35em', marginBottom: 28, textTransform: 'uppercase' }}>
+          Myth. Machine. Movement.
         </div>
 
         {/* Headline */}
-        <h1 style={{ margin: 0, lineHeight: 1.05, letterSpacing: '-2px' }}>
-          <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(48px, 6.5vw, 88px)', fontWeight: 800, color: C.cream }}>Own it.</div>
-          <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(48px, 6.5vw, 88px)', fontWeight: 800, color: C.silver }}>Tell its story.</div>
-          <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(48px, 6.5vw, 88px)', fontWeight: 800, color: C.ghost }}>Find your orbit.</div>
+        <h1 style={{ margin: 0, lineHeight: 1.0 }}>
+          <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(52px,7vw,92px)', fontWeight: 700, color: T.white, letterSpacing: '-1px', textTransform: 'uppercase' }}>Own it.</div>
+          <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(52px,7vw,92px)', fontWeight: 700, color: T.gray, letterSpacing: '-1px', textTransform: 'uppercase' }}>Tell its story.</div>
+          <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(52px,7vw,92px)', fontWeight: 700, color: T.grayDark, letterSpacing: '-1px', textTransform: 'uppercase' }}>Find your orbit.</div>
         </h1>
 
         {/* Sub */}
-        <p style={{
-          marginTop: 32, fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 18, color: C.dim,
-          maxWidth: 480, lineHeight: 1.6,
-        }}>
-          Rebl is a vault for the things that define you. Limited drops, verified ownership, and a community of collectors who get it.
+        <p style={{ marginTop: 32, fontFamily: BODY, fontSize: 17, color: T.grayMid, maxWidth: 480, lineHeight: 1.7 }}>
+          From ancient roots, to infinite futures. Rebl is the vault for collectors who refuse to blend in.
         </p>
 
         {/* CTA */}
-        <Link to="/signup" style={{
-          display: 'inline-block', marginTop: 48,
-          fontFamily: '"Space Mono", monospace', fontSize: 11, color: C.silver,
-          textDecoration: 'none', letterSpacing: '0.2em', textTransform: 'uppercase',
-          padding: '16px 40px', border: `1px solid ${C.silver}`,
-          transition: 'all 0.2s',
-        }}
-          onMouseEnter={e => { e.currentTarget.style.backgroundColor = C.silver; e.currentTarget.style.color = C.void }}
-          onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = C.silver }}
-        >Start Your Collection →</Link>
+        <div style={{ marginTop: 48, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+          <Link to="/signup" style={{
+            fontFamily: BODY, fontSize: 13, fontWeight: 600, color: T.bg,
+            textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase',
+            padding: '16px 48px', backgroundColor: T.white, transition: 'all 0.2s', display: 'inline-block',
+          }}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = '#D0D0D0'}
+            onMouseLeave={e => e.currentTarget.style.backgroundColor = T.white}
+          >Start Your Collection →</Link>
+          <Link to="/demo" style={{
+            fontFamily: BODY, fontSize: 13, fontWeight: 500, color: T.gray,
+            textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase',
+            padding: '16px 32px', border: `1px solid ${T.borderVis}`, transition: 'all 0.2s', display: 'inline-block',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = T.gray; e.currentTarget.style.color = T.white }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = T.borderVis; e.currentTarget.style.color = T.gray }}
+          >See the Demo</Link>
+        </div>
 
-        {/* Coordinate stats */}
-        <div style={{ display: 'flex', gap: 40, marginTop: 64, flexWrap: 'wrap' }}>
-          {[
-            { val: '500+', label: 'COLLECTORS', coord: '01.A' },
-            { val: '20+', label: 'BRANDS', coord: '02.B' },
-            { val: '1K+', label: 'VERIFIED ITEMS', coord: '03.C' },
-          ].map(s => (
-            <div key={s.coord}>
-              <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.dim, letterSpacing: '0.15em', marginBottom: 4 }}>{s.coord}</div>
-              <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 28, fontWeight: 700, color: C.cream, lineHeight: 1 }}>{s.val}</div>
-              <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.orbit, letterSpacing: '0.2em', marginTop: 4 }}>{s.label}</div>
+        {/* Stats */}
+        <div style={{ display: 'flex', gap: 48, marginTop: 72, flexWrap: 'wrap' }}>
+          {[{ n: '01', val: '500+', label: 'Collectors' }, { n: '02', val: '20+', label: 'Brands' }, { n: '03', val: '1K+', label: 'Verified Items' }].map(s => (
+            <div key={s.n}>
+              <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.15em', marginBottom: 6 }}>{s.n}</div>
+              <div style={{ fontFamily: DISPLAY, fontSize: 30, fontWeight: 700, color: T.white, lineHeight: 1 }}>{s.val}</div>
+              <div style={{ fontFamily: BODY, fontSize: 11, color: T.grayMid, letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: 4 }}>{s.label}</div>
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Greek border at bottom */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
+        <GreekBorder color={T.borderVis} opacity={0.6}/>
       </div>
     </section>
   )
@@ -207,72 +193,63 @@ function Hero() {
 /* ─── IDENTITY ─── */
 function Identity() {
   const rows = [
-    {
-      n: '01',
-      title: 'Your collection is your identity.',
-      body: 'Every piece you own is a signal — about where you\'ve been, what you value, what you refuse to compromise on. Rebl is built for people who collect with intention, not impulse.',
-    },
-    {
-      n: '02',
-      title: 'Stand out in a world of copies.',
-      body: 'Limited editions exist because some things should never be mass-produced. We help you find them, own them, and build a profile that proves it — permanently.',
-    },
-    {
-      n: '03',
-      title: 'Find your orbit.',
-      body: 'The 47 people in India who own the exact same piece as you exist. They care as much as you do. Rebl connects verified owners — not followers, not strangers. People who get it.',
-    },
+    { n: '01', title: 'Your collection is your identity.', body: 'Every piece you own is a signal — about where you\'ve been, what you value, what you refuse to compromise on. Rebl is built for people who collect with intention, not impulse.' },
+    { n: '02', title: 'Stand out in a world of copies.', body: 'Limited editions exist because some things should never be mass-produced. We help you find them, own them, and build a record that proves it — permanently on the blockchain of culture.' },
+    { n: '03', title: 'Find your orbit.', body: 'The 47 people in India who own the exact same piece as you exist. They care as much as you do. Rebl connects verified owners — not followers, not strangers. People who get it.' },
   ]
   return (
-    <section style={{ backgroundColor: C.void, padding: 'clamp(60px,8vw,128px) max(10vw,32px)', position: 'relative', overflow: 'hidden' }}>
-      <CoordinateGrid />
-      <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+    <section style={{ backgroundColor: T.bg, padding: 'clamp(80px,10vw,140px) max(8vw,32px)', borderTop: `1px solid ${T.border}` }}>
+      <div style={{ maxWidth: 960, margin: '0 auto' }}>
+        <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.grayMid, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 64 }}>
+          The Collector
+        </div>
         {rows.map((r, i) => (
           <div key={r.n}>
-            {i > 0 && <div style={{ height: 1, backgroundColor: C.ghost, margin: '48px 0' }} />}
-            <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 48, alignItems: 'start' }}>
-              <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 64, fontWeight: 700, color: C.crater, lineHeight: 1 }}>{r.n}</div>
+            {i > 0 && <div style={sep} />}
+            <div style={{ display: 'grid', gridTemplateColumns: '100px 1fr', gap: 56, alignItems: 'start', padding: '48px 0' }}>
+              <div style={{ fontFamily: DISPLAY, fontSize: 60, fontWeight: 700, color: T.grayDark, lineHeight: 1 }}>{r.n}</div>
               <div>
-                <h3 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(18px,2.5vw,26px)', fontWeight: 700, color: C.cream, margin: '0 0 16px', letterSpacing: '-0.5px' }}>{r.title}</h3>
-                <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 16, color: C.dim, lineHeight: 1.75, margin: 0, maxWidth: 560 }}>{r.body}</p>
+                <h3 style={{ fontFamily: DISPLAY, fontSize: 'clamp(18px,2.2vw,26px)', fontWeight: 600, color: T.white, margin: '0 0 20px', letterSpacing: '-0.5px', textTransform: 'uppercase', lineHeight: 1.2 }}>{r.title}</h3>
+                <p style={{ fontFamily: BODY, fontSize: 16, color: T.grayMid, lineHeight: 1.8, margin: 0, maxWidth: 580 }}>{r.body}</p>
               </div>
             </div>
           </div>
         ))}
       </div>
+      <GreekBorder color={T.borderVis} opacity={0.5}/>
     </section>
   )
 }
 
 /* ─── MISSION ─── */
 function Mission() {
-  const items = [
-    { n: '01', label: 'ACQUIRE', body: 'Drop-based marketplace. Limited quantities. Verified access. No bots, no bots, no bots.' },
-    { n: '02', label: 'AUTHENTICATE', body: 'Every item gets a permanent digital record. AI-generated provenance story. Verifiable ownership.' },
-    { n: '03', label: 'ORBIT', body: 'Connect with verified owners of the same piece. Owner Rooms, community boards, shared culture.' },
+  const cols = [
+    { label: 'Myth', n: '01', icon: '⊕', body: 'The timeless wisdom of ancient Greece — that great things are built by those who dare to go beyond what\'s known. We inherit that defiance.' },
+    { label: 'Machine', n: '02', icon: '◎', body: 'AI-generated provenance. Blockchain ownership. NFC authentication. The machinery of modern invention, applied to the things you love.' },
+    { label: 'Movement', n: '03', icon: '✦', body: 'A community of verified owners who find each other through the objects that define them. Not followers. A tribe.' },
   ]
   return (
-    <section style={{ backgroundColor: C.nebula, padding: 'clamp(60px,8vw,128px) max(5vw,32px)', borderTop: `1px solid ${C.ghost}`, borderBottom: `1px solid ${C.ghost}` }}>
+    <section style={{ backgroundColor: T.surface, padding: 'clamp(80px,10vw,140px) max(8vw,32px)', borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}` }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <div style={{ marginBottom: 64 }}>
-          <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 16 }}>MISSION PARAMETERS</div>
-          <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 800, color: C.cream, margin: 0, letterSpacing: '-1px' }}>Three coordinates. One platform.</h2>
+        <div style={{ marginBottom: 72, textAlign: 'center' }}>
+          <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(24px,4vw,52px)', fontWeight: 700, color: T.white, letterSpacing: '0.05em', textTransform: 'uppercase', lineHeight: 1.1 }}>
+            Myth. Machine. Movement.
+          </div>
+          <div style={{ width: 48, height: 1, backgroundColor: T.gray, margin: '24px auto 0' }}/>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 0 }}>
-          {items.map((item, i) => (
-            <div key={item.n} style={{
-              padding: '40px 36px',
-              borderLeft: i === 0 ? `1px solid ${C.ghost}` : 'none',
-              borderRight: `1px solid ${C.ghost}`,
-              borderTop: `1px solid ${C.ghost}`,
-              borderBottom: `1px solid ${C.ghost}`,
+          {cols.map((c, i) => (
+            <div key={c.n} style={{
+              padding: '48px 40px',
+              borderLeft: i === 0 ? `1px solid ${T.borderVis}` : 'none',
+              borderRight: `1px solid ${T.borderVis}`,
+              borderTop: `1px solid ${T.borderVis}`,
+              borderBottom: `1px solid ${T.borderVis}`,
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color: C.silver }}>{item.n}</span>
-                <div style={{ flex: 1, height: 1, backgroundColor: C.ghost }} />
-                <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 11, color: C.silver, letterSpacing: '0.15em' }}>{item.label}</span>
-              </div>
-              <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 15, color: C.dim, lineHeight: 1.75, margin: 0 }}>{item.body}</p>
+              <div style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid, letterSpacing: '0.2em', marginBottom: 8 }}>{c.n}</div>
+              <div style={{ fontSize: 28, marginBottom: 20, color: T.gray }}>{c.icon}</div>
+              <h3 style={{ fontFamily: DISPLAY, fontSize: 20, fontWeight: 600, color: T.white, margin: '0 0 20px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{c.label}</h3>
+              <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.8, margin: 0 }}>{c.body}</p>
             </div>
           ))}
         </div>
@@ -284,37 +261,39 @@ function Mission() {
 /* ─── THE VAULT ─── */
 function TheVault() {
   const cards = [
-    { label: 'PROVENANCE ENGINE', body: 'AI generates the story of each item the moment you add it. Cultural context, edition history, your personal chapter.' },
-    { label: 'OWNER ROOMS', body: 'Private spaces for verified owners of the same piece. 100 people in the world own this. You\'re one of them.' },
-    { label: 'COLLECTOR DNA', body: 'Your taste profile, auto-generated from your vault. Archetype. Signature phrase. The collector you actually are.' },
+    { label: 'Provenance Engine', icon: '◈', body: 'AI generates the story of each item the moment you add it. Cultural context, edition history, your personal chapter. Written like mythology.' },
+    { label: 'Owner Rooms', icon: '⊞', body: 'Private spaces for verified owners of the same piece. 100 people in the world own this. You\'re one of them. Find the others.' },
+    { label: 'Collector DNA', icon: '◉', body: 'Your taste profile, auto-generated from your vault. Archetype. Signature phrase. The collector you actually are, in data.' },
   ]
   return (
-    <section style={{ backgroundColor: C.cosmos, padding: 'clamp(60px,8vw,128px) max(5vw,32px)' }}>
+    <section style={{ backgroundColor: T.bg, padding: 'clamp(80px,10vw,140px) max(8vw,32px)' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <div style={{ marginBottom: 64, maxWidth: 600 }}>
-          <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(40px,5.5vw,72px)', fontWeight: 800, color: C.cream, margin: '0 0 16px', letterSpacing: '-2px', lineHeight: 1 }}>The Vault.</h2>
-          <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 17, color: C.dim, lineHeight: 1.65, margin: 0 }}>Not a profile. Not a portfolio. A permanent record of who you are as a collector.</p>
+        <div style={{ marginBottom: 72 }}>
+          <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.grayMid, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 20 }}>The Vault</div>
+          <h2 style={{ fontFamily: DISPLAY, fontSize: 'clamp(36px,5.5vw,72px)', fontWeight: 700, color: T.white, margin: 0, letterSpacing: '-1px', textTransform: 'uppercase', lineHeight: 1 }}>Your permanent record.</h2>
+          <p style={{ fontFamily: BODY, fontSize: 16, color: T.grayMid, lineHeight: 1.7, margin: '20px 0 0', maxWidth: 500 }}>Not a profile. Not a portfolio. A permanent record of who you are as a collector — sealed in time.</p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 1, backgroundColor: C.ghost }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 1, backgroundColor: T.borderVis }}>
           {cards.map((c, i) => (
-            <div key={i} style={{ backgroundColor: C.cosmos, padding: '40px 32px' }}>
-              <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.2em', marginBottom: 20 }}>{c.label}</div>
-              <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 15, color: C.dim, lineHeight: 1.75, margin: 0 }}>{c.body}</p>
+            <div key={i} style={{ backgroundColor: T.bg, padding: '44px 36px' }}>
+              <div style={{ fontSize: 22, color: T.gray, marginBottom: 20 }}>{c.icon}</div>
+              <div style={{ fontFamily: DISPLAY, fontSize: 12, color: T.gray, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 16 }}>{c.label}</div>
+              <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.8, margin: 0 }}>{c.body}</p>
             </div>
           ))}
         </div>
         <div style={{ marginTop: 40 }}>
           <Link to="/signup" style={{
-            fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver,
-            textDecoration: 'none', letterSpacing: '0.2em', textTransform: 'uppercase',
-            padding: '14px 36px', border: `1px solid ${C.silver}`, display: 'inline-block',
-            transition: 'all 0.2s',
+            fontFamily: BODY, fontSize: 12, fontWeight: 500, color: T.gray,
+            textDecoration: 'none', letterSpacing: '0.12em', textTransform: 'uppercase',
+            padding: '14px 36px', border: `1px solid ${T.borderVis}`, display: 'inline-block', transition: 'all 0.2s',
           }}
-            onMouseEnter={e => { e.currentTarget.style.backgroundColor = C.silver; e.currentTarget.style.color = C.void }}
-            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = C.silver }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = T.white; e.currentTarget.style.color = T.white }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = T.borderVis; e.currentTarget.style.color = T.gray }}
           >Build Your Vault →</Link>
         </div>
       </div>
+      <div style={{ marginTop: 80 }}><GreekBorder color={T.borderVis} opacity={0.5}/></div>
     </section>
   )
 }
@@ -322,33 +301,31 @@ function TheVault() {
 /* ─── BRAND MISSION ─── */
 function BrandMission() {
   const metrics = [
-    { val: '61%', label: 'post-purchase story completion rate' },
-    { val: '3x', label: 'higher retention vs standard e-commerce' },
-    { val: '₹0', label: 'to launch your first drop' },
+    { val: '61%', label: 'Post-purchase story completion rate' },
+    { val: '3×', label: 'Higher retention vs standard e-commerce' },
+    { val: '₹0', label: 'To launch your first drop' },
   ]
   return (
-    <section style={{ backgroundColor: C.nebula, padding: 'clamp(60px,8vw,128px) max(5vw,32px)', borderTop: `1px solid ${C.ghost}` }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 80, alignItems: 'center' }}>
+    <section style={{ backgroundColor: T.surface, padding: 'clamp(80px,10vw,140px) max(8vw,32px)', borderTop: `1px solid ${T.border}` }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px,1fr))', gap: 80, alignItems: 'center' }}>
         <div>
-          <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 20 }}>FOR BRANDS</div>
-          <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(24px,3.5vw,40px)', fontWeight: 800, color: C.cream, margin: '0 0 20px', letterSpacing: '-1px', lineHeight: 1.1 }}>Limited editions done right.</h2>
-          <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 16, color: C.dim, lineHeight: 1.75, margin: '0 0 36px' }}>Rebl gives brands the infrastructure to make scarcity meaningful — not just a marketing trick. Launch drops, build verified communities, and know your most passionate buyers by name.</p>
+          <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.grayMid, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 24 }}>For Brands</div>
+          <h2 style={{ fontFamily: DISPLAY, fontSize: 'clamp(22px,3.2vw,40px)', fontWeight: 700, color: T.white, margin: '0 0 24px', textTransform: 'uppercase', letterSpacing: '-0.5px', lineHeight: 1.1 }}>Limited editions done right.</h2>
+          <p style={{ fontFamily: BODY, fontSize: 16, color: T.grayMid, lineHeight: 1.8, margin: '0 0 40px' }}>Rebl gives brands the infrastructure to make scarcity meaningful — not just a marketing trick. Launch drops, build verified communities, and know your most passionate buyers by name.</p>
           <Link to="/brand/signup" style={{
-            fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver,
-            textDecoration: 'none', letterSpacing: '0.2em', textTransform: 'uppercase',
-            padding: '14px 32px', border: `1px solid ${C.silver}`, display: 'inline-block',
-            transition: 'all 0.2s',
+            fontFamily: BODY, fontSize: 12, fontWeight: 500, color: T.gray,
+            textDecoration: 'none', letterSpacing: '0.12em', textTransform: 'uppercase',
+            padding: '14px 36px', border: `1px solid ${T.borderVis}`, display: 'inline-block', transition: 'all 0.2s',
           }}
-            onMouseEnter={e => { e.currentTarget.style.backgroundColor = C.silver; e.currentTarget.style.color = C.void }}
-            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = C.silver }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = T.white; e.currentTarget.style.color = T.white }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = T.borderVis; e.currentTarget.style.color = T.gray }}
           >Launch Your Brand ↗</Link>
         </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        <div>
           {metrics.map((m, i) => (
-            <div key={i} style={{ padding: '28px 0', borderBottom: `1px solid ${C.ghost}` }}>
-              <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(32px,4vw,52px)', fontWeight: 700, color: C.cream, letterSpacing: '-2px' }}>{m.val}</div>
-              <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 13, color: C.dim, marginTop: 6 }}>{m.label}</div>
+            <div key={i} style={{ padding: '32px 0', borderBottom: `1px solid ${T.border}` }}>
+              <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(40px,5vw,64px)', fontWeight: 700, color: T.white, lineHeight: 1 }}>{m.val}</div>
+              <div style={{ fontFamily: BODY, fontSize: 13, color: T.grayMid, marginTop: 8, letterSpacing: '0.02em' }}>{m.label}</div>
             </div>
           ))}
         </div>
@@ -360,26 +337,26 @@ function BrandMission() {
 /* ─── UPCOMING TECH ─── */
 function UpcomingTech() {
   const items = [
-    { label: 'NFC AUTHENTICATION', body: 'Tap your physical item with your phone. Ownership verified in under 1 second. No apps, no QR codes.' },
-    { label: 'BLOCKCHAIN PROVENANCE', body: 'Every ownership transfer recorded on-chain. The item\'s full history, permanently and publicly verifiable.' },
-    { label: 'NFT VAULT PRESENCE', body: 'Every verified item in your vault gets a soulbound NFT. Non-transferable proof of ownership. Yours forever, on-chain.' },
-    { label: 'P2P RESALE MARKET', body: 'Sell with full provenance attached. Buyers know exactly what they\'re getting. Royalties auto-distributed to original brands.' },
+    { label: 'NFC Authentication', icon: '◎', body: 'Tap your physical item with your phone. Ownership verified in under 1 second. No apps, no QR codes.' },
+    { label: 'Blockchain Provenance', icon: '⬡', body: 'Every ownership transfer recorded on-chain. The item\'s full history, permanently and publicly verifiable.' },
+    { label: 'NFT Vault Presence', icon: '◈', body: 'Every verified item in your vault gets a soulbound NFT. Non-transferable proof of ownership. Yours forever.' },
+    { label: 'P2P Resale Market', icon: '⟳', body: 'Sell with full provenance attached. Buyers know exactly what they\'re getting. Royalties auto-distributed.' },
   ]
   return (
-    <section style={{ backgroundColor: C.void, padding: 'clamp(60px,8vw,128px) max(5vw,32px)', position: 'relative', overflow: 'hidden', borderTop: `1px solid ${C.ghost}` }}>
+    <section style={{ backgroundColor: T.bg, padding: 'clamp(80px,10vw,140px) max(8vw,32px)', position: 'relative', overflow: 'hidden', borderTop: `1px solid ${T.border}` }}>
       <StarField />
       <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-        <div style={{ marginBottom: 64 }}>
-          <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.25em', marginBottom: 16 }}>CLASSIFIED // COMING SOON</div>
-          <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 800, color: C.cream, margin: 0, letterSpacing: '-1px' }}>What's being built.</h2>
+        <div style={{ marginBottom: 72 }}>
+          <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.grayMid, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 20 }}>Classified // Coming Soon</div>
+          <h2 style={{ fontFamily: DISPLAY, fontSize: 'clamp(22px,3.2vw,40px)', fontWeight: 700, color: T.white, margin: 0, textTransform: 'uppercase', letterSpacing: '-0.5px' }}>What's being built.</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 1, backgroundColor: C.ghost }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px,1fr))', gap: 1, backgroundColor: T.borderVis }}>
           {items.map((item, i) => (
-            <div key={i} style={{ backgroundColor: C.void, padding: '36px 32px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div style={{ height: 1, backgroundColor: C.silver, width: 40 }} />
-              <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.2em' }}>{item.label}</div>
-              <p style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 14, color: C.dim, lineHeight: 1.75, margin: 0, flex: 1 }}>{item.body}</p>
-              <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.ghost, letterSpacing: '0.15em' }}>STATUS: DEVELOPMENT</div>
+            <div key={i} style={{ backgroundColor: T.bg, padding: '40px 32px' }}>
+              <div style={{ fontSize: 20, color: T.gray, marginBottom: 16 }}>{item.icon}</div>
+              <div style={{ fontFamily: DISPLAY, fontSize: 11, color: T.gray, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 16 }}>{item.label}</div>
+              <p style={{ fontFamily: BODY, fontSize: 14, color: T.grayMid, lineHeight: 1.8, margin: 0 }}>{item.body}</p>
+              <div style={{ fontFamily: MONO, fontSize: 9, color: T.borderVis, letterSpacing: '0.15em', marginTop: 24 }}>STATUS: DEVELOPMENT</div>
             </div>
           ))}
         </div>
@@ -391,64 +368,59 @@ function UpcomingTech() {
 /* ─── PRICING ─── */
 function Pricing() {
   return (
-    <section id="pricing" style={{ backgroundColor: C.cosmos, padding: 'clamp(60px,8vw,128px) max(5vw,32px)', borderTop: `1px solid ${C.ghost}` }}>
+    <section id="pricing" style={{ backgroundColor: T.surface, padding: 'clamp(80px,10vw,140px) max(8vw,32px)', borderTop: `1px solid ${T.border}` }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <div style={{ marginBottom: 64 }}>
-          <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.25em', marginBottom: 16 }}>PRICING</div>
-          <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 800, color: C.cream, margin: 0, letterSpacing: '-1px' }}>Free to collect. Powerful to build.</h2>
+        <div style={{ marginBottom: 72 }}>
+          <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.grayMid, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 20 }}>Pricing</div>
+          <h2 style={{ fontFamily: DISPLAY, fontSize: 'clamp(22px,3.2vw,40px)', fontWeight: 700, color: T.white, margin: 0, textTransform: 'uppercase', letterSpacing: '-0.5px' }}>Free to collect. Powerful to build.</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 1, backgroundColor: C.ghost }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px,1fr))', gap: 1, backgroundColor: T.borderVis }}>
           {/* Collector */}
-          <div style={{ backgroundColor: C.cosmos, padding: '48px 40px' }}>
-            <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.orbit, letterSpacing: '0.2em', marginBottom: 24 }}>COLLECTOR</div>
-            <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 48, fontWeight: 700, color: C.cream, lineHeight: 1 }}>Free</div>
-            <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 13, color: C.dim, margin: '8px 0 36px' }}>Forever</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 40 }}>
-              {['Unlimited items in your vault', 'AI story for every item', 'Owner Rooms for verified pieces', 'Collector DNA profile', 'Public vault URL'].map(f => (
-                <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <CrossHair size={14} color={C.silver} />
-                  <span style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 14, color: C.dim }}>{f}</span>
+          <div style={{ backgroundColor: T.surface, padding: '52px 44px' }}>
+            <div style={{ fontFamily: DISPLAY, fontSize: 11, color: T.gray, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 28 }}>Collector</div>
+            <div style={{ fontFamily: DISPLAY, fontSize: 56, fontWeight: 700, color: T.white, lineHeight: 1 }}>Free</div>
+            <div style={{ fontFamily: BODY, fontSize: 13, color: T.grayMid, margin: '10px 0 40px' }}>Forever, for every collector</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 44 }}>
+              {['Unlimited items in your vault', 'AI provenance story for every item', 'Owner Rooms for verified pieces', 'Collector DNA profile', 'Public vault URL'].map(f => (
+                <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ width: 6, height: 6, border: `1px solid ${T.gray}`, flexShrink: 0 }}/>
+                  <span style={{ fontFamily: BODY, fontSize: 14, color: T.grayMid }}>{f}</span>
                 </div>
               ))}
             </div>
             <Link to="/signup" style={{
-              display: 'block', textAlign: 'center',
-              fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver,
-              textDecoration: 'none', letterSpacing: '0.2em', textTransform: 'uppercase',
-              padding: '14px', border: `1px solid ${C.silver}`,
-              transition: 'all 0.2s',
+              display: 'block', textAlign: 'center', fontFamily: BODY, fontSize: 12, fontWeight: 500,
+              color: T.gray, textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase',
+              padding: '14px', border: `1px solid ${T.borderVis}`, transition: 'all 0.2s',
             }}
-              onMouseEnter={e => { e.currentTarget.style.backgroundColor = C.silver; e.currentTarget.style.color = C.void }}
-              onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = C.silver }}
+              onMouseEnter={e => { e.currentTarget.style.color = T.white; e.currentTarget.style.borderColor = T.white }}
+              onMouseLeave={e => { e.currentTarget.style.color = T.gray; e.currentTarget.style.borderColor = T.borderVis }}
             >Start Free →</Link>
           </div>
-
           {/* Brand */}
-          <div style={{ backgroundColor: C.cosmos, padding: '48px 40px', border: `1px solid ${C.silver}` }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
-              <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.2em' }}>BRAND</div>
-              <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 8, color: C.void, backgroundColor: C.silver, padding: '3px 8px', letterSpacing: '0.1em' }}>MOST POPULAR</div>
+          <div style={{ backgroundColor: T.surface, padding: '52px 44px', border: `1px solid ${T.white}` }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 28 }}>
+              <div style={{ fontFamily: DISPLAY, fontSize: 11, color: T.white, letterSpacing: '0.25em', textTransform: 'uppercase' }}>Brand</div>
+              <div style={{ fontFamily: MONO, fontSize: 8, color: T.bg, backgroundColor: T.white, padding: '4px 8px', letterSpacing: '0.1em' }}>MOST POPULAR</div>
             </div>
-            <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 48, fontWeight: 700, color: C.cream, lineHeight: 1 }}>₹0</div>
-            <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 13, color: C.dim, margin: '8px 0 36px' }}>For your first drop</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 16 }}>
-              {['Unlimited drops', 'Customer tier engine', 'Post-purchase contact center', 'Brand story builder', 'AI campaign tools', 'Subdomain: yourbrand.rebl.in', 'Analytics dashboard'].map(f => (
-                <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <CrossHair size={14} color={C.silver} />
-                  <span style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 14, color: C.dim }}>{f}</span>
+            <div style={{ fontFamily: DISPLAY, fontSize: 56, fontWeight: 700, color: T.white, lineHeight: 1 }}>₹0</div>
+            <div style={{ fontFamily: BODY, fontSize: 13, color: T.grayMid, margin: '10px 0 40px' }}>For your first drop</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 20 }}>
+              {['Unlimited drops', 'Customer tier engine', 'Post-purchase contact center', 'Brand story builder', 'AI campaign tools', 'Analytics dashboard'].map(f => (
+                <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ width: 6, height: 6, backgroundColor: T.white, flexShrink: 0 }}/>
+                  <span style={{ fontFamily: BODY, fontSize: 14, color: T.gray }}>{f}</span>
                 </div>
               ))}
             </div>
-            <div style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 12, color: C.dim, marginBottom: 32 }}>Growth from ₹15,000/mo</div>
+            <div style={{ fontFamily: BODY, fontSize: 12, color: T.grayMid, marginBottom: 36 }}>Growth from ₹15,000/mo</div>
             <Link to="/brand/signup" style={{
-              display: 'block', textAlign: 'center',
-              fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.void,
-              textDecoration: 'none', letterSpacing: '0.2em', textTransform: 'uppercase',
-              padding: '14px', backgroundColor: C.silver,
-              transition: 'background 0.2s',
+              display: 'block', textAlign: 'center', fontFamily: BODY, fontSize: 12, fontWeight: 600,
+              color: T.bg, textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase',
+              padding: '14px', backgroundColor: T.white, transition: 'background 0.2s',
             }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = C.silverBright}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = C.silver}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = '#D0D0D0'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = T.white}
             >Launch Free →</Link>
           </div>
         </div>
@@ -460,71 +432,42 @@ function Pricing() {
 /* ─── FOOTER ─── */
 function Footer() {
   const cols = [
-    {
-      label: 'PRODUCT',
-      links: [
-        { text: 'How it works', to: '/#how-it-works' },
-        { text: 'The Vault', to: '/demo#step-1' },
-        { text: 'Add to Collection', to: '/add-item' },
-        { text: 'Drops', to: '/brand/vegnongveg' },
-      ],
-    },
-    {
-      label: 'BRANDS',
-      links: [
-        { text: 'Partner with us', to: '/brand/signup' },
-        { text: 'Brand Dashboard', to: '/brand-dashboard' },
-        { text: 'Pricing', to: '/#pricing' },
-      ],
-    },
-    {
-      label: 'COMMUNITY',
-      links: [
-        { text: 'Find Your Tribe', to: '/tribe' },
-        { text: 'Drops', to: '/brand/vegnongveg' },
-        { text: 'Blog', to: '/blog' },
-      ],
-    },
-    {
-      label: 'LEGAL',
-      links: [
-        { text: 'About', to: '/about' },
-        { text: 'Privacy Policy', to: '/privacy' },
-        { text: 'Terms', to: '/terms' },
-      ],
-    },
+    { label: 'Product', links: [{ text: 'How it works', to: '/#how-it-works' }, { text: 'The Vault', to: '/demo#step-1' }, { text: 'Add to Collection', to: '/add-item' }, { text: 'Drops', to: '/brand/vegnongveg' }] },
+    { label: 'Brands', links: [{ text: 'Partner with us', to: '/brand/signup' }, { text: 'Brand Dashboard', to: '/brand-dashboard' }, { text: 'Pricing', to: '/#pricing' }] },
+    { label: 'Community', links: [{ text: 'Find Your Tribe', to: '/tribe' }, { text: 'Blog', to: '/blog' }] },
+    { label: 'Legal', links: [{ text: 'About', to: '/about' }, { text: 'Privacy', to: '/privacy' }, { text: 'Terms', to: '/terms' }] },
   ]
-
   return (
-    <footer style={{ backgroundColor: C.void, borderTop: `1px solid ${C.ghost}`, padding: 'clamp(48px,6vw,80px) max(5vw,32px) 40px' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr repeat(4, 1fr)', gap: 40, marginBottom: 64, flexWrap: 'wrap' }}>
-          <div>
-            <div style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 24, color: C.cream, letterSpacing: '-0.5px', lineHeight: 1 }}>Rēbl</div>
-            <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 7, color: C.dim, letterSpacing: '0.22em', marginBottom: 14, marginTop: 4 }}>COLLECTOR OS</div>
-            <p style={{ fontSize: 13, color: C.dim, lineHeight: 1.65, margin: 0, maxWidth: 220 }}>The platform for collectors who refuse to blend in.</p>
-          </div>
-          {cols.map(col => (
-            <div key={col.label}>
-              <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.orbit, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 20 }}>{col.label}</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {col.links.map(link => (
-                  <Link key={link.text} to={link.to} style={{
-                    fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: 13, color: C.dim,
-                    textDecoration: 'none', transition: 'color 0.2s',
-                  }}
-                    onMouseEnter={e => e.target.style.color = C.silver}
-                    onMouseLeave={e => e.target.style.color = C.dim}
-                  >{link.text}</Link>
-                ))}
-              </div>
+    <footer style={{ backgroundColor: T.bg, borderTop: `1px solid ${T.border}` }}>
+      <GreekBorder color={T.borderVis} opacity={0.4}/>
+      <div style={{ padding: 'clamp(56px,7vw,96px) max(8vw,32px) 0' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr repeat(4,1fr)', gap: 40, marginBottom: 80, flexWrap: 'wrap' }}>
+            <div>
+              <div style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 28, color: T.white, letterSpacing: '-0.5px', marginBottom: 6 }}>Rēbl</div>
+              <div style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.22em', marginBottom: 20 }}>MYTH. MACHINE. MOVEMENT.</div>
+              <p style={{ fontFamily: BODY, fontSize: 13, color: T.grayMid, lineHeight: 1.7, margin: 0, maxWidth: 220 }}>From ancient roots, to infinite futures.</p>
             </div>
-          ))}
+            {cols.map(col => (
+              <div key={col.label}>
+                <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.gray, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 24 }}>{col.label}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {col.links.map(link => (
+                    <Link key={link.text} to={link.to} style={{ fontFamily: BODY, fontSize: 13, color: T.grayMid, textDecoration: 'none', transition: 'color 0.2s' }}
+                      onMouseEnter={e => e.target.style.color = T.white}
+                      onMouseLeave={e => e.target.style.color = T.grayMid}
+                    >{link.text}</Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div style={{ height: 1, backgroundColor: C.ghost, marginBottom: 32 }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-          <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.dim, letterSpacing: '0.1em' }}>© 2025 REBL. ALL RIGHTS RESERVED.</span>
-          <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.crater, letterSpacing: '0.1em' }}>INDIA — COLLECTOR OS v1.0</span>
+      </div>
+      <div style={{ borderTop: `1px solid ${T.border}` }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '28px max(8vw,32px)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+          <span style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.12em', textTransform: 'uppercase' }}>From Ancient Roots, To Infinite Futures.</span>
+          <span style={{ fontFamily: MONO, fontSize: 9, color: T.grayDark, letterSpacing: '0.12em', textTransform: 'uppercase' }}>Rebl.in · India · MMXXV</span>
         </div>
       </div>
     </footer>

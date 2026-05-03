@@ -5,9 +5,9 @@ import { supabase } from '@/lib/supabase'
 
 /* ── Tokens ── */
 const C = {
-  primary: '#0A0A12', accent: '#A8B2C4', cream: '#F0F4FF',
-  muted: '#5A6380', gold: '#FFB703', card: '#12121E',
-  border: '#2A2A3E', sidebar: '#050508',
+  primary: '#000000', accent: '#A6A6A6', cream: '#FFFFFF',
+  muted: '#555555', gold: '#A6A6A6', card: '#0D0D0D',
+  border: '#1A1A1A', sidebar: '#000000',
 }
 
 const ARCHETYPES = [

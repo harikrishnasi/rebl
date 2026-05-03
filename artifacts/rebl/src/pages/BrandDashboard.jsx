@@ -6,9 +6,9 @@ import { supabase } from '@/lib/supabase'
 import { callGeminiAPI } from '@/lib/gemini'
 
 const C = {
-  primary: '#0A0A12', accent: '#A8B2C4', cream: '#F0F4FF',
-  muted: '#5A6380', gold: '#FFB703', card: '#12121E',
-  border: '#2A2A3E', sidebar: '#050508',
+  primary: '#000000', accent: '#A6A6A6', cream: '#FFFFFF',
+  muted: '#555555', gold: '#A6A6A6', card: '#0D0D0D',
+  border: '#1A1A1A', sidebar: '#000000',
 }
 
 const CATEGORY_LANGUAGE = {
@@ -83,7 +83,7 @@ export default function BrandDashboard() {
   const tabProps = { brand, lang, tiers, drops, setDrops, customers }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Plus Jakarta Sans", Inter, sans-serif', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', display: 'flex', flexDirection: 'column' }}>
       {showWelcome && <WelcomeModal brand={brand} lang={lang} onClose={() => setShowWelcome(false)} />}
 
       {/* ── Floating Contact Buyers button ── */}
@@ -1288,7 +1288,7 @@ function MessageComposer({ customer, brand, onClose }) {
    SMART CONTACT QUEUE — Section D
 ══════════════════════════════════════════ */
 const TRIGGER_META = {
-  story_not_written:    { dot: '🟡', color: '#FFB703', bg: 'rgba(255,183,3,0.12)',   label: 'Story Not Written',    subject: 'Your piece deserves a story.' },
+  story_not_written:    { dot: '🟡', color: '#A6A6A6', bg: 'rgba(255,183,3,0.12)',   label: 'Story Not Written',    subject: 'Your piece deserves a story.' },
   community_not_joined: { dot: '🔴', color: C.accent,  bg: 'rgba(230,57,70,0.12)',   label: 'Community Not Joined', subject: 'Your community is waiting for you.' },
   drop_anniversary:     { dot: '🟢', color: '#22c55e', bg: 'rgba(34,197,94,0.12)',   label: 'Drop Anniversary',     subject: 'One year ago today.' },
   tier_upgrade:         { dot: '🔵', color: '#60a5fa', bg: 'rgba(96,165,250,0.12)',  label: 'Tier Upgraded',        subject: "You've moved up." },
@@ -1416,7 +1416,7 @@ function SmartContactQueueSection({ brand, lang, tiers, customers }) {
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {storyRows.length > 0 && (
             <button onClick={() => setBulkConfirm({ type: 'story_not_written', rows: storyRows })}
-              style={{ padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: `1px solid rgba(255,183,3,0.35)`, backgroundColor: 'rgba(255,183,3,0.08)', color: '#FFB703' }}>
+              style={{ padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: `1px solid rgba(255,183,3,0.35)`, backgroundColor: 'rgba(255,183,3,0.08)', color: '#A6A6A6' }}>
               🟡 Send All Story Nudges ({storyRows.length})
             </button>
           )}
@@ -2926,5 +2926,5 @@ const IS = {
   width: '100%', backgroundColor: C.card, color: C.cream,
   border: `1px solid rgba(255,255,255,0.09)`, borderRadius: 10,
   padding: '11px 14px', fontSize: 14, outline: 'none',
-  fontFamily: '"Plus Jakarta Sans", Inter, sans-serif', boxSizing: 'border-box',
+  fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', boxSizing: 'border-box',
 }

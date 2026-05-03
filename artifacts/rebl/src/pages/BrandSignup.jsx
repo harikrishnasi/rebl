@@ -4,13 +4,13 @@ import toast from 'react-hot-toast'
 import { supabase } from '@/lib/supabase'
 
 const C = {
-  primary: '#0A0A12',
-  accent: '#A8B2C4',
-  cream: '#F0F4FF',
-  muted: '#5A6380',
-  gold: '#FFB703',
-  card: '#12121E',
-  border: '#2A2A3E',
+  primary: '#000000',
+  accent: '#A6A6A6',
+  cream: '#FFFFFF',
+  muted: '#555555',
+  gold: '#A6A6A6',
+  card: '#0D0D0D',
+  border: '#1A1A1A',
 }
 
 const CATEGORIES = [
@@ -194,7 +194,7 @@ export default function BrandSignup() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Plus Jakarta Sans", Inter, sans-serif' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: C.primary, color: C.cream, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
       {/* Header */}
       <div style={{ padding: '16px 20px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', gap: 16 }}>
         <button onClick={() => step > 1 ? goTo(step - 1) : navigate('/')}
@@ -528,5 +528,5 @@ const inputStyle = {
   width: '100%', backgroundColor: C.card, color: C.cream,
   border: `1px solid rgba(255,255,255,0.09)`, borderRadius: 10,
   padding: '11px 14px', fontSize: 14, outline: 'none',
-  fontFamily: '"Plus Jakarta Sans", Inter, sans-serif', boxSizing: 'border-box',
+  fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', boxSizing: 'border-box',
 }
