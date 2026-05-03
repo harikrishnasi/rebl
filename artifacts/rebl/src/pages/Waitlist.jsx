@@ -304,7 +304,7 @@ export default function Waitlist() {
 
       {/* Footer */}
       <div style={{ borderTop: `1px solid ${T.border}`, padding: isMobile ? '20px' : '20px max(8vw,48px)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-        <span style={{ fontFamily: BODY, fontSize: 12, color: T.mid }}>Rēbl · India · MMXXVI</span>
+        <span style={{ fontFamily: BODY, fontSize: 12, color: T.mid }}>Rēbl · Global · MMXXVI</span>
         <Link to="/" style={{ fontFamily: MONO, fontSize: 10, color: T.mid, textDecoration: 'none', letterSpacing: '0.1em' }}>← Back to Home</Link>
       </div>
     </div>

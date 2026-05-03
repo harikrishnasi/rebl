@@ -610,7 +610,7 @@ function Footer() {
               onMouseLeave={e => e.target.style.color = T.gray}
             >Discord</a>
           </div>
-          <span style={{ fontFamily: BODY, fontSize: 12, color: T.grayMid, letterSpacing: '0.04em' }}>Rebl.in · India · MMXXVI</span>
+          <span style={{ fontFamily: BODY, fontSize: 12, color: T.grayMid, letterSpacing: '0.04em' }}>Rebl.in · Global · MMXXVI</span>
         </div>
       </div>
     </footer>
