@@ -92,7 +92,7 @@ export default function ProductPage() {
           <span style={{ fontFamily: MONO, fontSize: 10, color: T.gray, letterSpacing: '0.1em' }}>{product.name.toUpperCase()}</span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '60fr 40fr', gap: 64, marginBottom: 120 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '52fr 48fr', gap: 56, marginBottom: 120 }}>
           <div>
             <div style={{ position: 'relative', marginBottom: 16 }}>
               <div style={{
@@ -142,7 +142,7 @@ export default function ProductPage() {
               to={`/brands/${product.brandSlug}`}
               style={{ fontFamily: MONO, fontSize: 10, color: T.gray, letterSpacing: '0.3em', textDecoration: 'none', textTransform: 'uppercase', display: 'block', marginBottom: 12 }}
             >{product.brand}</Link>
-            <h1 style={{ fontFamily: DISPLAY, fontSize: 36, color: T.white, fontWeight: 700, lineHeight: 1.1, marginBottom: 12 }}>{product.name}</h1>
+            <h1 style={{ fontFamily: DISPLAY, fontSize: 'clamp(18px, 2.2vw, 30px)', color: T.white, fontWeight: 700, lineHeight: 1.15, marginBottom: 12 }}>{product.name}</h1>
             <div style={{ fontFamily: BODY, fontSize: 14, color: T.grayMid, marginBottom: 32, lineHeight: 1.7 }}>{product.edition}</div>
 
             <div style={{ marginBottom: 24 }}>

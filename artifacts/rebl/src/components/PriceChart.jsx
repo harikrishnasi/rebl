@@ -7,6 +7,8 @@ const T = {
   borderVis: '#2D2D2D', white: '#FFFFFF', gray: '#A6A6A6', grayMid: '#555555',
 }
 const MONO = '"Space Mono", monospace'
+const DISPLAY = '"Cinzel", Georgia, serif'
+const BODY = '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif'
 
 const TABS = [
   { key: '1H', label: '1H', ms: 60 * 60 * 1000 },
@@ -60,7 +62,7 @@ export default function PriceChart({ product, onClose }) {
       onClick={onClose}
     >
       <div
-        style={{ width: '92%', maxWidth: 800, background: '#050508', border: `1px solid ${T.borderVis}`, padding: '40px 40px 32px' }}
+        style={{ width: '92%', maxWidth: 800, background: T.card, border: `1px solid ${T.borderVis}`, padding: '40px 40px 32px' }}
         onClick={e => e.stopPropagation()}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
@@ -68,7 +70,7 @@ export default function PriceChart({ product, onClose }) {
             <div style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.3em', marginBottom: 8 }}>
               {product.brand.toUpperCase()} · DYNAMIC PRICE HISTORY
             </div>
-            <div style={{ fontFamily: MONO, fontSize: 15, color: T.white, fontWeight: 700, marginBottom: 10 }}>{product.name}</div>
+            <div style={{ fontFamily: DISPLAY, fontSize: 18, color: T.white, fontWeight: 700, marginBottom: 10 }}>{product.name}</div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 14 }}>
               <span style={{ fontFamily: MONO, fontSize: 26, color: T.white, fontWeight: 700 }}>{formatINR(product.price)}</span>
               <span style={{ fontFamily: MONO, fontSize: 10, color: isUp ? '#4CAF50' : '#CC3333', letterSpacing: '0.05em' }}>
