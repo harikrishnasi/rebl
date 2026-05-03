@@ -147,7 +147,7 @@ function Hero() {
       <div style={{ maxWidth: 680, position: 'relative', zIndex: 1, width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: isMobile ? 28 : 40, flexWrap: 'wrap' }}>
           <div style={{ width: 32, height: 1, backgroundColor: T.gray }}/>
-          <span style={{ fontFamily: MONO, fontSize: isMobile ? 8 : 10, color: T.gray, letterSpacing: '0.2em' }}>EST. MMXXV — INDIA'S COLLECTOR OS</span>
+          <span style={{ fontFamily: MONO, fontSize: isMobile ? 8 : 10, color: T.gray, letterSpacing: '0.2em' }}>EST. MMXXV — WORLD'S FIRST</span>
           <div style={{ width: 32, height: 1, backgroundColor: T.gray }}/>
         </div>
         <h1 style={{ margin: 0, lineHeight: 1.0 }}>
