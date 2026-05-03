@@ -85,24 +85,24 @@ export default function ProductPage() {
     <div style={{ background: T.bg, minHeight: '100vh', color: T.white, fontFamily: BODY }}>
       <DropsNav />
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '60px 40px' }}>
-        <div style={{ marginBottom: 32 }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 40px' }}>
+        <div style={{ marginBottom: 20 }}>
           <Link to="/drops" style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid, textDecoration: 'none', letterSpacing: '0.1em' }}>← DROPS</Link>
           <span style={{ fontFamily: MONO, fontSize: 10, color: T.borderVis, margin: '0 10px' }}>/</span>
           <span style={{ fontFamily: MONO, fontSize: 10, color: T.gray, letterSpacing: '0.1em' }}>{product.name.toUpperCase()}</span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '52fr 48fr', gap: 56, marginBottom: 120 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '50fr 50fr', gap: 48, marginBottom: 80 }}>
           <div>
-            <div style={{ position: 'relative', marginBottom: 16 }}>
+            <div style={{ position: 'relative', marginBottom: 12 }}>
               <div style={{
-                aspectRatio: '1/1',
+                height: 420,
                 background: `linear-gradient(135deg, ${product.mainColor}20 0%, ${T.card} 70%)`,
                 border: `1px solid ${T.borderVis}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 position: 'relative', overflow: 'hidden',
               }}>
-                <span style={{ fontFamily: MONO, fontSize: 180, color: `${product.mainColor}10`, fontWeight: 700, userSelect: 'none', lineHeight: 1 }}>
+                <span style={{ fontFamily: MONO, fontSize: 140, color: `${product.mainColor}10`, fontWeight: 700, userSelect: 'none', lineHeight: 1 }}>
                   {product.brand.split(' ')[0].toUpperCase()}
                 </span>
                 <div style={{
