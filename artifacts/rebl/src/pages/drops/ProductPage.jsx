@@ -8,9 +8,9 @@ import toast from 'react-hot-toast'
 import PriceChart from '@/components/PriceChart'
 
 const T = {
-  bg: '#000000', surface: '#050508', card: '#0A0A12',
-  border: '#1A1A1A', borderVis: '#2D2D2D', borderDim: '#1C1C2E',
-  white: '#F0F4FF', gray: '#A8B2C4', grayMid: '#5A6380',
+  bg: '#000000', surface: '#0A0A0A', card: '#0D0D0D',
+  border: '#1A1A1A', borderVis: '#2D2D2D', borderDim: '#111111',
+  white: '#FFFFFF', gray: '#A6A6A6', grayMid: '#555555',
 }
 const MONO = '"Space Mono", monospace'
 const DISPLAY = '"Cinzel", Georgia, serif'
@@ -142,8 +142,8 @@ export default function ProductPage() {
               to={`/brands/${product.brandSlug}`}
               style={{ fontFamily: MONO, fontSize: 10, color: T.gray, letterSpacing: '0.3em', textDecoration: 'none', textTransform: 'uppercase', display: 'block', marginBottom: 12 }}
             >{product.brand}</Link>
-            <h1 style={{ fontFamily: MONO, fontSize: 36, color: T.white, fontWeight: 700, letterSpacing: '-1px', lineHeight: 1.1, marginBottom: 12 }}>{product.name}</h1>
-            <div style={{ fontFamily: MONO, fontSize: 11, color: T.grayMid, marginBottom: 32, lineHeight: 1.6 }}>{product.edition}</div>
+            <h1 style={{ fontFamily: DISPLAY, fontSize: 36, color: T.white, fontWeight: 700, lineHeight: 1.1, marginBottom: 12 }}>{product.name}</h1>
+            <div style={{ fontFamily: BODY, fontSize: 14, color: T.grayMid, marginBottom: 32, lineHeight: 1.7 }}>{product.edition}</div>
 
             <div style={{ marginBottom: 24 }}>
               <div style={{ fontFamily: MONO, fontSize: 40, color: T.white, fontWeight: 700, letterSpacing: '-1px' }}>{formatINR(product.price)}</div>

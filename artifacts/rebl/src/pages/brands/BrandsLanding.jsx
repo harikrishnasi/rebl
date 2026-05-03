@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
 
 const T = {
-  bg: '#000000', surface: '#050508', card: '#0A0A12',
-  border: '#1A1A1A', borderVis: '#2D2D2D', borderDim: '#1C1C2E',
-  white: '#F0F4FF', gray: '#A8B2C4', grayMid: '#5A6380',
+  bg: '#000000', surface: '#0A0A0A', card: '#0D0D0D',
+  border: '#1A1A1A', borderVis: '#2D2D2D', borderDim: '#111111',
+  white: '#FFFFFF', gray: '#A6A6A6', grayMid: '#555555',
 }
 const MONO = '"Space Mono", monospace'
 const DISPLAY = '"Cinzel", Georgia, serif'
@@ -94,7 +94,7 @@ export default function BrandsLanding() {
           <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
             <Link to="/drops" style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid, textDecoration: 'none', letterSpacing: '0.1em' }}>Drops →</Link>
             <Link
-              to="/brand/signup"
+              to="/brand/create"
               style={{
                 fontFamily: MONO, fontSize: 10, color: '#000', background: T.white,
                 textDecoration: 'none', letterSpacing: '0.15em', padding: '8px 20px',
@@ -114,7 +114,7 @@ export default function BrandsLanding() {
         </p>
         <div style={{ display: 'flex', gap: 16 }}>
           <Link
-            to="/brand/signup"
+            to="/brand/create"
             style={{
               fontFamily: MONO, fontSize: 11, letterSpacing: '0.2em', color: '#000',
               background: T.white, textDecoration: 'none', padding: '14px 32px',
@@ -143,6 +143,51 @@ export default function BrandsLanding() {
                 <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.8 }}>{f.body}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </div>
+
+      <div style={{ padding: '80px 40px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.3em', marginBottom: 12 }}>HOW IT WORKS</div>
+          <h2 style={{ fontFamily: DISPLAY, fontSize: 36, color: T.white, fontWeight: 700, marginBottom: 12 }}>Campaign. Drops. Community.</h2>
+          <p style={{ fontFamily: BODY, fontSize: 16, color: T.gray, maxWidth: 560, lineHeight: 1.8, marginBottom: 56 }}>
+            One campaign can contain a single drop or an entire season. Each drop has its own inventory, pricing, story, and owner community.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 40px 1fr 40px 1fr 40px 1fr', alignItems: 'center', gap: 0 }}>
+            {[
+              { icon: '◈', label: 'BRAND', desc: 'Your identity on Rebl. Logo, story, subdomain.' },
+              { icon: '⊕', label: 'CAMPAIGN', desc: 'FW24 Season. India Tour 2025. A collection, a narrative.' },
+              { icon: '◎', label: 'DROP', desc: 'Box Logo. AJ1. VIP Ticket. Each with its own page, price, story.' },
+              { icon: '✦', label: 'VAULT ENTRY', desc: 'Every buyer gets a verified ownership record. Auto-community.' },
+            ].reduce((acc, item, i) => {
+              acc.push(
+                <div key={item.label} style={{ background: T.card, border: `1px solid ${T.border}`, padding: '32px 28px' }}>
+                  <div style={{ fontFamily: MONO, fontSize: 22, color: T.grayMid, marginBottom: 16 }}>{item.icon}</div>
+                  <div style={{ fontFamily: MONO, fontSize: 10, color: T.gray, letterSpacing: '0.25em', marginBottom: 10 }}>{item.label}</div>
+                  <div style={{ fontFamily: BODY, fontSize: 13, color: T.grayMid, lineHeight: 1.7 }}>{item.desc}</div>
+                </div>
+              )
+              if (i < 3) acc.push(
+                <div key={`arrow-${i}`} style={{ textAlign: 'center', fontFamily: MONO, fontSize: 18, color: T.borderVis }}>→</div>
+              )
+              return acc
+            }, [])}
+          </div>
+          <div style={{ marginTop: 40, background: T.card, border: `1px solid ${T.border}`, padding: '24px 32px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32 }}>
+              {[
+                { label: 'Example', value: 'Supreme × Rebl', sub: 'Brand' },
+                { label: 'Campaign', value: 'FW24 Drop Season', sub: 'Oct–Dec 2024 · 3 drops' },
+                { label: 'Drops inside', value: 'Box Logo  ·  Hoodie  ·  Cap', sub: 'Each with own pricing, story & community' },
+              ].map(s => (
+                <div key={s.label}>
+                  <div style={{ fontFamily: MONO, fontSize: 8, color: T.grayMid, letterSpacing: '0.2em', marginBottom: 6 }}>{s.label.toUpperCase()}</div>
+                  <div style={{ fontFamily: DISPLAY, fontSize: 18, color: T.white, marginBottom: 4 }}>{s.value}</div>
+                  <div style={{ fontFamily: BODY, fontSize: 12, color: T.grayMid }}>{s.sub}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -202,7 +247,7 @@ export default function BrandsLanding() {
                   ))}
                 </div>
                 <Link
-                  to="/brand/signup"
+                  to="/brand/create"
                   style={{
                     display: 'block', textAlign: 'center',
                     padding: '12px 0', fontFamily: MONO, fontSize: 10,
@@ -223,7 +268,7 @@ export default function BrandsLanding() {
           <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.3em', marginBottom: 20 }}>READY?</div>
           <h2 style={{ fontFamily: DISPLAY, fontSize: 40, color: T.white, fontWeight: 700, marginBottom: 24, letterSpacing: '-1px' }}>Launch your first drop on Rebl.</h2>
           <Link
-            to="/brand/signup"
+            to="/brand/create"
             style={{
               fontFamily: MONO, fontSize: 12, letterSpacing: '0.2em', color: '#000',
               background: T.white, textDecoration: 'none', padding: '16px 40px',

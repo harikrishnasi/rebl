@@ -6,9 +6,9 @@ import { demoProducts, getLiveDrops, getUpcomingDrops } from '@/data/demoProduct
 import { formatINR, useCountdown } from '@/lib/utils'
 
 const T = {
-  bg: '#000000', surface: '#050508', card: '#0A0A12',
-  border: '#1A1A1A', borderVis: '#2D2D2D', borderDim: '#1C1C2E',
-  white: '#F0F4FF', gray: '#A8B2C4', grayMid: '#5A6380',
+  bg: '#000000', surface: '#0A0A0A', card: '#0D0D0D',
+  border: '#1A1A1A', borderVis: '#2D2D2D', borderDim: '#111111',
+  white: '#FFFFFF', gray: '#A6A6A6', grayMid: '#555555',
 }
 const MONO = '"Space Mono", monospace'
 const DISPLAY = '"Cinzel", Georgia, serif'
@@ -70,7 +70,7 @@ function DropCard({ product }) {
         </div>
         <div style={{ padding: '16px 18px' }}>
           <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 6 }}>{product.brand}</div>
-          <div style={{ fontFamily: MONO, fontSize: 14, color: T.white, fontWeight: 700, marginBottom: 8, lineHeight: 1.3 }}>{product.name}</div>
+          <div style={{ fontFamily: DISPLAY, fontSize: 13, color: T.white, fontWeight: 700, marginBottom: 8, lineHeight: 1.3 }}>{product.name}</div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
             <span style={{ fontFamily: MONO, fontSize: 14, color: T.white }}>{formatINR(product.price)}</span>
             {endingSoon && product.status === 'live' && (
@@ -91,7 +91,7 @@ function DropCard({ product }) {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
                   <span style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.2em' }}>LIVE PRICE</span>
                   <svg width="54" height="14">
-                    <polyline points={polyPts} fill="none" stroke={up ? '#A8B2C4' : '#5A6380'} strokeWidth="1.2" strokeLinejoin="round" />
+                    <polyline points={polyPts} fill="none" stroke={up ? '#A6A6A6' : '#555555'} strokeWidth="1.2" strokeLinejoin="round" />
                   </svg>
                 </div>
                 <div style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.1em' }}>
@@ -129,7 +129,7 @@ function UpcomingCard({ product }) {
       localStorage.setItem('rebl_waitlist', JSON.stringify([...list, product.id]))
     }
     setIsNotified(true)
-    toast.success('You\'ll be notified when this drops.', { style: { background: '#0A0A12', color: '#F0F4FF', border: '1px solid #2D2D2D' } })
+    toast.success('You\'ll be notified when this drops.', { style: { background: '#0D0D0D', color: '#FFFFFF', border: '1px solid #2D2D2D' } })
   }
 
   return (
@@ -138,7 +138,7 @@ function UpcomingCard({ product }) {
       display: 'flex', flexDirection: 'column', gap: 10, flexShrink: 0,
     }}>
       <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.25em', textTransform: 'uppercase' }}>{product.brand}</div>
-      <div style={{ fontFamily: MONO, fontSize: 13, color: T.white, fontWeight: 700, lineHeight: 1.3 }}>{product.name}</div>
+      <div style={{ fontFamily: DISPLAY, fontSize: 13, color: T.white, fontWeight: 700, lineHeight: 1.3 }}>{product.name}</div>
       <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid }}>{product.edition}</div>
       <div style={{ fontFamily: MONO, fontSize: 18, color: T.white, letterSpacing: '0.1em' }}>{countdown}</div>
       <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid }}>DROPS IN</div>
@@ -175,8 +175,8 @@ function EventCard({ product }) {
       >
         <div>
           <div style={{ fontFamily: MONO, fontSize: 9, color: product.accentColor || T.gray, letterSpacing: '0.3em', marginBottom: 8 }}>LIVE EVENT</div>
-          <div style={{ fontFamily: MONO, fontSize: 20, color: T.white, fontWeight: 700, marginBottom: 6, lineHeight: 1.2 }}>{product.name}</div>
-          <div style={{ fontFamily: MONO, fontSize: 11, color: T.gray, marginBottom: 12 }}>{product.eventDate} · {product.eventVenue}</div>
+          <div style={{ fontFamily: DISPLAY, fontSize: 20, color: T.white, fontWeight: 700, marginBottom: 6, lineHeight: 1.2 }}>{product.name}</div>
+          <div style={{ fontFamily: BODY, fontSize: 13, color: T.gray, marginBottom: 12 }}>{product.eventDate} · {product.eventVenue}</div>
           {product.ticketTiers && (
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {product.ticketTiers.map(t => (
@@ -235,8 +235,8 @@ function FeaturedBanner({ product }) {
             <span style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid }}>·</span>
             <span style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.15em' }}>{product.brand.toUpperCase()}</span>
           </div>
-          <div style={{ fontFamily: MONO, fontSize: 'clamp(22px, 4vw, 44px)', color: T.white, fontWeight: 700, letterSpacing: '-1px', lineHeight: 1.1, marginBottom: 12 }}>{product.name}</div>
-          <div style={{ fontFamily: MONO, fontSize: 12, color: T.gray, marginBottom: 24 }}>{product.edition}</div>
+          <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(22px, 4vw, 44px)', color: T.white, fontWeight: 700, lineHeight: 1.1, marginBottom: 12 }}>{product.name}</div>
+          <div style={{ fontFamily: BODY, fontSize: 14, color: T.gray, marginBottom: 24 }}>{product.edition}</div>
           <div style={{ display: 'flex', gap: 32, alignItems: 'flex-end', marginBottom: 24, flexWrap: 'wrap' }}>
             <div>
               <div style={{ fontFamily: MONO, fontSize: 32, color: T.white, fontWeight: 700 }}>{formatINR(product.price)}</div>

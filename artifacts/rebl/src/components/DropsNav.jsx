@@ -3,8 +3,8 @@ import { ShoppingBag } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 
 const T = {
-  bg: '#050508', border: '#1C1C2E',
-  white: '#F0F4FF', gray: '#A8B2C4', grayMid: '#5A6380',
+  bg: '#000000', border: '#1A1A1A',
+  white: '#FFFFFF', gray: '#A6A6A6', grayMid: '#555555',
 }
 const MONO = '"Space Mono", monospace'
 const BODY = '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif'

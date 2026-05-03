@@ -3,8 +3,8 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceL
 import { formatINR } from '@/lib/utils'
 
 const T = {
-  bg: '#000000', card: '#0A0A12', border: '#1A1A1A',
-  borderVis: '#2D2D2D', white: '#F0F4FF', gray: '#A8B2C4', grayMid: '#5A6380',
+  bg: '#000000', card: '#0D0D0D', border: '#1A1A1A',
+  borderVis: '#2D2D2D', white: '#FFFFFF', gray: '#A6A6A6', grayMid: '#555555',
 }
 const MONO = '"Space Mono", monospace'
 

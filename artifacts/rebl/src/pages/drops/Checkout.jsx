@@ -5,9 +5,9 @@ import { formatINR } from '@/lib/utils'
 import confetti from 'canvas-confetti'
 
 const T = {
-  bg: '#000000', surface: '#050508', card: '#0A0A12',
-  border: '#1A1A1A', borderVis: '#2D2D2D', borderDim: '#1C1C2E',
-  white: '#F0F4FF', gray: '#A8B2C4', grayMid: '#5A6380',
+  bg: '#000000', surface: '#0A0A0A', card: '#0D0D0D',
+  border: '#1A1A1A', borderVis: '#2D2D2D', borderDim: '#111111',
+  white: '#FFFFFF', gray: '#A6A6A6', grayMid: '#555555',
 }
 const MONO = '"Space Mono", monospace'
 const DISPLAY = '"Cinzel", Georgia, serif'
