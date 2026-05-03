@@ -158,7 +158,6 @@ export default function BrandSignup() {
         owner_id: userId,
         name: brandName,
         slug,
-        email,
         description,
         logo_url: logoUrl,
         limited_edition_strategies: strategies,
