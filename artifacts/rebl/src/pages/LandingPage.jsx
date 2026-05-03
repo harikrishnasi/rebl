@@ -303,29 +303,63 @@ function Identity() {
 /* ─── MISSION ─── */
 function Mission() {
   const cols = [
-    { label: 'Myth', n: '01', icon: '⊕', body: 'The timeless wisdom of ancient Greece — that great things are built by those who dare to go beyond what\'s known. We inherit that defiance.' },
-    { label: 'Machine', n: '02', icon: '◎', body: 'AI-generated provenance. Blockchain ownership. NFC authentication. The machinery of modern invention, applied to the things you love.' },
-    { label: 'Movement', n: '03', icon: '✦', body: 'A community of verified owners who find each other through the objects that define them. Not followers. A tribe.' },
+    {
+      n: '01', label: 'Origin',
+      body: 'Every item has a history. Every collector has a source. Rebl begins where most platforms end — with the meaning behind what you own.',
+      icon: (
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+          <circle cx="22" cy="22" r="19" />
+          <circle cx="22" cy="22" r="2.5" fill="currentColor" stroke="none" />
+          <line x1="22" y1="3" x2="22" y2="12" />
+          <line x1="22" y1="32" x2="22" y2="41" />
+          <line x1="3" y1="22" x2="12" y2="22" />
+          <line x1="32" y1="22" x2="41" y2="22" />
+        </svg>
+      ),
+    },
+    {
+      n: '02', label: 'System',
+      body: 'AI provenance. NFC authentication. Blockchain records. The infrastructure of modern ownership — automated, invisible, permanent.',
+      icon: (
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+          <rect x="3" y="3" width="38" height="38" />
+          <rect x="13" y="13" width="18" height="18" />
+          <line x1="13" y1="3" x2="13" y2="13" />
+          <line x1="22" y1="3" x2="22" y2="13" />
+          <line x1="31" y1="3" x2="31" y2="13" />
+          <line x1="13" y1="31" x2="13" y2="41" />
+          <line x1="22" y1="31" x2="22" y2="41" />
+          <line x1="31" y1="31" x2="31" y2="41" />
+        </svg>
+      ),
+    },
+    {
+      n: '03', label: 'Signal',
+      body: 'Ownership is a signal. When you verify what you own, you broadcast who you are — to the exact people who understand it.',
+      icon: (
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="2,22 9,22 13,8 19,36 25,8 30,30 35,22 42,22" />
+        </svg>
+      ),
+    },
   ]
   return (
-    <section style={{ backgroundColor: T.surface, padding: 'clamp(80px,10vw,140px) max(8vw,32px)', borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}` }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <div style={{ marginBottom: 72, textAlign: 'center' }}>
-          <div style={{ width: 48, height: 1, backgroundColor: T.gray, margin: '0 auto' }}/>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 0 }}>
+    <section style={{ backgroundColor: T.bg, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}` }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
           {cols.map((c, i) => (
             <div key={c.n} style={{
-              padding: '48px 40px',
-              borderLeft: i === 0 ? `1px solid ${T.borderVis}` : 'none',
-              borderRight: `1px solid ${T.borderVis}`,
-              borderTop: `1px solid ${T.borderVis}`,
-              borderBottom: `1px solid ${T.borderVis}`,
+              padding: 'clamp(56px, 6vw, 96px) clamp(40px, 4vw, 72px)',
+              borderRight: i < 2 ? `1px solid ${T.borderVis}` : 'none',
             }}>
-              <div style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid, letterSpacing: '0.2em', marginBottom: 8 }}>{c.n}</div>
-              <div style={{ fontSize: 28, marginBottom: 20, color: T.gray }}>{c.icon}</div>
-              <h3 style={{ fontFamily: DISPLAY, fontSize: 20, fontWeight: 600, color: T.white, margin: '0 0 20px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{c.label}</h3>
-              <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.8, margin: 0 }}>{c.body}</p>
+              <div style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid, letterSpacing: '0.28em', marginBottom: 52 }}>{c.n}</div>
+              <div style={{ color: T.gray, marginBottom: 40 }}>{c.icon}</div>
+              <h3 style={{
+                fontFamily: DISPLAY, fontSize: 'clamp(20px, 2vw, 26px)', fontWeight: 700,
+                color: T.white, margin: '0 0 28px', textTransform: 'uppercase',
+                letterSpacing: '0.1em', lineHeight: 1,
+              }}>{c.label}</h3>
+              <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.9, margin: 0 }}>{c.body}</p>
             </div>
           ))}
         </div>
