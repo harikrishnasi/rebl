@@ -6,13 +6,13 @@ import { supabase } from '@/lib/supabase'
 import { callGeminiAPI } from '@/lib/gemini'
 
 const C = {
-  primary: '#0F0F1A',
-  accent: '#E63946',
-  cream: '#F1FAEE',
-  muted: '#8D99AE',
+  primary: '#0A0A12',
+  accent: '#A8B2C4',
+  cream: '#F0F4FF',
+  muted: '#5A6380',
   gold: '#FFB703',
-  card: '#16162A',
-  border: 'rgba(255,255,255,0.08)',
+  card: '#12121E',
+  border: '#2A2A3E',
 }
 
 export default function PostPurchase() {

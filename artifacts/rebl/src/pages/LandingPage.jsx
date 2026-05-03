@@ -159,10 +159,10 @@ function Hero() {
         </div>
 
         {/* Headline */}
-        <h1 style={{ margin: 0, lineHeight: 1, letterSpacing: '-4px' }}>
-          <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(56px, 7vw, 96px)', fontWeight: 700, color: C.cream }}>Own it.</div>
-          <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(56px, 7vw, 96px)', fontWeight: 700, color: C.silver }}>Tell its story.</div>
-          <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(56px, 7vw, 96px)', fontWeight: 700, color: C.ghost }}>Find your orbit.</div>
+        <h1 style={{ margin: 0, lineHeight: 1.05, letterSpacing: '-2px' }}>
+          <div style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(48px, 6.5vw, 88px)', fontWeight: 800, color: C.cream }}>Own it.</div>
+          <div style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(48px, 6.5vw, 88px)', fontWeight: 800, color: C.silver }}>Tell its story.</div>
+          <div style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(48px, 6.5vw, 88px)', fontWeight: 800, color: C.ghost }}>Find your orbit.</div>
         </h1>
 
         {/* Sub */}
@@ -233,7 +233,7 @@ function Identity() {
             <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 48, alignItems: 'start' }}>
               <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 64, fontWeight: 700, color: C.crater, lineHeight: 1 }}>{r.n}</div>
               <div>
-                <h3 style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(18px,2.5vw,26px)', fontWeight: 700, color: C.cream, margin: '0 0 16px', letterSpacing: '-0.5px' }}>{r.title}</h3>
+                <h3 style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(18px,2.5vw,26px)', fontWeight: 700, color: C.cream, margin: '0 0 16px', letterSpacing: '-0.5px' }}>{r.title}</h3>
                 <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 16, color: C.dim, lineHeight: 1.75, margin: 0, maxWidth: 560 }}>{r.body}</p>
               </div>
             </div>
@@ -256,7 +256,7 @@ function Mission() {
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div style={{ marginBottom: 64 }}>
           <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 16 }}>MISSION PARAMETERS</div>
-          <h2 style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 700, color: C.cream, margin: 0, letterSpacing: '-1px' }}>Three coordinates. One platform.</h2>
+          <h2 style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 800, color: C.cream, margin: 0, letterSpacing: '-1px' }}>Three coordinates. One platform.</h2>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 0 }}>
           {items.map((item, i) => (
@@ -292,7 +292,7 @@ function TheVault() {
     <section style={{ backgroundColor: C.cosmos, padding: 'clamp(60px,8vw,128px) max(5vw,32px)' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div style={{ marginBottom: 64, maxWidth: 600 }}>
-          <h2 style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(40px,5.5vw,72px)', fontWeight: 700, color: C.cream, margin: '0 0 16px', letterSpacing: '-2px', lineHeight: 1 }}>The Vault.</h2>
+          <h2 style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(40px,5.5vw,72px)', fontWeight: 800, color: C.cream, margin: '0 0 16px', letterSpacing: '-2px', lineHeight: 1 }}>The Vault.</h2>
           <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 17, color: C.dim, lineHeight: 1.65, margin: 0 }}>Not a profile. Not a portfolio. A permanent record of who you are as a collector.</p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 1, backgroundColor: C.ghost }}>
@@ -331,7 +331,7 @@ function BrandMission() {
       <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 80, alignItems: 'center' }}>
         <div>
           <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 20 }}>FOR BRANDS</div>
-          <h2 style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(24px,3.5vw,40px)', fontWeight: 700, color: C.cream, margin: '0 0 20px', letterSpacing: '-1px', lineHeight: 1.1 }}>Limited editions done right.</h2>
+          <h2 style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(24px,3.5vw,40px)', fontWeight: 800, color: C.cream, margin: '0 0 20px', letterSpacing: '-1px', lineHeight: 1.1 }}>Limited editions done right.</h2>
           <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 16, color: C.dim, lineHeight: 1.75, margin: '0 0 36px' }}>Rebl gives brands the infrastructure to make scarcity meaningful — not just a marketing trick. Launch drops, build verified communities, and know your most passionate buyers by name.</p>
           <Link to="/brand/signup" style={{
             fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver,
@@ -371,7 +371,7 @@ function UpcomingTech() {
       <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <div style={{ marginBottom: 64 }}>
           <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.25em', marginBottom: 16 }}>CLASSIFIED // COMING SOON</div>
-          <h2 style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 700, color: C.cream, margin: 0, letterSpacing: '-1px' }}>What's being built.</h2>
+          <h2 style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 800, color: C.cream, margin: 0, letterSpacing: '-1px' }}>What's being built.</h2>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 1, backgroundColor: C.ghost }}>
           {items.map((item, i) => (
@@ -395,7 +395,7 @@ function Pricing() {
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div style={{ marginBottom: 64 }}>
           <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.silver, letterSpacing: '0.25em', marginBottom: 16 }}>PRICING</div>
-          <h2 style={{ fontFamily: '"Space Mono", monospace', fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 700, color: C.cream, margin: 0, letterSpacing: '-1px' }}>Free to collect. Powerful to build.</h2>
+          <h2 style={{ fontFamily: '"Syne", sans-serif', fontSize: 'clamp(24px,3.5vw,42px)', fontWeight: 800, color: C.cream, margin: 0, letterSpacing: '-1px' }}>Free to collect. Powerful to build.</h2>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 1, backgroundColor: C.ghost }}>
           {/* Collector */}
