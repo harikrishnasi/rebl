@@ -594,8 +594,22 @@ function Footer() {
         </div>
       </div>
       <div style={{ borderTop: `1px solid ${T.border}` }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto', padding: `24px ${isMobile ? '20px' : 'max(8vw,32px)'}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', padding: `24px ${isMobile ? '20px' : 'max(8vw,32px)'}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 24 }}>
           <span style={{ fontFamily: BODY, fontSize: 12, color: T.grayMid, letterSpacing: '0.04em' }}>From ancient roots, to infinite futures.</span>
+          <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: MONO, fontSize: 11, color: T.gray, textDecoration: 'none', transition: 'color 0.2s', letterSpacing: '0.08em' }}
+              onMouseEnter={e => e.target.style.color = T.white}
+              onMouseLeave={e => e.target.style.color = T.gray}
+            >X</a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: MONO, fontSize: 11, color: T.gray, textDecoration: 'none', transition: 'color 0.2s', letterSpacing: '0.08em' }}
+              onMouseEnter={e => e.target.style.color = T.white}
+              onMouseLeave={e => e.target.style.color = T.gray}
+            >Instagram</a>
+            <a href="https://discord.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: MONO, fontSize: 11, color: T.gray, textDecoration: 'none', transition: 'color 0.2s', letterSpacing: '0.08em' }}
+              onMouseEnter={e => e.target.style.color = T.white}
+              onMouseLeave={e => e.target.style.color = T.gray}
+            >Discord</a>
+          </div>
           <span style={{ fontFamily: BODY, fontSize: 12, color: T.grayMid, letterSpacing: '0.04em' }}>Rebl.in · India · MMXXVI</span>
         </div>
       </div>
