@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import StarField from '@/components/StarField'
 import GreekBorder from '@/components/GreekBorder'
 import imgHero from '@assets/ChatGPT_Image_May_3,_2026,_12_47_35_PM_1777792668141.png'
-import imgMid from '@assets/image_1777793302813.png'
+import imgMid from '@assets/ChatGPT_Image_May_3,_2026,_03_35_30_PM_1777809402549.png'
 import { useWindowWidth } from '@/lib/utils'
 
 const T = {
