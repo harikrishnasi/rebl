@@ -453,7 +453,7 @@ function UpcomingTech() {
           <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.grayMid, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 20 }}>Classified // Coming Soon</div>
           <h2 style={{ fontFamily: DISPLAY, fontSize: 'clamp(22px,3.2vw,40px)', fontWeight: 700, color: T.white, margin: 0, textTransform: 'uppercase', letterSpacing: '-0.5px' }}>What's being built.</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px,1fr))', gap: 1, backgroundColor: T.borderVis }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px,1fr))', gap: 1, backgroundColor: T.bg }}>
           {items.map((item, i) => (
             <div key={i} style={{ backgroundColor: T.bg, padding: '40px 32px' }}>
               <div style={{ fontSize: 20, color: T.gray, marginBottom: 16 }}>{item.icon}</div>
