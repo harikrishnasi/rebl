@@ -1,9 +1,9 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { ShoppingBag } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 
 const T = {
-  bg: '#000000', border: '#1A1A1A',
+  bg: '#000000', border: '#1A1A1A', borderVis: '#2D2D2D',
   white: '#FFFFFF', gray: '#A6A6A6', grayMid: '#555555',
 }
 const MONO = '"Space Mono", monospace'
@@ -11,7 +11,6 @@ const BODY = '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif'
 
 export default function DropsNav({ activeFilter, onFilter }) {
   const { count, setIsOpen } = useCart()
-  const navigate = useNavigate()
 
   const filters = ['All', 'Sneakers', 'Streetwear', 'Events']
 
@@ -25,36 +24,46 @@ export default function DropsNav({ activeFilter, onFilter }) {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         height: 64,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 18, color: T.white, letterSpacing: '-0.5px' }}>Rēbl</span>
-            <span style={{ fontFamily: MONO, fontSize: 12, color: T.gray }}>/</span>
-            <span style={{ fontFamily: MONO, fontSize: 12, color: T.gray, letterSpacing: '0.15em' }}>DROPS</span>
-          </Link>
-        </div>
 
-        <div style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 20, color: T.white, letterSpacing: '-0.5px' }}>Rēbl</span>
+          <span style={{ fontFamily: MONO, fontSize: 11, color: T.grayMid }}>/</span>
+          <span style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid, letterSpacing: '0.2em' }}>DROPS</span>
+        </Link>
+
+        <div style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
           {filters.map(f => (
             <button
               key={f}
               onClick={() => onFilter && onFilter(f)}
               style={{
                 background: 'none', border: 'none', cursor: 'pointer',
-                fontFamily: MONO, fontSize: 11, letterSpacing: '0.1em',
-                color: activeFilter === f ? T.white : T.grayMid,
-                textTransform: 'uppercase', padding: '4px 0',
+                fontFamily: BODY, fontSize: 12, fontWeight: 500,
+                letterSpacing: '0.08em', textTransform: 'uppercase',
+                color: activeFilter === f ? T.white : T.gray,
+                padding: '4px 0',
                 borderBottom: activeFilter === f ? `1px solid ${T.white}` : '1px solid transparent',
-                transition: 'all 0.2s',
+                transition: 'color 0.2s',
               }}
+              onMouseEnter={e => e.currentTarget.style.color = T.white}
+              onMouseLeave={e => e.currentTarget.style.color = activeFilter === f ? T.white : T.gray}
             >{f}</button>
           ))}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <Link
             to="/brands"
-            style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid, textDecoration: 'none', letterSpacing: '0.1em' }}
-          >For Brands →</Link>
+            style={{
+              fontFamily: BODY, fontSize: 12, fontWeight: 500,
+              color: T.gray, textDecoration: 'none',
+              letterSpacing: '0.08em', textTransform: 'uppercase',
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = T.white}
+            onMouseLeave={e => e.currentTarget.style.color = T.gray}
+          >For Brands</Link>
+
           <button
             onClick={() => setIsOpen(true)}
             style={{
@@ -73,15 +82,18 @@ export default function DropsNav({ activeFilter, onFilter }) {
               }}>{count}</span>
             )}
           </button>
+
           <Link
             to="/"
             style={{
-              fontFamily: MONO, fontSize: 10, color: T.grayMid, textDecoration: 'none',
-              letterSpacing: '0.1em', border: `1px solid ${T.border}`, padding: '6px 14px',
-              transition: 'color 0.2s',
+              fontFamily: BODY, fontSize: 12, fontWeight: 500,
+              color: T.gray, textDecoration: 'none',
+              letterSpacing: '0.08em', textTransform: 'uppercase',
+              border: `1px solid ${T.borderVis}`, padding: '7px 16px',
+              transition: 'all 0.2s',
             }}
-            onMouseEnter={e => e.currentTarget.style.color = T.white}
-            onMouseLeave={e => e.currentTarget.style.color = T.grayMid}
+            onMouseEnter={e => { e.currentTarget.style.color = T.white; e.currentTarget.style.borderColor = T.gray }}
+            onMouseLeave={e => { e.currentTarget.style.color = T.gray; e.currentTarget.style.borderColor = T.borderVis }}
           >← Back to Rebl</Link>
         </div>
       </div>
