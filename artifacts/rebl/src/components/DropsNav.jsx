@@ -25,11 +25,8 @@ export default function DropsNav({ activeFilter, onFilter }) {
         height: 64,
       }}>
 
-        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 24, color: T.white, letterSpacing: '-0.5px', lineHeight: 1 }}>Rēbl</span>
-            <span style={{ fontFamily: MONO, fontSize: 7, color: T.grayMid, letterSpacing: '0.18em', textTransform: 'uppercase' }}>Own the rare. Tell its story.</span>
-          </div>
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 22, color: T.white, letterSpacing: '-0.5px', lineHeight: 1 }}>Rēbl</span>
           <span style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid }}>/</span>
           <span style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid, letterSpacing: '0.2em' }}>DROPS</span>
         </Link>
