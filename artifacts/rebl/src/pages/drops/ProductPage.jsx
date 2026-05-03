@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import DropsNav from '@/components/DropsNav'
 import { getDemoProduct, demoProducts } from '@/data/demoProducts'
-import { formatINR, useCountdown } from '@/lib/utils'
+import { formatINR, useCountdown, useWindowWidth } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
 import toast from 'react-hot-toast'
 import PriceChart from '@/components/PriceChart'
@@ -36,6 +36,8 @@ export default function ProductPage() {
   const navigate = useNavigate()
   const { addToCart } = useCart()
   const product = getDemoProduct(productId)
+  const w = useWindowWidth()
+  const isMobile = w < 768
 
   const [selectedSize, setSelectedSize] = useState(null)
   const [selectedTier, setSelectedTier] = useState(null)
@@ -85,18 +87,18 @@ export default function ProductPage() {
     <div style={{ background: T.bg, minHeight: '100vh', color: T.white, fontFamily: BODY }}>
       <DropsNav />
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 40px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '16px 20px' : '24px 40px' }}>
         <div style={{ marginBottom: 20 }}>
           <Link to="/drops" style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid, textDecoration: 'none', letterSpacing: '0.1em' }}>← DROPS</Link>
           <span style={{ fontFamily: MONO, fontSize: 10, color: T.borderVis, margin: '0 10px' }}>/</span>
           <span style={{ fontFamily: MONO, fontSize: 10, color: T.gray, letterSpacing: '0.1em' }}>{product.name.toUpperCase()}</span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '50fr 50fr', gap: 48, marginBottom: 80 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '50fr 50fr', gap: isMobile ? 32 : 48, marginBottom: isMobile ? 48 : 80 }}>
           <div>
             <div style={{ position: 'relative', marginBottom: 12 }}>
               <div style={{
-                height: 420,
+                height: isMobile ? 280 : 420,
                 background: `linear-gradient(135deg, ${product.mainColor}20 0%, ${T.card} 70%)`,
                 border: `1px solid ${T.borderVis}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -231,7 +233,7 @@ export default function ProductPage() {
             {(product.category === 'sneakers' || product.category === 'streetwear') && product.sizes && (
               <div style={{ marginBottom: 28 }}>
                 <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 12 }}>SELECT SIZE</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? 6 : 8 }}>
                   {product.sizes.map(size => {
                     const oos = product.sizesOOS?.includes(size)
                     const selected = selectedSize === size
@@ -275,9 +277,9 @@ export default function ProductPage() {
               }}
             >Add to Wishlist</button>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginTop: 24, paddingTop: 24, borderTop: `1px solid ${T.border}` }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: 12, marginTop: 24, paddingTop: 24, borderTop: `1px solid ${T.border}` }}>
               {['Rebl Verified', 'AI Story Included', 'Vault Ready'].map(label => (
-                <div key={label} style={{ textAlign: 'center' }}>
+                <div key={label} style={{ textAlign: isMobile ? 'left' : 'center' }}>
                   <div style={{ fontFamily: MONO, fontSize: 8, color: T.gray, letterSpacing: '0.1em', lineHeight: 1.4 }}>→ {label}</div>
                 </div>
               ))}
@@ -285,11 +287,11 @@ export default function ProductPage() {
           </div>
         </div>
 
-        <div style={{ margin: '0 -40px', background: T.surface, padding: '80px 40px', marginBottom: 0 }}>
+        <div style={{ margin: isMobile ? '0 -20px' : '0 -40px', background: T.surface, padding: isMobile ? '48px 20px' : '80px 40px', marginBottom: 0 }}>
           <div style={{ maxWidth: 1120, margin: '0 auto' }}>
-            <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.3em', marginBottom: 64 }}>THE STORY BEHIND THIS DROP</div>
+            <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.3em', marginBottom: isMobile ? 40 : 64 }}>THE STORY BEHIND THIS DROP</div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 80 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 48 : 80 }}>
               <StoryBlock num="01">
                 <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.3em', marginBottom: 16 }}>/ THE ORIGIN</div>
                 <h2 style={{ fontFamily: DISPLAY, fontSize: 28, color: T.white, fontWeight: 700, marginBottom: 28, lineHeight: 1.3 }}>{product.story.origin.headline}</h2>
@@ -318,11 +320,11 @@ export default function ProductPage() {
         </div>
 
         <div style={{
-          margin: '0 -40px', background: '#0A0A12',
+          margin: isMobile ? '0 -20px' : '0 -40px', background: '#0A0A12',
           borderTop: `1px solid ${T.borderDim}`, borderBottom: `1px solid ${T.borderDim}`,
-          padding: '64px 40px', marginBottom: 0,
+          padding: isMobile ? '40px 20px' : '64px 40px', marginBottom: 0,
         }}>
-          <div style={{ maxWidth: 1120, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>
+          <div style={{ maxWidth: 1120, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 32 : 64, alignItems: 'center' }}>
             <div>
               <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.3em', marginBottom: 16 }}>03 / THE REBL ELEMENT</div>
               <p style={{ fontFamily: BODY, fontSize: 17, color: T.white, lineHeight: 1.8 }}>{product.story.reblElement}</p>
@@ -343,9 +345,9 @@ export default function ProductPage() {
           </div>
         </div>
 
-        <div style={{ padding: '80px 0' }}>
+        <div style={{ padding: isMobile ? '48px 0' : '80px 0' }}>
           <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.3em', marginBottom: 8 }}>VERIFIED OWNERS ON REBL</div>
-          <h3 style={{ fontFamily: DISPLAY, fontSize: 24, color: T.white, fontWeight: 700, marginBottom: 32 }}>
+          <h3 style={{ fontFamily: DISPLAY, fontSize: isMobile ? 18 : 24, color: T.white, fontWeight: 700, marginBottom: 32 }}>
             {product.unitsSold} people already own this on Rebl
           </h3>
           <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
@@ -368,9 +370,9 @@ export default function ProductPage() {
           <div style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid, letterSpacing: '0.1em' }}>Join their owner room after purchase →</div>
         </div>
 
-        <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 64 }}>
+        <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: isMobile ? 40 : 64 }}>
           <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.3em', marginBottom: 32 }}>YOU MIGHT ALSO WANT</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: T.borderDim }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 1, background: T.borderDim }}>
             {related.map(p => (
               <div key={p.id} style={{ background: T.bg }}>
                 <Link to={`/drops/product/${p.id}`} style={{ textDecoration: 'none', display: 'block', padding: '24px' }}>
