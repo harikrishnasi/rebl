@@ -28,6 +28,7 @@ import BrandSupport from '@/pages/BrandSupport'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import BrandRoute from '@/components/BrandRoute'
 import CartDrawer from '@/components/CartDrawer'
+import ScrollToTop from '@/components/ScrollToTop'
 import { CartProvider } from '@/context/CartContext'
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '')
@@ -36,6 +37,7 @@ export default function App() {
   return (
     <CartProvider>
       <BrowserRouter basename={base}>
+        <ScrollToTop />
         <CartDrawer />
         <Routes>
           <Route path="/" element={<LandingPage />} />
