@@ -24,7 +24,12 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **Stack**: React 19, Vite, React Router v6, Supabase, Tailwind v4, Recharts, Radix UI, Lucide, react-hot-toast
 - **Auth**: Supabase Auth (`src/lib/supabase.js`)
 - **AI**: Anthropic Claude via direct API (`src/lib/anthropic.js`)
-- **Brand colors**: primary `#0F0F1A`, accent `#E63946`, cream `#F1FAEE`, muted `#8D99AE`, gold `#FFB703`, card `#16162A`
+- **Brand identity**: Void Black `#000000` (80%) · Pure White `#FFFFFF` (15%) · Steel Gray `#A6A6A6` (5%)
+- **Brand accent**: `#E63946` (accent/danger/cta only) — NOT a primary accent color
+- **Fonts**: Cinzel (DISPLAY/headlines), Satoshi (BODY), Poppins 800 (logo only), Space Mono (MONO/labels)
+- **Symbols**: ◈ ⊕ ◎ ✦ · — NO emojis anywhere in UI
+- **No rounded corners**: `borderRadius` is 0 everywhere except `'50%'` on avatar/spinner circles, `12` on toggle pill, `4` on checkbox
+- **Brand colors (C object)**: `primary:'#000'`, `card:'#0D0D0D'`, `border:'#1A1A1A'`, `cream:'#FFFFFF'`, `accent:'#E63946'`, `gold:'#A6A6A6'`, `muted:'#555555'`
 - **Env vars**: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_ANTHROPIC_API_KEY`
 
 #### Routes
@@ -43,6 +48,14 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 | `/dashboard` | Dashboard | ProtectedRoute |
 | `/tribe` | TribePage | ProtectedRoute |
 | `/brand-dashboard` | BrandDashboard | BrandRoute (role=brand) |
+| `/drops` | DropsHome | — |
+| `/drops/product/:id` | ProductPage | — |
+
+#### BrandDashboard tabs
+- **Customers** — collector list, tiers, smart contact queue, contact log
+- **Campaigns** — template grid + campaign composer (subject, body, AI improve, channels, schedule)
+- **Backstage** — event type cards, event table, posts, BSCreateEventModal, BSCreatePostModal
+- **Settings** — brand info, tiers, theme colors, subdomain
 
 ### api-server (`artifacts/api-server`)
 - **Type**: Express 5 API

@@ -339,10 +339,10 @@ function TabDrops({ brand, lang, drops, setDrops }) {
               </div>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
-              <button type="submit" disabled={saving} style={{ backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '11px 22px', fontWeight: 700, cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
+              <button type="submit" disabled={saving} style={{ backgroundColor: C.cream, color: '#000', border: 'none', padding: '11px 22px', fontWeight: 700, cursor: 'pointer', opacity: saving ? 0.7 : 1, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
                 {saving ? 'Creating…' : `Create ${lang.drop}`}
               </button>
-              <button type="button" onClick={() => setShowCreate(false)} style={{ backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '11px 20px', cursor: 'pointer' }}>
+              <button type="button" onClick={() => setShowCreate(false)} style={{ backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, padding: '11px 20px', cursor: 'pointer', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
                 Cancel
               </button>
             </div>
@@ -355,7 +355,7 @@ function TabDrops({ brand, lang, drops, setDrops }) {
         : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {drops.map(drop => (
-              <div key={drop.id} style={{ backgroundColor: C.card, borderRadius: 14, border: `1px solid ${C.border}`, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div key={drop.id} style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
                 <StatusPill status={drop.status} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 700, fontSize: 15 }}>{drop.name}</div>
@@ -509,7 +509,7 @@ Each field: 2-3 sentences max. Tone: collector-grade editorial.`
                 display: 'flex', alignItems: 'center', gap: 10,
                 backgroundColor: generating ? 'rgba(230,57,70,0.25)' : 'rgba(230,57,70,0.15)',
                 color: C.accent, border: `1px solid rgba(230,57,70,0.35)`,
-                borderRadius: 10, padding: '11px 22px', fontWeight: 700, fontSize: 14,
+                padding: '11px 22px', fontWeight: 700, fontSize: 14,
                 cursor: generating ? 'not-allowed' : 'pointer', transition: 'all 0.2s',
               }}
             >
@@ -571,7 +571,7 @@ Each field: 2-3 sentences max. Tone: collector-grade editorial.`
               style={{
                 backgroundColor: 'transparent', color: hasContent ? C.cream : C.muted,
                 border: `1px solid ${hasContent ? 'rgba(255,255,255,0.2)' : C.border}`,
-                borderRadius: 10, padding: '12px 22px', fontWeight: 600, fontSize: 14,
+                padding: '12px 22px', fontWeight: 600, fontSize: 14,
                 cursor: hasContent ? 'pointer' : 'not-allowed',
               }}
             >
@@ -583,7 +583,7 @@ Each field: 2-3 sentences max. Tone: collector-grade editorial.`
               style={{
                 backgroundColor: published ? '#22c55e' : C.accent,
                 color: C.cream, border: 'none',
-                borderRadius: 10, padding: '12px 26px', fontWeight: 700, fontSize: 14,
+                padding: '12px 26px', fontWeight: 700, fontSize: 14,
                 cursor: publishing || published ? 'not-allowed' : 'pointer',
                 transition: 'background-color 0.2s', opacity: publishing ? 0.75 : 1,
               }}
@@ -659,7 +659,7 @@ function StoryPreviewModal({ fields, drop, brand, lang, onClose }) {
   return (
     <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
       onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 480, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
+      <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, maxWidth: 480, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
         {/* Modal header */}
         <div style={{ padding: '18px 22px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 10, color: C.muted, letterSpacing: '0.2em' }}>◎ COLLECTOR VIEW</div>
@@ -678,8 +678,8 @@ function StoryPreviewModal({ fields, drop, brand, lang, onClose }) {
               <div style={{ fontSize: 13, fontWeight: 700 }}>{brand.name}</div>
               <div style={{ fontSize: 11, color: C.muted }}>{drop.name}{drop.edition ? ` · ${drop.edition}` : ''}</div>
             </div>
-            <div style={{ marginLeft: 'auto', padding: '3px 10px', borderRadius: 20, backgroundColor: 'rgba(230,57,70,0.12)', border: `1px solid rgba(230,57,70,0.3)`, fontSize: 11, fontWeight: 700, color: C.accent }}>
-              ✦ Verified {lang.drop}
+            <div style={{ marginLeft: 'auto', padding: '3px 10px', border: `1px solid ${C.border}`, fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: '0.1em', color: C.muted }}>
+              ✦ VERIFIED {lang.drop?.toUpperCase()}
             </div>
           </div>
 
@@ -704,7 +704,7 @@ function StoryPreviewModal({ fields, drop, brand, lang, onClose }) {
 
           {/* Behind the scenes */}
           {fields.behind_scenes && (
-            <div style={{ marginTop: 20, padding: '14px 16px', backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 10, border: `1px solid ${C.border}` }}>
+            <div style={{ marginTop: 20, padding: '14px 16px', backgroundColor: 'rgba(255,255,255,0.04)', border: `1px solid ${C.border}` }}>
               <div style={{ fontSize: 10, fontWeight: 800, color: C.muted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>✦ Behind the Scenes</div>
               {fields.behind_scenes.startsWith('http')
                 ? <a href={fields.behind_scenes} target="_blank" rel="noreferrer" style={{ color: C.accent, fontSize: 13, wordBreak: 'break-all' }}>{fields.behind_scenes}</a>
@@ -790,13 +790,13 @@ function TabCustomers({ brand, lang, tiers: initTiers, customers }) {
           const count = customers.filter(c => c.tier_level === tier.level).length
           const perks = Array.isArray(tier.perks) ? tier.perks : (tier.perks || '').split('\n').filter(Boolean)
           return (
-            <div key={tier.id} style={{ backgroundColor: C.card, borderRadius: 16, border: `1px solid ${C.border}`, padding: '20px 18px', position: 'relative' }}>
+            <div key={tier.id} style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, padding: '20px 18px', position: 'relative' }}>
               {/* Color band */}
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, borderRadius: '16px 16px 0 0', backgroundColor: `#${tier.color}` }} />
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, backgroundColor: `#${tier.color}` }} />
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, marginTop: 8 }}>
-                <div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: `#${tier.color}`, flexShrink: 0 }} />
-                <span style={{ fontWeight: 800, fontSize: 16 }}>{tier.name}</span>
-                {tier.has_backstage_access && <span style={{ fontSize: 10, backgroundColor: 'rgba(255,183,3,0.15)', color: C.gold, border: `1px solid rgba(255,183,3,0.3)`, borderRadius: 4, padding: '2px 6px', fontWeight: 700 }}>✦ BACKSTAGE</span>}
+                <div style={{ width: 10, height: 10, backgroundColor: `#${tier.color}`, flexShrink: 0 }} />
+                <span style={{ fontFamily: '"Cinzel", Georgia, serif', fontWeight: 700, fontSize: 14, letterSpacing: '0.04em', textTransform: 'uppercase' }}>{tier.name}</span>
+                {tier.has_backstage_access && <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, border: `1px solid ${C.border}`, color: C.gray, padding: '2px 6px', letterSpacing: '0.1em' }}>✦ BACKSTAGE</span>}
               </div>
               <div style={{ fontSize: 28, fontWeight: 900, color: `#${tier.color}`, marginBottom: 4 }}>{count}</div>
               <div style={{ fontSize: 12, color: C.muted, marginBottom: 14 }}>{lang.community.toLowerCase()}</div>
@@ -829,7 +829,7 @@ function TabCustomers({ brand, lang, tiers: initTiers, customers }) {
               </div>
 
               <button onClick={() => setEditingTier({ ...tier, perks: perks.join('\n') })}
-                style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.06)', border: `1px solid ${C.border}`, color: C.cream, borderRadius: 8, padding: '8px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.06)', border: `1px solid ${C.border}`, color: C.cream, padding: '8px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
                 Edit Tier
               </button>
             </div>
@@ -924,14 +924,14 @@ function TabCustomers({ brand, lang, tiers: initTiers, customers }) {
         : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 32 }}>
             {/* Donut chart */}
-            <div style={{ backgroundColor: C.card, borderRadius: 16, border: `1px solid ${C.border}`, padding: '24px 20px' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 16 }}>Collectors per Tier</div>
+            <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, padding: '24px 20px' }}>
+              <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 11, fontWeight: 700, marginBottom: 16, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Collectors per Tier</div>
               <ResponsiveContainer width="100%" height={180}>
                 <PieChart>
                   <Pie data={tierCounts} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="value">
                     {tierCounts.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                   </Pie>
-                  <Tooltip contentStyle={{ backgroundColor: C.card, border: `1px solid ${C.border}`, borderRadius: 8, fontSize: 13 }} />
+                  <Tooltip contentStyle={{ backgroundColor: C.card, border: `1px solid ${C.border}`, fontSize: 13 }} />
                 </PieChart>
               </ResponsiveContainer>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 16px', marginTop: 8 }}>
@@ -946,17 +946,17 @@ function TabCustomers({ brand, lang, tiers: initTiers, customers }) {
             </div>
 
             {/* Bar chart */}
-            <div style={{ backgroundColor: C.card, borderRadius: 16, border: `1px solid ${C.border}`, padding: '24px 20px' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 16 }}>Avg. Spend per Tier (₹)</div>
+            <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, padding: '24px 20px' }}>
+              <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 11, fontWeight: 700, marginBottom: 16, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Avg. Spend per Tier (₹)</div>
               <ResponsiveContainer width="100%" height={180}>
                 <BarChart data={tierAvgSpend} barSize={28}>
                   <XAxis dataKey="name" tick={{ fill: C.muted, fontSize: 11 }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fill: C.muted, fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: C.card, border: `1px solid ${C.border}`, borderRadius: 8, fontSize: 13 }}
+                    contentStyle={{ backgroundColor: C.card, border: `1px solid ${C.border}`, fontSize: 13 }}
                     formatter={v => [`₹${Number(v).toLocaleString('en-IN')}`, 'Avg spend']}
                   />
-                  <Bar dataKey="avg" radius={[6, 6, 0, 0]}>
+                  <Bar dataKey="avg" radius={[0, 0, 0, 0]}>
                     {tierAvgSpend.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                   </Bar>
                 </BarChart>
@@ -964,7 +964,7 @@ function TabCustomers({ brand, lang, tiers: initTiers, customers }) {
             </div>
 
             {/* Upgrade metric */}
-            <div style={{ backgroundColor: C.card, borderRadius: 16, border: `1px solid ${C.border}`, padding: '24px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, padding: '24px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 20 }}>This Month</div>
               <div style={{ fontSize: 44, fontWeight: 900, color: C.gold, lineHeight: 1 }}>
                 {customers.filter(c => {
@@ -1096,10 +1096,10 @@ function TierEditModal({ tier, onClose, onSave }) {
   return (
     <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
       onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 520, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
+      <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, maxWidth: 520, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
         {/* Header */}
         <div style={{ padding: '18px 24px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontWeight: 800, fontSize: 16 }}>Edit Tier — {tier.name}</div>
+          <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontWeight: 700, fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Edit Tier — {tier.name}</div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: C.muted, fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>×</button>
         </div>
 
@@ -1115,7 +1115,7 @@ function TierEditModal({ tier, onClose, onSave }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <input type="color" value={form.color} onChange={e => set('color', e.target.value)}
                   style={{ width: 48, height: 40, border: 'none', backgroundColor: 'transparent', cursor: 'pointer', padding: 0 }} />
-                <div style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: form.color, border: `1px solid ${C.border}` }} />
+                <div style={{ width: 40, height: 40, backgroundColor: form.color, border: `1px solid ${C.border}` }} />
               </div>
             </div>
           </div>
@@ -1153,7 +1153,7 @@ function TierEditModal({ tier, onClose, onSave }) {
             <div style={{ display: 'flex', gap: 10 }}>
               {['any', 'all'].map(v => (
                 <button key={v} onClick={() => set('qualify_logic', v)}
-                  style={{ flex: 1, padding: '10px', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 13, border: `1px solid ${form.qualify_logic === v ? C.accent : C.border}`, backgroundColor: form.qualify_logic === v ? 'rgba(230,57,70,0.12)' : 'transparent', color: form.qualify_logic === v ? C.accent : C.muted, transition: 'all 0.15s' }}>
+                  style={{ flex: 1, padding: '10px', cursor: 'pointer', fontWeight: 700, fontSize: 13, border: `1px solid ${form.qualify_logic === v ? C.accent : C.border}`, backgroundColor: form.qualify_logic === v ? 'rgba(230,57,70,0.08)' : 'transparent', color: form.qualify_logic === v ? C.cream : C.muted, transition: 'all 0.15s', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
                   {v === 'any' ? 'ANY one threshold' : 'ALL thresholds'}
                 </button>
               ))}
@@ -1161,7 +1161,7 @@ function TierEditModal({ tier, onClose, onSave }) {
           </div>
 
           {/* Backstage toggle */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', backgroundColor: 'rgba(255,183,3,0.06)', borderRadius: 10, border: `1px solid rgba(255,183,3,0.15)` }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', backgroundColor: 'rgba(255,255,255,0.03)', border: `1px solid ${C.border}` }}>
             <div>
               <div style={{ fontWeight: 700, fontSize: 14 }}>✦ Backstage Access</div>
               <div style={{ color: C.muted, fontSize: 12, marginTop: 2 }}>Can view exclusive brand posts</div>
@@ -1172,11 +1172,11 @@ function TierEditModal({ tier, onClose, onSave }) {
           {/* Actions */}
           <div style={{ display: 'flex', gap: 10, paddingTop: 4 }}>
             <button onClick={handleSave} disabled={saving}
-              style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '13px', fontWeight: 700, fontSize: 14, cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
+              style={{ flex: 2, backgroundColor: C.cream, color: '#000', border: 'none', padding: '13px', fontWeight: 700, fontSize: 14, cursor: 'pointer', opacity: saving ? 0.7 : 1, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
               {saving ? 'Saving…' : 'Save Tier'}
             </button>
             <button onClick={onClose}
-              style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '13px', cursor: 'pointer' }}>
+              style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, padding: '13px', cursor: 'pointer', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
               Cancel
             </button>
           </div>
@@ -1219,16 +1219,16 @@ function ProfileSidePanel({ customer, tiers, lang, onClose }) {
             { label: 'Score',        val: customer.collector_score ?? '—' },
             { label: 'Stories',      val: customer.stories_written ?? '—' },
           ].map((m, i) => (
-            <div key={i} style={{ backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '12px 14px' }}>
-              <div style={{ fontSize: 11, color: C.muted, fontWeight: 600, marginBottom: 4 }}>{m.label}</div>
-              <div style={{ fontWeight: 800, fontSize: 18 }}>{m.val}</div>
+            <div key={i} style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: `1px solid ${C.border}`, padding: '12px 14px' }}>
+              <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.muted, marginBottom: 4, letterSpacing: '0.15em', textTransform: 'uppercase' }}>{m.label}</div>
+              <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontWeight: 700, fontSize: 18 }}>{m.val}</div>
             </div>
           ))}
         </div>
 
         {prof?.username && (
           <a href={`/profile/${prof.username}`} target="_blank" rel="noreferrer"
-            style={{ display: 'block', textAlign: 'center', padding: '12px', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 10, color: C.cream, fontSize: 14, fontWeight: 600, textDecoration: 'none', border: `1px solid ${C.border}` }}>
+            style={{ display: 'block', textAlign: 'center', padding: '12px', backgroundColor: 'rgba(255,255,255,0.06)', color: C.cream, fontSize: 13, fontWeight: 600, textDecoration: 'none', border: `1px solid ${C.border}`, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', letterSpacing: '0.05em' }}>
             View Public Profile ↗
           </a>
         )}
@@ -1262,12 +1262,12 @@ function MessageComposer({ customer, brand, onClose }) {
   return (
     <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
       onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 460, width: '100%', padding: '28px 24px' }}>
+      <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, maxWidth: 460, width: '100%', padding: '28px 24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <div style={{ fontWeight: 800, fontSize: 16 }}>Message {prof?.display_name || 'Collector'}</div>
+          <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontWeight: 700, fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Message {prof?.display_name || 'Collector'}</div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: C.muted, fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>×</button>
         </div>
-        <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '12px 14px', marginBottom: 16, fontSize: 13, color: C.muted }}>
+        <div style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: `1px solid ${C.border}`, padding: '12px 14px', marginBottom: 16, fontSize: 13, color: C.muted, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
           From: <span style={{ color: C.cream, fontWeight: 600 }}>{brand.name}</span>
           {prof?.username && <> → <span style={{ color: C.cream }}>@{prof.username}</span></>}
         </div>
@@ -1276,10 +1276,10 @@ function MessageComposer({ customer, brand, onClose }) {
           style={{ ...IS, resize: 'none', lineHeight: 1.65, marginBottom: 16 }} />
         <div style={{ display: 'flex', gap: 10 }}>
           <button onClick={handleSend} disabled={sending || !msg.trim()}
-            style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '13px', fontWeight: 700, fontSize: 14, cursor: 'pointer', opacity: (sending || !msg.trim()) ? 0.6 : 1 }}>
+            style={{ flex: 2, backgroundColor: C.cream, color: '#000', border: 'none', padding: '13px', fontWeight: 700, fontSize: 14, cursor: 'pointer', opacity: (sending || !msg.trim()) ? 0.6 : 1, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
             {sending ? 'Sending…' : 'Send Message'}
           </button>
-          <button onClick={onClose} style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '13px', cursor: 'pointer' }}>
+          <button onClick={onClose} style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, padding: '13px', cursor: 'pointer', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
             Cancel
           </button>
         </div>
@@ -1295,7 +1295,7 @@ const TRIGGER_META = {
   story_not_written:    { dot: '◈', color: '#A6A6A6', bg: 'rgba(166,166,166,0.08)',  label: 'Story Not Written',    subject: 'Your piece deserves a story.' },
   community_not_joined: { dot: '◎', color: C.accent,  bg: 'rgba(255,255,255,0.05)',  label: 'Community Not Joined', subject: 'Your community is waiting for you.' },
   drop_anniversary:     { dot: '⊕', color: C.cream,   bg: 'rgba(255,255,255,0.06)', label: 'Drop Anniversary',     subject: 'One year ago today.' },
-  tier_upgrade:         { dot: '✦', color: C.gray,    bg: 'rgba(255,255,255,0.05)', label: 'Tier Upgraded',        subject: "You've moved up." },
+  tier_upgrade:         { dot: '✦', color: '#A6A6A6', bg: 'rgba(255,255,255,0.05)', label: 'Tier Upgraded',        subject: "You've moved up." },
   manual:               { dot: '·', color: C.muted,   bg: 'rgba(255,255,255,0.04)', label: 'Manual',               subject: '' },
 }
 
@@ -1411,7 +1411,7 @@ function SmartContactQueueSection({ brand, lang, tiers, customers }) {
           <div style={{ width: 26, height: 26, borderRadius: '50%', backgroundColor: C.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900, color: C.cream, flexShrink: 0 }}>D</div>
           <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>Smart Contact Queue</h2>
           {eligible.length > 0 && (
-            <span style={{ backgroundColor: C.accent, color: C.cream, borderRadius: 20, padding: '2px 10px', fontSize: 12, fontWeight: 800 }}>{eligible.length}</span>
+            <span style={{ backgroundColor: C.accent, color: '#000', padding: '2px 10px', fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: '0.08em', fontWeight: 700 }}>{eligible.length}</span>
           )}
           <div style={{ flex: 1, height: 1, backgroundColor: C.border, minWidth: 20 }} />
         </div>
@@ -1420,7 +1420,7 @@ function SmartContactQueueSection({ brand, lang, tiers, customers }) {
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {storyRows.length > 0 && (
             <button onClick={() => setBulkConfirm({ type: 'story_not_written', rows: storyRows })}
-              style={{ padding: '7px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer', border: `1px solid ${C.border}`, backgroundColor: 'transparent', color: C.gray, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
+              style={{ padding: '7px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer', border: `1px solid ${C.border}`, backgroundColor: 'transparent', color: '#A6A6A6', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
               ◈ Send All Story Nudges ({storyRows.length})
             </button>
           )}
@@ -1469,8 +1469,8 @@ function SmartContactQueueSection({ brand, lang, tiers, customers }) {
       {bulkConfirm && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
           onClick={e => e.target === e.currentTarget && setBulkConfirm(null)}>
-          <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 440, width: '100%', padding: '28px 24px' }}>
-            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 8 }}>
+          <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, maxWidth: 440, width: '100%', padding: '28px 24px' }}>
+            <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontWeight: 700, fontSize: 14, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 8 }}>
               {TRIGGER_META[bulkConfirm.type]?.dot} Send to {bulkConfirm.rows.length} collectors?
             </div>
             <div style={{ color: C.muted, fontSize: 13, lineHeight: 1.6, marginBottom: 20 }}>
@@ -1493,11 +1493,11 @@ function SmartContactQueueSection({ brand, lang, tiers, customers }) {
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
               <button onClick={() => handleBulkSend(bulkConfirm.rows)} disabled={bulkSending}
-                style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '12px', fontWeight: 700, cursor: 'pointer', opacity: bulkSending ? 0.7 : 1 }}>
+                style={{ flex: 2, backgroundColor: C.cream, color: '#000', border: 'none', padding: '12px', fontWeight: 700, cursor: 'pointer', opacity: bulkSending ? 0.7 : 1, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
                 {bulkSending ? `Sending…` : `Send ${bulkConfirm.rows.length} Messages`}
               </button>
               <button onClick={() => setBulkConfirm(null)}
-                style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '12px', cursor: 'pointer' }}>
+                style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, padding: '12px', cursor: 'pointer', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
                 Cancel
               </button>
             </div>
@@ -1543,7 +1543,7 @@ function SmartContactRow({ trigger, tiers, onSend }) {
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.2fr 1.4fr 1fr', gap: '0 12px', alignItems: 'center', padding: '12px 16px', backgroundColor: C.card, borderRadius: 10, border: `1px solid ${C.border}`, marginBottom: 4, transition: 'border-color 0.15s' }}
+    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.2fr 1.4fr 1fr', gap: '0 12px', alignItems: 'center', padding: '12px 16px', backgroundColor: C.card, border: `1px solid ${C.border}`, marginBottom: 4, transition: 'border-color 0.15s' }}
       onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'}
       onMouseLeave={e => e.currentTarget.style.borderColor = C.border}>
 
@@ -1560,7 +1560,7 @@ function SmartContactRow({ trigger, tiers, onSend }) {
 
       {/* Trigger chip */}
       <div>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 20, backgroundColor: meta.bg, color: meta.color, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 9px', backgroundColor: meta.bg, color: meta.color, fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>
           {meta.dot} {meta.label}
         </span>
         <div style={{ fontSize: 11, color: C.muted, marginTop: 4, lineHeight: 1.3 }}>{snippets[type] || ''}</div>
@@ -1574,7 +1574,7 @@ function SmartContactRow({ trigger, tiers, onSend }) {
       {/* Send button */}
       <div>
         <button onClick={onSend}
-          style={{ padding: '7px 14px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none', backgroundColor: C.accent, color: C.cream, width: '100%', transition: 'opacity 0.15s' }}
+          style={{ padding: '7px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer', border: 'none', backgroundColor: C.cream, color: '#000', width: '100%', transition: 'opacity 0.15s', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}
           onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
           onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
           Send ◎
@@ -1617,12 +1617,12 @@ function SmartComposerModal({ trigger, prefillMsg, subject: initSubject, generat
   return (
     <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.78)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
       onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 500, width: '100%', padding: '28px 24px' }}>
+      <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, maxWidth: 500, width: '100%', padding: '28px 24px' }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-              <span style={{ padding: '3px 9px', borderRadius: 20, backgroundColor: meta.bg, color: meta.color, fontSize: 11, fontWeight: 700 }}>
+              <span style={{ padding: '3px 9px', backgroundColor: meta.bg, color: meta.color, fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: '0.08em' }}>
                 {meta.dot} {meta.label}
               </span>
             </div>
@@ -1667,11 +1667,11 @@ function SmartComposerModal({ trigger, prefillMsg, subject: initSubject, generat
 
         <div style={{ display: 'flex', gap: 10 }}>
           <button onClick={handleSend} disabled={sending || generating || !msg.trim()}
-            style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '13px', fontWeight: 700, fontSize: 14, cursor: 'pointer', opacity: (sending || generating || !msg.trim()) ? 0.6 : 1 }}>
+            style={{ flex: 2, backgroundColor: C.cream, color: '#000', border: 'none', padding: '13px', fontWeight: 700, fontSize: 14, cursor: 'pointer', opacity: (sending || generating || !msg.trim()) ? 0.6 : 1, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
             {sending ? 'Sending…' : '◎ Send Message'}
           </button>
           <button onClick={onClose}
-            style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '13px', cursor: 'pointer' }}>
+            style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, padding: '13px', cursor: 'pointer', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
             Cancel
           </button>
         </div>
@@ -1734,7 +1734,7 @@ function ContactLogSection({ brand }) {
                           </div>
                         </td>
                         <td style={{ padding: '11px 12px' }}>
-                          <span style={{ padding: '3px 8px', borderRadius: 20, backgroundColor: trigMeta.bg, color: trigMeta.color, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                          <span style={{ padding: '3px 8px', backgroundColor: trigMeta.bg, color: trigMeta.color, fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>
                             {trigMeta.dot} {trigMeta.label}
                           </span>
                         </td>
@@ -1855,10 +1855,10 @@ function TabCampaigns({ brand, lang, tiers, customers }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12, marginBottom: 44 }}>
         {CAMP_TEMPLATES.map(tmpl => (
           <button key={tmpl.id} onClick={() => openComposer(tmpl)}
-            style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: '20px 18px', cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s, transform 0.15s' }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.transform = 'translateY(-2px)' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.transform = 'none' }}>
-            <div style={{ fontSize: 28, marginBottom: 10 }}>{tmpl.icon}</div>
+            style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, padding: '20px 18px', cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = C.border }}>
+            <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 18, marginBottom: 10, color: C.muted }}>{tmpl.icon}</div>
             <div style={{ fontWeight: 700, fontSize: 14, color: C.cream, marginBottom: 5 }}>{tmpl.label}</div>
             <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.4 }}>{tmpl.desc}</div>
             {tmpl.id !== 'custom' && (
@@ -1896,7 +1896,7 @@ function TabCampaigns({ brand, lang, tiers, customers }) {
                         {c.subject && <div style={{ fontSize: 11, color: C.muted, marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.subject}</div>}
                       </td>
                       <td style={{ padding: '12px 12px' }}>
-                        <span style={{ padding: '3px 8px', borderRadius: 6, backgroundColor: meta.bg, color: meta.color, fontSize: 11, fontWeight: 700 }}>{meta.label}</span>
+                        <span style={{ padding: '3px 8px', backgroundColor: meta.bg, color: meta.color, fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: '0.08em' }}>{meta.label}</span>
                       </td>
                       <td style={{ padding: '12px 12px', color: C.muted, fontSize: 12 }}>
                         {Array.isArray(c.tier_target) ? c.tier_target.join(', ') : (c.tier_target || 'All')}
@@ -2017,7 +2017,7 @@ Rewrite it: same intent, same length, but in a sharper, more collector-grade edi
           <span style={{ fontSize: 14, color: C.muted }}>Collector Preview</span>
         </div>
         <div style={{ maxWidth: 480 }}>
-          <div style={{ backgroundColor: C.card, borderRadius: 18, border: `1px solid ${C.border}`, overflow: 'hidden' }}>
+          <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, overflow: 'hidden' }}>
             {/* Email-style header */}
             <div style={{ padding: '18px 22px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', gap: 12 }}>
               {brand.logo_url
@@ -2035,16 +2035,16 @@ Rewrite it: same intent, same length, but in a sharper, more collector-grade edi
             <div style={{ padding: '24px 24px 28px' }}>
               {c.subject && <h2 style={{ fontSize: 20, fontWeight: 900, lineHeight: 1.25, marginBottom: 18 }}>{c.subject}</h2>}
               <div style={{ fontSize: 15, lineHeight: 1.8, color: C.cream, whiteSpace: 'pre-wrap' }}>{c.body || <span style={{ color: C.muted, fontStyle: 'italic' }}>No message written yet</span>}</div>
-              <div style={{ marginTop: 24, padding: '14px 18px', backgroundColor: 'rgba(230,57,70,0.08)', border: `1px solid rgba(230,57,70,0.2)`, borderRadius: 10, fontSize: 13, color: C.muted }}>
+              <div style={{ marginTop: 24, padding: '14px 18px', backgroundColor: 'rgba(255,255,255,0.04)', border: `1px solid ${C.border}`, fontSize: 13, color: C.muted }}>
                 This message will be sent to <span style={{ color: C.cream, fontWeight: 700 }}>{recipientCount} {lang.community.toLowerCase()}</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-            <button onClick={() => set('preview', false)} style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '12px', cursor: 'pointer', fontWeight: 600 }}>
+            <button onClick={() => set('preview', false)} style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, padding: '12px', cursor: 'pointer', fontWeight: 600, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
               Edit
             </button>
-            <button onClick={handleSend} disabled={sending} style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '12px', fontWeight: 700, cursor: 'pointer', opacity: sending ? 0.7 : 1 }}>
+            <button onClick={handleSend} disabled={sending} style={{ flex: 2, backgroundColor: C.cream, color: '#000', border: 'none', padding: '12px', fontWeight: 700, cursor: 'pointer', opacity: sending ? 0.7 : 1, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
               {sending ? 'Sending…' : c.scheduleMode === 'now' ? 'Send Now' : 'Schedule'}
             </button>
           </div>
@@ -2079,7 +2079,7 @@ Rewrite it: same intent, same length, but in a sharper, more collector-grade edi
               const active = c.targetTiers.includes(opt.value)
               return (
                 <button key={opt.value} onClick={() => toggleTier(opt.value)}
-                  style={{ padding: '6px 14px', borderRadius: 20, border: `1px solid ${active ? opt.color : 'rgba(255,255,255,0.12)'}`, backgroundColor: active ? `${opt.color}20` : 'transparent', color: active ? opt.color : C.muted, fontSize: 13, fontWeight: active ? 700 : 400, cursor: 'pointer', transition: 'all 0.15s' }}>
+                  style={{ padding: '6px 14px', border: `1px solid ${active ? opt.color : 'rgba(255,255,255,0.12)'}`, backgroundColor: active ? `${opt.color}20` : 'transparent', color: active ? opt.color : C.muted, fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: '0.08em', fontWeight: active ? 700 : 400, cursor: 'pointer', transition: 'all 0.15s' }}>
                   {opt.label}
                 </button>
               )
@@ -2101,7 +2101,7 @@ Rewrite it: same intent, same length, but in a sharper, more collector-grade edi
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 7 }}>
             <CLabel style={{ marginBottom: 0 }}>Message Body</CLabel>
             <button onClick={improveWithAI} disabled={improving}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, backgroundColor: 'transparent', color: improving ? C.muted : C.accent, border: `1px solid ${improving ? C.border : 'rgba(230,57,70,0.35)'}`, borderRadius: 8, padding: '5px 12px', fontSize: 12, fontWeight: 700, cursor: improving ? 'not-allowed' : 'pointer' }}>
+              style={{ display: 'flex', alignItems: 'center', gap: 6, backgroundColor: 'transparent', color: improving ? C.muted : C.cream, border: `1px solid ${improving ? C.border : C.border}`, padding: '5px 12px', fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: '0.06em', cursor: improving ? 'not-allowed' : 'pointer' }}>
               {improving ? <><Spinner size={12} /> Improving…</> : <>✦ Improve with AI</>}
             </button>
           </div>
@@ -2119,7 +2119,7 @@ Rewrite it: same intent, same length, but in a sharper, more collector-grade edi
               { key: 'sendEmail', label: '✦ Email' },
             ].map(ch => (
               <button key={ch.key} onClick={() => set(ch.key, !c[ch.key])}
-                style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 18px', borderRadius: 10, cursor: 'pointer', border: `1px solid ${c[ch.key] ? C.accent : C.border}`, backgroundColor: c[ch.key] ? 'rgba(230,57,70,0.1)' : 'transparent', transition: 'all 0.15s' }}>
+                style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 18px', cursor: 'pointer', border: `1px solid ${c[ch.key] ? C.border : C.border}`, backgroundColor: c[ch.key] ? 'rgba(255,255,255,0.06)' : 'transparent', transition: 'all 0.15s' }}>
                 <div style={{ width: 18, height: 18, borderRadius: 4, backgroundColor: c[ch.key] ? C.accent : 'transparent', border: `2px solid ${c[ch.key] ? C.accent : 'rgba(255,255,255,0.25)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: C.cream, flexShrink: 0 }}>
                   {c[ch.key] && '✓'}
                 </div>
@@ -2135,7 +2135,7 @@ Rewrite it: same intent, same length, but in a sharper, more collector-grade edi
           <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
             {[['now', 'Send Now'], ['schedule', 'Schedule for later']].map(([val, label]) => (
               <button key={val} onClick={() => set('scheduleMode', val)}
-                style={{ flex: 1, padding: '10px', borderRadius: 10, cursor: 'pointer', fontWeight: 700, fontSize: 13, border: `1px solid ${c.scheduleMode === val ? C.accent : C.border}`, backgroundColor: c.scheduleMode === val ? 'rgba(230,57,70,0.12)' : 'transparent', color: c.scheduleMode === val ? C.accent : C.muted, transition: 'all 0.15s' }}>
+                style={{ flex: 1, padding: '10px', cursor: 'pointer', fontWeight: 700, fontSize: 12, border: `1px solid ${c.scheduleMode === val ? C.border : C.border}`, backgroundColor: c.scheduleMode === val ? 'rgba(255,255,255,0.07)' : 'transparent', color: c.scheduleMode === val ? C.cream : C.muted, transition: 'all 0.15s', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
                 {label}
               </button>
             ))}
@@ -2168,7 +2168,7 @@ function CLabel({ children }) {
 
 /* ── Status badge ── */
 function StatusBadge({ status }) {
-  const map = { sent: [C.cream, 'rgba(255,255,255,0.06)', 'Sent'], scheduled: [C.gray, 'rgba(255,255,255,0.04)', 'Scheduled'], draft: [C.muted, 'transparent', 'Draft'], failed: [C.accent, 'rgba(255,255,255,0.04)', 'Failed'] }
+  const map = { sent: [C.cream, 'rgba(255,255,255,0.06)', 'Sent'], scheduled: ['#A6A6A6', 'rgba(255,255,255,0.04)', 'Scheduled'], draft: [C.muted, 'transparent', 'Draft'], failed: [C.accent, 'rgba(255,255,255,0.04)', 'Failed'] }
   const [color, bg, label] = map[status] || map.draft
   return <span style={{ padding: '3px 8px', border: `1px solid ${C.border}`, backgroundColor: bg, color, fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: '0.1em' }}>{label}</span>
 }
@@ -2235,10 +2235,10 @@ function TabBackstage({ brand, lang, tiers, drops }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: 12, marginBottom: 44 }}>
         {BS_EVENT_TYPES.map(t => (
           <button key={t.id} onClick={() => setCreateModal({ typeId: t.id })}
-            style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: '20px 18px', cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s, transform 0.15s' }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = C.gold; e.currentTarget.style.transform = 'translateY(-2px)' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.transform = 'none' }}>
-            <div style={{ fontSize: 26, marginBottom: 10 }}>{t.icon}</div>
+            style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, padding: '20px 18px', cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = C.border }}>
+            <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 18, marginBottom: 10, color: C.muted }}>{t.icon}</div>
             <div style={{ fontWeight: 700, fontSize: 13, color: C.cream, marginBottom: 5 }}>{t.label}</div>
             <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.4 }}>{t.desc}</div>
           </button>
@@ -2276,7 +2276,7 @@ function TabBackstage({ brand, lang, tiers, drops }) {
                         {ev.description && <div style={{ fontSize: 11, color: C.muted, marginTop: 2, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ev.description}</div>}
                       </td>
                       <td style={{ padding: '13px 12px' }}>
-                        <span style={{ padding: '3px 9px', borderRadius: 6, backgroundColor: 'rgba(255,183,3,0.10)', color: C.gold, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                        <span style={{ padding: '3px 9px', backgroundColor: 'rgba(255,255,255,0.06)', color: '#A6A6A6', fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>
                           {typeInfo.icon} {typeInfo.label}
                         </span>
                       </td>
@@ -2284,7 +2284,7 @@ function TabBackstage({ brand, lang, tiers, drops }) {
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                           {eligibleTiers.length > 0
                             ? eligibleTiers.map((name, j) => (
-                              <span key={j} style={{ padding: '2px 7px', borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.07)', fontSize: 11, color: C.muted }}>{name}</span>
+                              <span key={j} style={{ padding: '2px 7px', backgroundColor: 'rgba(255,255,255,0.07)', fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: '0.06em', color: C.muted }}>{name}</span>
                             ))
                             : <span style={{ fontSize: 12, color: C.muted }}>All</span>
                           }
@@ -2307,7 +2307,7 @@ function TabBackstage({ brand, lang, tiers, drops }) {
                       </td>
                       <td style={{ padding: '13px 12px' }}>
                         <button onClick={() => sendInviteForEvent(ev)}
-                          style={{ padding: '6px 12px', borderRadius: 7, fontSize: 11, fontWeight: 700, cursor: 'pointer', border: `1px solid rgba(255,183,3,0.3)`, backgroundColor: 'rgba(255,183,3,0.08)', color: C.gold, whiteSpace: 'nowrap' }}>
+                          style={{ padding: '6px 12px', fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: '0.08em', cursor: 'pointer', border: `1px solid ${C.border}`, backgroundColor: 'transparent', color: '#A6A6A6', whiteSpace: 'nowrap' }}>
                           ◈ Send Invite
                         </button>
                       </td>
@@ -2324,7 +2324,7 @@ function TabBackstage({ brand, lang, tiers, drops }) {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <SectionHead label="C" title="Backstage Posts" />
         <button onClick={() => setPostModal(true)}
-          style={{ backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer', marginBottom: 16 }}>
+          style={{ backgroundColor: C.cream, color: '#000', border: 'none', padding: '8px 16px', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontSize: 13, fontWeight: 700, cursor: 'pointer', marginBottom: 16 }}>
           + New Post
         </button>
       </div>
@@ -2335,17 +2335,17 @@ function TabBackstage({ brand, lang, tiers, drops }) {
             {posts.map((post, i) => {
               const tierName = tiers.find(t => t.id === post.eligible_tier_id)?.name
               return (
-                <div key={post.id || i} style={{ backgroundColor: C.card, borderRadius: 14, border: `1px solid ${C.border}`, padding: '18px 20px' }}>
+                <div key={post.id || i} style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, padding: '18px 20px' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10, marginBottom: 10 }}>
                     <div style={{ fontWeight: 700, fontSize: 15 }}>{post.title}</div>
                     <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
                       {tierName && (
-                        <span style={{ padding: '3px 8px', borderRadius: 6, backgroundColor: 'rgba(255,183,3,0.12)', color: C.gold, fontSize: 11, fontWeight: 700 }}>
+                        <span style={{ padding: '3px 8px', backgroundColor: 'rgba(255,255,255,0.06)', color: '#A6A6A6', fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: '0.08em' }}>
                           ✦ {tierName}+
                         </span>
                       )}
                       {!tierName && post.tier_required && (
-                        <span style={{ padding: '3px 8px', border: `1px solid ${C.border}`, backgroundColor: 'rgba(255,255,255,0.04)', color: C.gray, fontSize: 11, fontWeight: 700 }}>
+                        <span style={{ padding: '3px 8px', border: `1px solid ${C.border}`, backgroundColor: 'rgba(255,255,255,0.04)', color: '#A6A6A6', fontSize: 11, fontWeight: 700 }}>
                           ✦ {post.tier_required}+
                         </span>
                       )}
@@ -2389,10 +2389,10 @@ function BSEventStatusBadge({ event }) {
   let label = 'Active', color = C.cream, bg = 'rgba(255,255,255,0.06)'
   if (event.status === 'draft')    { label = 'Draft';    color = C.muted; bg = 'transparent' }
   if (event.status === 'ended')    { label = 'Ended';    color = C.muted; bg = 'transparent' }
-  if (event.status === 'upcoming') { label = 'Upcoming'; color = C.gray;  bg = 'rgba(255,255,255,0.04)' }
+  if (event.status === 'upcoming') { label = 'Upcoming'; color = '#A6A6A6'; bg = 'rgba(255,255,255,0.04)' }
   if (!event.status || event.status === 'active') {
     const now = new Date()
-    if (event.event_date && new Date(event.event_date) > now) { label = 'Upcoming'; color = C.gray; bg = 'rgba(255,255,255,0.04)' }
+    if (event.event_date && new Date(event.event_date) > now) { label = 'Upcoming'; color = '#A6A6A6'; bg = 'rgba(255,255,255,0.04)' }
     else if (event.rolling_access) { label = 'Live'; color = C.cream; bg = 'rgba(255,255,255,0.06)' }
   }
   return <span style={{ padding: '3px 8px', border: `1px solid ${C.border}`, backgroundColor: bg, color, fontFamily: '"Space Mono", monospace', fontSize: 9, letterSpacing: '0.1em' }}>{label}</span>
@@ -2448,13 +2448,13 @@ function BSCreateEventModal({ brand, tiers, drops, initialTypeId, onClose, onCre
   return (
     <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
       onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 540, width: '100%', maxHeight: '92vh', overflowY: 'auto' }}>
+      <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, maxWidth: 540, width: '100%', maxHeight: '92vh', overflowY: 'auto' }}>
         {/* Header */}
         <div style={{ padding: '20px 24px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', gap: 14, justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ fontSize: 24 }}>{typeInfo.icon}</span>
+            <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 16, color: C.muted }}>{typeInfo.icon}</span>
             <div>
-              <div style={{ fontWeight: 800, fontSize: 16 }}>Create {typeInfo.label}</div>
+              <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontWeight: 700, fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Create {typeInfo.label}</div>
               <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>{typeInfo.desc}</div>
             </div>
           </div>
@@ -2474,7 +2474,7 @@ function BSCreateEventModal({ brand, tiers, drops, initialTypeId, onClose, onCre
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
               {BS_EVENT_TYPES.map(t => (
                 <button key={t.id} onClick={() => set('event_type', t.id)}
-                  style={{ padding: '9px 8px', borderRadius: 9, cursor: 'pointer', border: `1px solid ${form.event_type === t.id ? C.gold : C.border}`, backgroundColor: form.event_type === t.id ? 'rgba(255,183,3,0.1)' : 'transparent', fontSize: 12, fontWeight: form.event_type === t.id ? 700 : 400, color: form.event_type === t.id ? C.gold : C.muted, transition: 'all 0.15s' }}>
+                  style={{ padding: '9px 8px', cursor: 'pointer', border: `1px solid ${form.event_type === t.id ? C.border : C.border}`, backgroundColor: form.event_type === t.id ? 'rgba(255,255,255,0.08)' : 'transparent', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontSize: 12, fontWeight: form.event_type === t.id ? 700 : 400, color: form.event_type === t.id ? C.cream : C.muted, transition: 'all 0.15s' }}>
                   {t.icon} {t.label}
                 </button>
               ))}
@@ -2508,7 +2508,7 @@ function BSCreateEventModal({ brand, tiers, drops, initialTypeId, onClose, onCre
                 const active = form.eligible_tier_ids.includes(t.id)
                 return (
                   <button key={t.id} onClick={() => toggleTierId(t.id)}
-                    style={{ padding: '6px 14px', borderRadius: 20, border: `1px solid ${active ? `#${t.color}` : 'rgba(255,255,255,0.12)'}`, backgroundColor: active ? `#${t.color}20` : 'transparent', color: active ? `#${t.color}` : C.muted, fontSize: 13, fontWeight: active ? 700 : 400, cursor: 'pointer', transition: 'all 0.15s' }}>
+                    style={{ padding: '6px 14px', border: `1px solid ${active ? `#${t.color}` : 'rgba(255,255,255,0.12)'}`, backgroundColor: active ? `#${t.color}20` : 'transparent', color: active ? `#${t.color}` : C.muted, fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: '0.08em', fontWeight: active ? 700 : 400, cursor: 'pointer', transition: 'all 0.15s' }}>
                     {t.name}
                     {t.has_backstage_access && ' ✦'}
                   </button>
@@ -2519,7 +2519,7 @@ function BSCreateEventModal({ brand, tiers, drops, initialTypeId, onClose, onCre
           </div>
 
           {/* Rolling access toggle */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 10, border: `1px solid ${C.border}` }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', backgroundColor: 'rgba(255,255,255,0.04)', border: `1px solid ${C.border}` }}>
             <div>
               <div style={{ fontWeight: 700, fontSize: 14 }}>∞ Rolling Access</div>
               <div style={{ color: C.muted, fontSize: 12, marginTop: 2 }}>Available on-demand, no fixed date</div>
@@ -2542,7 +2542,7 @@ function BSCreateEventModal({ brand, tiers, drops, initialTypeId, onClose, onCre
           )}
 
           {/* RSVP toggle */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 10, border: `1px solid ${C.border}` }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', backgroundColor: 'rgba(255,255,255,0.04)', border: `1px solid ${C.border}` }}>
             <div>
               <div style={{ fontWeight: 700, fontSize: 14 }}>RSVP Required</div>
               <div style={{ color: C.muted, fontSize: 12, marginTop: 2 }}>Collectors must confirm attendance</div>
@@ -2553,11 +2553,11 @@ function BSCreateEventModal({ brand, tiers, drops, initialTypeId, onClose, onCre
           {/* Actions */}
           <div style={{ display: 'flex', gap: 10, paddingTop: 4 }}>
             <button onClick={handleSave} disabled={saving}
-              style={{ flex: 2, backgroundColor: C.gold, color: C.primary, border: 'none', borderRadius: 10, padding: '13px', fontWeight: 800, fontSize: 14, cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>
+              style={{ flex: 2, backgroundColor: C.cream, color: '#000', border: 'none', padding: '13px', fontWeight: 700, fontSize: 14, cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
               {saving ? 'Creating…' : `Create ${typeInfo.label}`}
             </button>
             <button onClick={onClose}
-              style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '13px', cursor: 'pointer' }}>
+              style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, padding: '13px', cursor: 'pointer', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
               Cancel
             </button>
           </div>
@@ -2587,7 +2587,7 @@ function BSCreatePostModal({ brand, tiers, onClose, onCreate }) {
   return (
     <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}
       onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={{ backgroundColor: C.card, borderRadius: 20, border: `1px solid ${C.border}`, maxWidth: 500, width: '100%' }}>
+      <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}`, maxWidth: 500, width: '100%' }}>
         <div style={{ padding: '20px 24px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ fontFamily: '"Cinzel", Georgia, serif', fontWeight: 700, fontSize: 14, letterSpacing: '0.06em', textTransform: 'uppercase' }}>✦ New Backstage Post</div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: C.muted, fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>×</button>
@@ -2621,11 +2621,11 @@ function BSCreatePostModal({ brand, tiers, onClose, onCreate }) {
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
             <button onClick={handleSave} disabled={saving}
-              style={{ flex: 2, backgroundColor: C.accent, color: C.cream, border: 'none', borderRadius: 10, padding: '13px', fontWeight: 700, cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
+              style={{ flex: 2, backgroundColor: C.cream, color: '#000', border: 'none', padding: '13px', fontWeight: 700, cursor: 'pointer', opacity: saving ? 0.7 : 1, fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
               {saving ? 'Publishing…' : 'Publish Post'}
             </button>
             <button onClick={onClose}
-              style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 10, padding: '13px', cursor: 'pointer' }}>
+              style={{ flex: 1, backgroundColor: 'transparent', color: C.muted, border: `1px solid ${C.border}`, padding: '13px', cursor: 'pointer', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}>
               Cancel
             </button>
           </div>
@@ -2754,7 +2754,7 @@ function TabSettings({ brand, lang, setBrand }) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <input type="color" value={form[f.key]} onChange={e => set(f.key, e.target.value)}
                     style={{ width: 44, height: 40, border: 'none', backgroundColor: 'transparent', cursor: 'pointer', padding: 0 }} />
-                  <div style={{ flex: 1, height: 40, borderRadius: 8, backgroundColor: form[f.key], border: `1px solid ${C.border}` }} />
+                  <div style={{ flex: 1, height: 40, backgroundColor: form[f.key], border: `1px solid ${C.border}` }} />
                   <input value={form[f.key]} onChange={e => set(f.key, e.target.value)} style={{ ...IS, width: 96, fontSize: 12, padding: '8px 10px' }} />
                 </div>
               </div>
@@ -2762,10 +2762,10 @@ function TabSettings({ brand, lang, setBrand }) {
           </div>
 
           {/* Live preview swatch */}
-          <div style={{ borderRadius: 12, overflow: 'hidden', border: `1px solid ${C.border}` }}>
+          <div style={{ overflow: 'hidden', border: `1px solid ${C.border}` }}>
             <div style={{ backgroundColor: form.theme_primary, padding: '20px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span style={{ color: '#F1FAEE', fontWeight: 700, fontSize: 14 }}>Preview</span>
-              <button style={{ backgroundColor: form.theme_accent, color: '#F1FAEE', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 700, fontSize: 13, cursor: 'default' }}>Claim Yours</button>
+              <button style={{ backgroundColor: form.theme_accent, color: '#F1FAEE', border: 'none', padding: '8px 18px', fontWeight: 700, fontSize: 13, cursor: 'default' }}>Claim Yours</button>
             </div>
           </div>
         </SettingsBlock>
@@ -2779,7 +2779,7 @@ function TabSettings({ brand, lang, setBrand }) {
                 {brand.slug}.rebl.in
               </div>
               <button onClick={copySubdomain}
-                style={{ backgroundColor: copied ? 'rgba(34,197,94,0.12)' : 'rgba(255,255,255,0.06)', color: copied ? '#22c55e' : C.cream, border: `1px solid ${copied ? 'rgba(34,197,94,0.3)' : C.border}`, borderRadius: 10, padding: '0 16px', fontWeight: 700, fontSize: 12, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>
+                style={{ backgroundColor: copied ? 'rgba(34,197,94,0.12)' : 'rgba(255,255,255,0.06)', color: copied ? '#22c55e' : C.cream, border: `1px solid ${copied ? 'rgba(34,197,94,0.3)' : C.border}`, padding: '0 16px', fontFamily: '"Space Mono", monospace', fontSize: 10, letterSpacing: '0.06em', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>
                 {copied ? '✓ Copied' : 'Copy'}
               </button>
             </div>
@@ -2793,7 +2793,7 @@ function TabSettings({ brand, lang, setBrand }) {
           </div>
 
           <a href={`/s/${brand.slug}`} target="_blank" rel="noreferrer"
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid ${C.border}`, color: C.cream, borderRadius: 10, padding: '12px', textDecoration: 'none', fontWeight: 700, fontSize: 14, transition: 'background 0.15s' }}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid ${C.border}`, color: C.cream, padding: '12px', textDecoration: 'none', fontWeight: 700, fontSize: 14, transition: 'background 0.15s', fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif' }}
             onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.09)'}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}>
             ◎ Preview My Page ↗

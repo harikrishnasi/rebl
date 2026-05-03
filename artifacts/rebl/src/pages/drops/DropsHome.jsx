@@ -1,9 +1,32 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import DropsNav from '@/components/DropsNav'
 import { demoProducts, getLiveDrops, getUpcomingDrops } from '@/data/demoProducts'
 import { formatINR, useCountdown } from '@/lib/utils'
+import { supabase } from '@/lib/supabase'
+
+const FALLBACK_COLORS = ['#C0392B','#2980B9','#27AE60','#8E44AD','#D35400','#16A085','#2C3E50','#F39C12']
+
+function mapSupaDrop(d, idx) {
+  const brand = d.brands || {}
+  return {
+    id: `supa-${d.id}`,
+    brand: brand.name || 'Unknown Brand',
+    brandSlug: brand.slug || '',
+    name: d.name,
+    edition: d.edition || '',
+    price: d.price || 0,
+    units: d.quantity || 100,
+    unitsSold: 0,
+    status: d.status || 'upcoming',
+    category: 'sneakers',
+    dropDate: d.drop_date,
+    endDate: null,
+    mainColor: brand.theme_primary || FALLBACK_COLORS[idx % FALLBACK_COLORS.length],
+    _fromSupabase: true,
+  }
+}
 
 const T = {
   bg: '#000000', surface: '#0A0A0A', card: '#0D0D0D',
@@ -277,18 +300,45 @@ function FeaturedBanner({ product }) {
 
 export default function DropsHome() {
   const [activeFilter, setActiveFilter] = useState('All')
+  const [supaDrops, setSupaDrops] = useState([])
+
+  useEffect(() => {
+    async function fetchDrops() {
+      const { data: drops, error } = await supabase
+        .from('drops')
+        .select('id, brand_id, name, edition, quantity, price, drop_date, status')
+        .order('drop_date', { ascending: false })
+        .limit(50)
+      if (error || !drops?.length) return
+
+      const brandIds = [...new Set(drops.map(d => d.brand_id).filter(Boolean))]
+      let brandsMap = {}
+      if (brandIds.length) {
+        const { data: brands } = await supabase
+          .from('brands')
+          .select('id, name, slug, logo_url, theme_primary')
+          .in('id', brandIds)
+        if (brands) brands.forEach(b => { brandsMap[b.id] = b })
+      }
+
+      setSupaDrops(drops.map((d, i) => mapSupaDrop({ ...d, brands: brandsMap[d.brand_id] }, i)))
+    }
+    fetchDrops()
+  }, [])
 
   const filterMap = { All: null, Sneakers: 'sneakers', Streetwear: 'streetwear', Events: 'concert_tickets' }
   const categoryFilter = filterMap[activeFilter]
 
-  const liveDrops = getLiveDrops()
-  const upcomingDrops = getUpcomingDrops()
-  const events = demoProducts.filter(p => p.category === 'concert_tickets')
-  const featured = demoProducts.find(p => p.id === 'nike-aj1-chicago-2025')
+  const allProducts = [...demoProducts, ...supaDrops]
+
+  const liveDrops = allProducts.filter(p => p.status === 'live')
+  const upcomingDrops = allProducts.filter(p => p.status === 'upcoming')
+  const events = allProducts.filter(p => p.category === 'concert_tickets')
+  const featured = allProducts.find(p => p.id === 'nike-aj1-chicago-2025') || allProducts[0]
 
   const filtered = categoryFilter
-    ? demoProducts.filter(p => p.category === categoryFilter)
-    : demoProducts.filter(p => p.category !== 'concert_tickets')
+    ? allProducts.filter(p => p.category === categoryFilter)
+    : allProducts.filter(p => p.category !== 'concert_tickets')
 
   return (
     <div style={{ background: T.bg, minHeight: '100vh', color: T.white, fontFamily: BODY }}>
@@ -310,7 +360,7 @@ export default function DropsHome() {
               </div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 1, background: T.borderDim }}>
-              {(categoryFilter ? demoProducts.filter(p => p.category === categoryFilter && p.status === 'live') : liveDrops.filter(p => p.category !== 'concert_tickets')).map(p => (
+              {(categoryFilter ? allProducts.filter(p => p.category === categoryFilter && p.status === 'live') : liveDrops.filter(p => p.category !== 'concert_tickets')).map(p => (
                 <div key={p.id} style={{ background: T.bg }}>
                   <DropCard product={p} />
                 </div>
