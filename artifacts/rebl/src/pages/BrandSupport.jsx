@@ -318,7 +318,7 @@ export default function BrandSupport() {
         <div>
           <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.25em', marginBottom: 6 }}>D · DIRECT CHANNELS</div>
           <h2 style={{ fontFamily: DISPLAY, fontSize: 16, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 24 }}>Other Ways to Reach Us</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 1, backgroundColor: T.border }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 0 }}>
             {[
               { sym: '◈', label: 'Email', val: 'brands@rebl.in', sub: 'For all brand enquiries' },
               { sym: '⊕', label: 'WhatsApp', val: '+91 98765 43210', sub: 'Mon–Sat, 10am–7pm IST' },
