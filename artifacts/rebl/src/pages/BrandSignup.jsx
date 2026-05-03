@@ -101,22 +101,24 @@ export default function BrandSignup() {
     const alreadySelected = selectedCats.includes(value)
 
     if (alreadySelected) {
-      // Second click → set as primary
+      // Click on selected → deselect
+      setSelectedCats(prev => prev.filter(c => c !== value))
       if (primaryCat === value) {
-        // Already primary, deselect
-        setSelectedCats(prev => prev.filter(c => c !== value))
-        setPrimaryCat(null)
-      } else {
-        setPrimaryCat(value)
+        const remaining = selectedCats.filter(c => c !== value)
+        setPrimaryCat(remaining.length > 0 ? remaining[0] : null)
       }
     } else {
+      // Click on unselected → select
       setSelectedCats(prev => [...prev, value])
       if (!primaryCat) setPrimaryCat(value)
     }
 
-    // Long-press also sets primary
+    // Long-press sets as primary
     if (clickTimers.current[value]) clearTimeout(clickTimers.current[value])
     clickTimers.current[value] = setTimeout(() => {
+      if (!selectedCats.includes(value)) {
+        setSelectedCats(prev => [...prev, value])
+      }
       setPrimaryCat(value)
     }, 600)
   }
@@ -368,7 +370,7 @@ function Step2({ selectedCats, primaryCat, onCatClick, onCatMouseUp, onNext }) {
     <div>
       <h2 style={{ fontFamily: DISPLAY, fontSize: 22, fontWeight: 700, marginBottom: 6, letterSpacing: '0.03em', textTransform: 'uppercase' }}>What do you create?</h2>
       <p style={{ color: C.muted, fontSize: 14, marginBottom: 8, fontFamily: BODY }}>
-        Click once to select. Click again to set as primary.
+        Click to select or deselect. Long-press to set as primary.
       </p>
       {primaryCat && (
         <div style={{ fontFamily: MONO, fontSize: 10, color: C.accent, marginBottom: 20, letterSpacing: '0.15em' }}>
