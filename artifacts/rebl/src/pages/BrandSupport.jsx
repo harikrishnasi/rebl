@@ -322,7 +322,7 @@ export default function BrandSupport() {
             {[
               { sym: '◈', label: 'Email', val: 'brands@rebl.in', sub: 'For all brand enquiries' },
               { sym: '⊕', label: 'WhatsApp', val: '+91 98765 43210', sub: 'Mon–Sat, 10am–7pm IST' },
-              { sym: '◎', label: 'Live Chat', val: 'In-app coming soon', sub: 'Q3 2025 rollout' },
+              { sym: '◎', label: 'Live Chat', val: 'In-app coming soon', sub: 'Q4 2026 rollout' },
               { sym: '✦', label: 'Brand Community', val: 'Slack workspace', sub: 'Apply via brands@rebl.in' },
             ].map((ch, i) => (
               <div key={i} style={{ backgroundColor: T.card, padding: '24px 22px' }}>
