@@ -25,10 +25,10 @@ export default function DropsNav({ activeFilter, onFilter }) {
         height: 64,
       }}>
 
-        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 22, color: T.white, letterSpacing: '-0.5px', lineHeight: 1 }}>Rēbl</span>
-          <span style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid }}>/</span>
-          <span style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid, letterSpacing: '0.2em' }}>DROPS</span>
+          <span style={{ fontFamily: BODY, fontSize: 12, color: T.grayMid, fontWeight: 400 }}>/</span>
+          <span style={{ fontFamily: BODY, fontSize: 12, fontWeight: 500, color: T.gray, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Drops</span>
         </Link>
 
         <div style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
