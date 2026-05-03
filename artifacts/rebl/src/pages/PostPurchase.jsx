@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import confetti from 'canvas-confetti'
 import toast from 'react-hot-toast'
 import { supabase } from '@/lib/supabase'
 import { callGeminiAPI } from '@/lib/gemini'
+import { getDemoProduct } from '@/data/demoProducts'
+import { formatINR } from '@/lib/utils'
 
 const C = {
   primary: '#000000',
@@ -16,8 +18,18 @@ const C = {
 }
 
 export default function PostPurchase() {
-  const { purchaseId } = useParams()
+  const { id } = useParams()
   const navigate = useNavigate()
+  const demoProduct = getDemoProduct(id)
+
+  if (demoProduct) {
+    return <DemoPostPurchase product={demoProduct} />
+  }
+
+  return <RealPostPurchase purchaseId={id} navigate={navigate} />
+}
+
+function RealPostPurchase({ purchaseId, navigate }) {
   const [screen, setScreen] = useState(0) // 0 = welcome, 1 = story, 2 = community
   const [direction, setDirection] = useState(1) // 1 = forward, -1 = back
   const [animating, setAnimating] = useState(false)
@@ -462,6 +474,244 @@ function ActionCard({ emoji, title, desc, variant, onClick }) {
       </div>
       <span style={{ marginLeft: 'auto', color: isAccent ? 'rgba(241,250,238,0.7)' : C.muted, fontSize: 18 }}>›</span>
     </button>
+  )
+}
+
+/* ─── DEMO POST PURCHASE ─── */
+const DT = {
+  bg: '#000000', surface: '#050508', card: '#0A0A12',
+  border: '#1A1A1A', borderVis: '#2D2D2D', borderDim: '#1C1C2E',
+  white: '#F0F4FF', gray: '#A8B2C4', grayMid: '#5A6380',
+}
+const DMONO = '"Space Mono", monospace'
+const DDISPLAY = '"Cinzel", Georgia, serif'
+const DBODY = '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif'
+
+function DemoPostPurchase({ product }) {
+  const [step, setStep] = useState(0)
+  const [aiStory, setAiStory] = useState('')
+  const [editedStory, setEditedStory] = useState('')
+  const [genState, setGenState] = useState('idle')
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (step === 1 && genState === 'idle') {
+      setGenState('loading')
+      const sys = `You are the story engine for Rebl, India's collector OS. Write compelling, authentic provenance stories. Tone: passionate, editorial, collector-to-collector.`
+      const prompt = `A collector just added this item to their vault:
+Item: ${product.name}
+Brand: ${product.brand}
+Edition: ${product.edition}
+Category: ${product.category}
+
+Write a 160-word personal provenance story. Start with the cultural significance of this item (2-3 sentences), then what makes this edition special (2 sentences), then a personal moment starting with "Your story with this piece begins —". Write in second person. No headers. Just the story.`
+      callGeminiAPI(prompt, sys)
+        .then(s => { setAiStory(s); setEditedStory(s); setGenState('done') })
+        .catch(() => { setAiStory(''); setEditedStory(''); setGenState('done') })
+    }
+  }, [step])
+
+  const steps = ['Confirmed', 'Your Story', 'Community', 'Vault Preview']
+
+  return (
+    <div style={{ background: DT.bg, minHeight: '100vh', color: DT.white, fontFamily: DBODY }}>
+      <div style={{ background: DT.surface, borderBottom: `1px solid ${DT.border}`, padding: '0 40px' }}>
+        <div style={{ maxWidth: 860, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 60 }}>
+          <Link to="/" style={{ textDecoration: 'none' }}>
+            <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 18, color: DT.white, letterSpacing: '-0.5px' }}>Rēbl</span>
+          </Link>
+          <div style={{ display: 'flex', gap: 28 }}>
+            {steps.map((s, i) => (
+              <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{
+                  width: 20, height: 20,
+                  border: `1px solid ${i < step ? '#4CAF50' : i === step ? DT.white : DT.border}`,
+                  background: i < step ? '#4CAF50' : 'transparent',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontFamily: DMONO, fontSize: 8,
+                  color: i < step ? '#000' : i === step ? DT.white : DT.grayMid,
+                }}>{i < step ? '✓' : i + 1}</div>
+                <span style={{ fontFamily: DMONO, fontSize: 9, color: i === step ? DT.white : DT.grayMid, letterSpacing: '0.1em' }}>{s.toUpperCase()}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{ width: 60 }} />
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 860, margin: '0 auto', padding: '64px 40px' }}>
+        {step === 0 && (
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontFamily: DMONO, fontSize: 10, color: '#4CAF50', letterSpacing: '0.2em', marginBottom: 24 }}>DROP CONFIRMED</div>
+            <div style={{
+              width: 120, height: 120, margin: '0 auto 40px',
+              background: `linear-gradient(135deg, ${product.mainColor}25 0%, ${DT.card} 100%)`,
+              border: `1px solid ${DT.borderVis}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <span style={{ fontFamily: DMONO, fontSize: 9, color: DT.gray, letterSpacing: '0.1em' }}>{product.brand.split(' ')[0].toUpperCase()}</span>
+            </div>
+            <div style={{ fontFamily: DMONO, fontSize: 11, color: DT.gray, letterSpacing: '0.2em', marginBottom: 12 }}>{product.brand.toUpperCase()}</div>
+            <h1 style={{ fontFamily: DDISPLAY, fontSize: 36, color: DT.white, fontWeight: 700, marginBottom: 12, letterSpacing: '-0.5px' }}>{product.name}</h1>
+            <div style={{ fontFamily: DMONO, fontSize: 12, color: DT.grayMid, marginBottom: 8 }}>{product.edition}</div>
+            <div style={{ fontFamily: DMONO, fontSize: 24, color: DT.white, marginBottom: 40 }}>{formatINR(product.price)}</div>
+            <p style={{ fontFamily: DBODY, fontSize: 17, color: DT.gray, lineHeight: 1.8, marginBottom: 48, maxWidth: 480, margin: '0 auto 48px' }}>
+              Now let's build your vault entry. Your ownership is permanent. Your story is yours.
+            </p>
+            <button
+              onClick={() => setStep(1)}
+              style={{
+                background: DT.white, color: '#000', border: 'none',
+                fontFamily: DMONO, fontSize: 12, letterSpacing: '0.2em',
+                padding: '16px 48px', cursor: 'pointer', textTransform: 'uppercase',
+              }}
+            >Build My Vault Entry →</button>
+          </div>
+        )}
+
+        {step === 1 && (
+          <div>
+            <div style={{ fontFamily: DMONO, fontSize: 9, color: DT.gray, letterSpacing: '0.3em', marginBottom: 12 }}>STEP 2 OF 4</div>
+            <h2 style={{ fontFamily: DDISPLAY, fontSize: 32, color: DT.white, fontWeight: 700, marginBottom: 40, letterSpacing: '0.05em' }}>YOUR STORY</h2>
+
+            <div style={{ marginBottom: 40, padding: '28px 32px', background: DT.card, borderLeft: `3px solid ${DT.borderVis}` }}>
+              <div style={{ fontFamily: DMONO, fontSize: 9, color: DT.gray, letterSpacing: '0.25em', marginBottom: 16 }}>BRAND STORY / {product.brand.toUpperCase()}</div>
+              <p style={{ fontFamily: DBODY, fontSize: 15, color: DT.gray, lineHeight: 1.8 }}>{product.story.origin.body[0]}</p>
+              {product.story.origin.pullQuote && (
+                <div style={{ fontFamily: DDISPLAY, fontSize: 16, color: DT.white, fontStyle: 'italic', marginTop: 20, paddingTop: 20, borderTop: `1px solid ${DT.border}` }}>
+                  "{product.story.origin.pullQuote}"
+                </div>
+              )}
+            </div>
+
+            <div style={{ marginBottom: 32 }}>
+              <div style={{ fontFamily: DMONO, fontSize: 9, color: DT.white, letterSpacing: '0.25em', marginBottom: 16 }}>YOUR PERSONAL STORY</div>
+              {genState === 'loading' ? (
+                <div style={{ padding: '48px', border: `1px solid ${DT.border}`, textAlign: 'center' }}>
+                  <div style={{ fontFamily: DMONO, fontSize: 24, color: DT.borderDim, animation: 'spin 1s linear infinite', display: 'inline-block', marginBottom: 16 }}>◈</div>
+                  <div style={{ fontFamily: DMONO, fontSize: 10, color: DT.grayMid, letterSpacing: '0.2em' }}>CRAFTING YOUR STORY...</div>
+                  <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                </div>
+              ) : (
+                <textarea
+                  value={editedStory || 'Your story is being crafted...'}
+                  onChange={e => setEditedStory(e.target.value)}
+                  style={{
+                    width: '100%', minHeight: 200, padding: '20px',
+                    background: DT.card, border: `1px solid ${DT.border}`,
+                    color: DT.white, fontFamily: DBODY, fontSize: 15, lineHeight: 1.8,
+                    resize: 'vertical', outline: 'none', boxSizing: 'border-box',
+                  }}
+                />
+              )}
+              <div style={{ fontFamily: DMONO, fontSize: 9, color: DT.grayMid, marginTop: 8, letterSpacing: '0.1em' }}>MAKE IT YOURS — edit the story above</div>
+            </div>
+
+            <button
+              onClick={() => setStep(2)}
+              disabled={genState === 'loading'}
+              style={{
+                background: genState === 'loading' ? DT.borderDim : DT.white,
+                color: genState === 'loading' ? DT.grayMid : '#000',
+                border: 'none', fontFamily: DMONO, fontSize: 12, letterSpacing: '0.2em',
+                padding: '16px 40px', cursor: genState === 'loading' ? 'wait' : 'pointer',
+                textTransform: 'uppercase',
+              }}
+            >Save to Vault →</button>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
+            <div style={{ fontFamily: DMONO, fontSize: 9, color: DT.gray, letterSpacing: '0.3em', marginBottom: 40 }}>STEP 3 OF 4</div>
+            <div style={{ fontFamily: DMONO, fontSize: 72, color: DT.borderDim, marginBottom: 24 }}>◎</div>
+            <h2 style={{ fontFamily: DDISPLAY, fontSize: 32, color: DT.white, fontWeight: 700, marginBottom: 20, letterSpacing: '0.05em' }}>
+              You're now part of {product.unitsSold} verified owners.
+            </h2>
+            <p style={{ fontFamily: DBODY, fontSize: 16, color: DT.gray, lineHeight: 1.8, marginBottom: 40 }}>
+              {product.story.reblElement}
+            </p>
+            <div style={{ background: DT.card, border: `1px solid ${DT.border}`, padding: '32px', marginBottom: 40, textAlign: 'left' }}>
+              <div style={{ fontFamily: DMONO, fontSize: 9, color: DT.gray, letterSpacing: '0.2em', marginBottom: 16 }}>OWNER ROOM — {product.brand.toUpperCase()} / {product.name.split(' ').slice(0, 3).join(' ').toUpperCase()}</div>
+              <div style={{ fontFamily: DBODY, fontSize: 14, color: DT.grayMid, lineHeight: 1.8, marginBottom: 20 }}>
+                A private community of the {product.unitsSold} verified owners of this exact edition. Conversations, resell rights, exclusive brand communication — all in one place.
+              </div>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+                {['AK', 'RV', 'PM', 'SK', 'JD', 'MN'].map(i => (
+                  <div key={i} style={{
+                    width: 36, height: 36, border: `1px solid ${DT.borderVis}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontFamily: DMONO, fontSize: 10, color: DT.white, background: DT.borderDim,
+                  }}>{i}</div>
+                ))}
+                <div style={{
+                  width: 36, height: 36, border: `1px solid ${DT.border}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontFamily: DMONO, fontSize: 8, color: DT.grayMid,
+                }}>+{product.unitsSold - 6}</div>
+              </div>
+              <button
+                style={{
+                  background: DT.white, color: '#000', border: 'none',
+                  fontFamily: DMONO, fontSize: 10, letterSpacing: '0.15em',
+                  padding: '10px 24px', cursor: 'pointer', textTransform: 'uppercase',
+                }}
+              >Join Owner Room →</button>
+            </div>
+            <button
+              onClick={() => setStep(3)}
+              style={{
+                background: 'transparent', color: DT.gray,
+                border: `1px solid ${DT.border}`, fontFamily: DMONO, fontSize: 11,
+                letterSpacing: '0.15em', padding: '14px 40px', cursor: 'pointer', textTransform: 'uppercase',
+              }}
+            >Continue to Vault Preview →</button>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div>
+            <div style={{ fontFamily: DMONO, fontSize: 9, color: DT.gray, letterSpacing: '0.3em', marginBottom: 40, textAlign: 'center' }}>STEP 4 OF 4</div>
+            <h2 style={{ fontFamily: DDISPLAY, fontSize: 32, color: DT.white, fontWeight: 700, marginBottom: 40, letterSpacing: '0.05em', textAlign: 'center' }}>YOUR VAULT PREVIEW</h2>
+            <div style={{ maxWidth: 500, margin: '0 auto 48px', background: DT.card, border: `1px solid ${DT.borderVis}` }}>
+              <div style={{
+                height: 200,
+                background: `linear-gradient(135deg, ${product.mainColor}20 0%, ${DT.surface} 100%)`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                borderBottom: `1px solid ${DT.border}`,
+              }}>
+                <span style={{ fontFamily: DMONO, fontSize: 64, color: `${product.mainColor}15`, fontWeight: 700 }}>
+                  {product.brand.split(' ')[0].toUpperCase()}
+                </span>
+              </div>
+              <div style={{ padding: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                  <div style={{ fontFamily: DMONO, fontSize: 9, color: DT.gray, letterSpacing: '0.15em' }}>{product.brand.toUpperCase()}</div>
+                  <div style={{ fontFamily: DMONO, fontSize: 8, color: '#4CAF50', border: '1px solid #4CAF50', padding: '1px 6px', letterSpacing: '0.1em' }}>VERIFIED</div>
+                </div>
+                <div style={{ fontFamily: DMONO, fontSize: 16, color: DT.white, fontWeight: 700, marginBottom: 8 }}>{product.name}</div>
+                <div style={{ fontFamily: DBODY, fontSize: 13, color: DT.grayMid, lineHeight: 1.6 }}>
+                  {(editedStory || product.story.reblElement).substring(0, 120)}...
+                </div>
+              </div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontFamily: DMONO, fontSize: 10, color: DT.grayMid, letterSpacing: '0.1em', marginBottom: 24 }}>
+                Your vault is live at rebl.in/vault/[username]
+              </div>
+              <Link
+                to="/dashboard"
+                style={{
+                  display: 'inline-block', background: DT.white, color: '#000',
+                  fontFamily: DMONO, fontSize: 12, letterSpacing: '0.2em',
+                  padding: '16px 48px', textDecoration: 'none', textTransform: 'uppercase',
+                }}
+              >View Full Vault →</Link>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
 

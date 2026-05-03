@@ -28,6 +28,7 @@ export default function LandingPage() {
     <div style={{ backgroundColor: T.bg, color: T.white, fontFamily: BODY }}>
       <Navbar />
       <Hero />
+      <Portals />
       <Identity />
       <Mission />
       <TheVault />
@@ -50,7 +51,7 @@ function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
   const links = [
-    { label: 'DROPS', to: '/brand/vegnongveg' },
+    { label: 'DROPS', to: '/drops' },
     { label: 'THE VAULT', to: user ? '/dashboard' : '/demo#step-1' },
     { label: 'DEMO', to: '/demo' },
     { label: 'BLOG', to: '/blog' },
@@ -185,6 +186,89 @@ function Hero() {
       {/* Greek border at bottom */}
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
         <GreekBorder color={T.borderVis} opacity={0.6}/>
+      </div>
+    </section>
+  )
+}
+
+/* ─── PORTALS ─── */
+function Portals() {
+  const [dot, setDot] = useState(false)
+  useEffect(() => {
+    const t = setInterval(() => setDot(d => !d), 900)
+    return () => clearInterval(t)
+  }, [])
+
+  return (
+    <section style={{ borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}` }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: T.borderVis, gap: 1 }}>
+        {/* PORTAL 1 — DROPS */}
+        <Link to="/drops" style={{ textDecoration: 'none', display: 'block', background: '#0A0A12', padding: 'max(6vw, 48px)', transition: 'background 0.2s', position: 'relative' }}
+          onMouseEnter={e => e.currentTarget.style.background = '#0D0D18'}
+          onMouseLeave={e => e.currentTarget.style.background = '#0A0A12'}
+        >
+          <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.35em', marginBottom: 28 }}>DROPS.REBL.IN</div>
+          <h2 style={{ fontFamily: MONO, fontSize: 'clamp(22px, 3.5vw, 36px)', color: T.white, fontWeight: 700, lineHeight: 1.2, marginBottom: 20, letterSpacing: '-0.5px' }}>
+            Limited editions.<br />Right now.
+          </h2>
+          <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.8, maxWidth: 400, marginBottom: 36 }}>
+            Nike. Supreme. Concerts. The things that sell out. Find them, buy them, own them — with a story attached.
+          </p>
+          <div style={{ display: 'flex', gap: 32, marginBottom: 36 }}>
+            {[['12', 'live drops'], ['3', 'ending soon']].map(([n, l]) => (
+              <div key={l}>
+                <div style={{ fontFamily: MONO, fontSize: 24, color: T.white, fontWeight: 700 }}>{n}</div>
+                <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.15em', marginTop: 4 }}>{l.toUpperCase()}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{
+            display: 'inline-block', background: T.white, color: '#000',
+            fontFamily: MONO, fontSize: 11, letterSpacing: '0.2em', padding: '12px 28px', textTransform: 'uppercase',
+          }}>Enter Drops →</div>
+          <div style={{ position: 'absolute', bottom: 'max(6vw, 48px)', right: 'max(6vw, 48px)', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{
+              width: 7, height: 7, borderRadius: '50%', background: '#CC0000',
+              opacity: dot ? 1 : 0.3, transition: 'opacity 0.4s',
+            }} />
+            <span style={{ fontFamily: MONO, fontSize: 9, color: '#CC0000', letterSpacing: '0.2em' }}>LIVE</span>
+          </div>
+        </Link>
+
+        {/* PORTAL 2 — THE VAULT */}
+        <Link to="/dashboard" style={{ textDecoration: 'none', display: 'block', background: '#050508', padding: 'max(6vw, 48px)', transition: 'background 0.2s', position: 'relative' }}
+          onMouseEnter={e => e.currentTarget.style.background = '#080810'}
+          onMouseLeave={e => e.currentTarget.style.background = '#050508'}
+        >
+          <div style={{ fontFamily: MONO, fontSize: 9, color: T.gray, letterSpacing: '0.35em', marginBottom: 28 }}>VAULT.REBL.IN</div>
+          <h2 style={{ fontFamily: MONO, fontSize: 'clamp(22px, 3.5vw, 36px)', color: T.white, fontWeight: 700, lineHeight: 1.2, marginBottom: 20, letterSpacing: '-0.5px' }}>
+            Your collection.<br />Permanent.
+          </h2>
+          <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.8, maxWidth: 400, marginBottom: 36 }}>
+            Add what you own. Get an AI-generated story. Build a verified identity as a collector.
+          </p>
+          <div style={{ display: 'flex', gap: 32, marginBottom: 36 }}>
+            {[['500+', 'collectors'], ['1000+', 'verified items']].map(([n, l]) => (
+              <div key={l}>
+                <div style={{ fontFamily: MONO, fontSize: 24, color: T.white, fontWeight: 700 }}>{n}</div>
+                <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.15em', marginTop: 4 }}>{l.toUpperCase()}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{
+            display: 'inline-block', border: `1px solid ${T.borderVis}`, color: T.gray,
+            fontFamily: MONO, fontSize: 11, letterSpacing: '0.2em', padding: '12px 28px', textTransform: 'uppercase',
+          }}>Open Your Vault →</div>
+          <div style={{
+            position: 'absolute', bottom: 'max(6vw, 48px)', right: 'max(6vw, 48px)',
+            width: 28, height: 28, border: `1px solid ${T.borderVis}`, borderRadius: '50%',
+            animation: 'orbit-spin 30s linear infinite',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <div style={{ width: 4, height: 4, background: T.gray, borderRadius: '50%', transform: 'translateX(10px)' }} />
+          </div>
+          <style>{`@keyframes orbit-spin { to { transform: rotate(360deg); } }`}</style>
+        </Link>
       </div>
     </section>
   )

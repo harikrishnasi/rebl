@@ -1,0 +1,867 @@
+prompt = r"""You are updating the existing Rebl React app. This update adds the complete customer journey — two distinct interfaces (Drops storefront + Vault), full cart/checkout/post-purchase flow, demo brand products with rich editorial product pages, and the subdomain architecture (simulated as separate route namespaces).
+
+Do NOT rebuild existing working pages. Add new files and update routing only.
+
+===========================================================
+THE TWO INTERFACES — UNDERSTAND THIS FIRST
+===========================================================
+
+Rebl has two completely separate experiences:
+
+INTERFACE 1: DROPS (/drops/* namespace)
+  This is the storefront. Like a curated shop front.
+  URL pattern: /drops (simulates drops.rebl.in)
+  Purpose: Discover and BUY limited edition products and event tickets
+  User flow: Browse drops → Product detail page → Add to cart → Checkout → Order confirmation → Add to vault
+  Feel: Editorial, like a luxury magazine meets a drop site. Every product has a full story.
+
+INTERFACE 2: THE VAULT (/vault/* and existing pages)
+  This is the collector's identity platform.
+  URL pattern: /profile/:username, /vault/:username, /add-item
+  Purpose: Showcase what you own, add items you bought elsewhere, view provenance
+  User flow: Add item → AI story generated → Published to vault → Find tribe
+  Feel: Premium, personal, like a private gallery
+
+INTERFACE 3: BRANDS (/brands/* namespace)
+  URL pattern: /brands (simulates brands.rebl.in)
+  Purpose: Brand portal — brand pages, dashboards, subdomain engine
+  Already partially built — just add a /brands landing page
+
+The NAVBAR changes based on which interface the user is in:
+  - On /drops/* → show Drops nav
+  - On /vault/* or /dashboard → show Vault nav
+  - On landing page → show both entry points
+
+===========================================================
+CHANGE 1: MAIN NAVIGATION HUB — UPDATE LANDING PAGE HERO
+===========================================================
+
+Add two large entry point cards to the landing page (above the fold, below the headline):
+
+TWO PORTALS SECTION (add between hero text and stats):
+<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1px',background:'#1C1C2E',margin:'48px 0',border:'1px solid #1C1C2E'}}>
+  
+  PORTAL 1 — THE DROP (left card):
+  Background: #0A0A12. Padding 48px.
+  Top label: "DROPS.REBL.IN" in font-mono 10px silver tracking-widest
+  Headline: "Limited editions. Right now." font-mono 32px cream
+  Body: "Nike. Supreme. Concerts. The things that sell out. Find them, buy them, own them — with a story attached."
+  Stats row: "12 live drops" | "3 ending soon"
+  CTA: "Enter Drops →" — silver filled button — links to /drops
+  Bottom: A subtle animated pulsing red dot + "LIVE" text
+
+  PORTAL 2 — THE VAULT (right card):  
+  Background: #050508. Padding 48px. Border-left 1px #1C1C2E.
+  Top label: "VAULT.REBL.IN" in font-mono 10px orbit tracking-widest
+  Headline: "Your collection. Permanent." font-mono 32px cream
+  Body: "Add what you own. Get an AI-generated story. Build a verified identity as a collector."
+  Stats row: "500+ collectors" | "1000+ verified items"
+  CTA: "Open Your Vault →" — silver ghost button — links to /dashboard or /signup
+  Bottom: A small orbit icon animation (CSS rotation, very slow, 30s per rotation)
+
+===========================================================
+CHANGE 2: DROPS INTERFACE — COMPLETE BUILD
+===========================================================
+
+--- FILE: src/pages/drops/DropsHome.jsx ---
+Route: /drops
+
+This is the storefront homepage. Feels like a premium editorial drop site.
+
+DROPS NAVBAR (separate from main navbar, show only on /drops/* routes):
+Background: #050508. Border-bottom 1px #1C1C2E.
+Left: "Rēbl / DROPS" — "Rēbl" in cream + " / DROPS" in silver font-mono
+Center: "Live" | "Upcoming" | "Sold Out" | "Events" — filter tabs
+Right: Cart icon with count badge (red dot) + "Back to Rebl" ghost link → /
+
+HERO BANNER (rotating, shows featured drop):
+Full-width. Height: 70vh. Image: dark editorial background (use a CSS gradient + geometric shapes as placeholder if no image).
+Overlay: large product name + brand + "LIVE DROP" badge + countdown timer + price
+"Shop Now" CTA button
+
+SECTION: "LIVE NOW" 
+Grid 3-col desktop 2-col mobile. Each drop card:
+  Full image (aspect ratio 4:5)
+  Brand name (font-mono, silver, small caps)
+  Product name (font-mono, cream, 18px, bold)
+  Price in INR
+  Units remaining (e.g. "47 of 500 left") — progress bar below in thin silver
+  Countdown timer if ending < 24hrs (red text)
+  Status badge: LIVE (green) | UPCOMING (silver) | SOLD OUT (red)
+  "Shop Drop →" button on hover
+  Click → /drops/product/:productId
+
+SECTION: "UPCOMING DROPS"
+Horizontal scroll. Each card shows countdown to drop date.
+"Notify Me" button → adds to localStorage waitlist → shows toast
+
+SECTION: "EVENT TICKETS" 
+Special section with concert/event styling.
+Different card style — landscape orientation, shows event poster aesthetic.
+
+--- FILE: src/pages/drops/ProductPage.jsx ---
+Route: /drops/product/:productId
+
+THIS IS THE MOST IMPORTANT PAGE. World-class editorial product page.
+
+LAYOUT: Full dark page. Single column, max-width 1200px centered.
+
+TOP SECTION (2 column, 60/40 split):
+LEFT: Product image gallery
+  Main image: large, square, dark bg
+  Thumbnail row below: 4 smaller images (use color variations as placeholders)
+  Image counter: "01 / 04" font-mono silver
+
+RIGHT: Product details
+  Brand name: font-mono 11px silver tracking-widest uppercase
+  Product name: font-mono 42px cream bold letter-spacing -2px
+  Edition info: "Limited to 500 pairs" or "Concert — June 2025" etc.
+  Price: font-mono 36px cream
+  Stock indicator: live units remaining with thin progress bar
+  Countdown if applicable
+
+  SIZE/VARIANT selector (if applicable):
+  For shoes: size grid (UK 6-12) — each a square button, OUT OF STOCK = dim + strikethrough
+  For tickets: Tier selector (General / Floor / VIP)
+  For apparel: S / M / L / XL grid
+
+  ADD TO CART button: full-width, silver filled, font-mono uppercase tracking-widest
+  "Add to Wishlist" ghost button below
+
+  AUTHENTICITY ROW (below buttons):
+  3 small items with CrossHair icons:
+  "Rebl Verified" | "Ai Story Included" | "Vault Ready"
+
+MIDDLE SECTION — THE EDITORIAL STORY (full-width, dark, generous padding):
+This is what makes Rebl different. Every product has a 3-part story.
+
+PART 1 — "THE ORIGIN"
+Large label: "01 / THE ORIGIN" font-mono silver tracking-widest
+Headline: [product-specific headline]
+Body: [3-4 paragraphs of real editorial copy about the brand/product]
+Pull quote: one sentence in large italic cream text, centered
+
+PART 2 — "THE DROP"
+Label: "02 / THIS DROP"
+Why this edition exists. What makes it limited. The story behind this specific release.
+Include: edition number, materials, designer details, cultural context.
+
+PART 3 — "THE REBL ELEMENT"
+Label: "03 / REBL ELEMENT"
+This section is always present and explains what happens when you buy this on Rebl specifically:
+"When you add this to your vault, you're not just logging a purchase. You're joining [X] other verified owners and receiving an AI-generated provenance story specific to this edition. Your ownership is permanent. Your story is yours."
+CTA inside this section: "Learn how the vault works →" → /demo#vault
+
+BOTTOM SECTION — OWNERS IN THE COMMUNITY:
+"[X] people already own this on Rebl"
+Show 6 collector avatar circles (with initials, demo data)
+"Join the owner community after purchase"
+
+RELATED DROPS grid below.
+
+===========================================================
+CHANGE 3: DEMO PRODUCTS DATA — SEED FILE
+===========================================================
+
+Create: src/data/demoProducts.js
+
+This file contains all demo product data. Import it wherever needed.
+
+export const demoProducts = [
+  {
+    id: "nike-aj1-chicago-2025",
+    brand: "Nike",
+    brandSlug: "nike",
+    name: "Air Jordan 1 Retro High OG Chicago",
+    edition: "2025 Reissue — Limited to 500 pairs in India",
+    price: 13995,
+    originalPrice: null,
+    units: 500,
+    unitsSold: 453,
+    status: "live",
+    category: "sneakers",
+    sizes: ["UK 6", "UK 7", "UK 8", "UK 9", "UK 10", "UK 11"],
+    sizesOOS: ["UK 6", "UK 11"],
+    dropDate: new Date(Date.now() - 1000*60*60*2).toISOString(),
+    endDate: new Date(Date.now() + 1000*60*60*14).toISOString(),
+    mainColor: "#B22234",
+    accentColor: "#F0F4FF",
+    tags: ["Air Jordan", "Basketball", "Heritage", "Chicago"],
+    story: {
+      origin: {
+        headline: "The shoe that started a revolution.",
+        body: [
+          "In 1985, Nike was a mid-size athletic company with a problem: Michael Jordan did not want to wear their shoes. He wanted Adidas. The deal that happened next changed not just sneaker culture but the entire relationship between athletes, brands, and identity.",
+          "The Air Jordan 1 in Chicago colorway — red, black, and white — was banned by the NBA within weeks of Jordan wearing it. The colors didn't match the Bulls' uniform regulations. Nike paid the $5,000 fine every game. Jordan wore it anyway. The ban became the campaign. The shoe became a myth.",
+          "What you're looking at is not footwear. It is the original act of rebellion against a system that told someone what they could and couldn't wear. Nike didn't create a sneaker. They created a statement."
+        ],
+        pullQuote: "They fined him $5,000 every game. He wore it anyway."
+      },
+      thisEdition: {
+        headline: "The 2025 reissue. 500 pairs. India exclusive.",
+        body: [
+          "This reissue is constructed identically to the 1985 original — full-grain leather upper, Nike Air cushioning, the original Wings logo on the ankle. No modern modifications. No updated tooling. The 2025 Chicago is a direct document of the original.",
+          "What makes this edition significant is its geography. These 500 pairs are allocated exclusively for India through Rebl. They will not appear on SNKRS. They will not appear on any physical retail shelf. The only way to own a pair from this allocation is to be here, now.",
+          "Serial numbers 001-500 are embossed on the sockliner. Each pair comes with a certificate of authenticity sealed in the box."
+        ]
+      },
+      reblElement: "When you add this to your vault, you join 453 other verified owners of this exact edition. Your AI-generated provenance story documents the cultural history of the Air Jordan 1 Chicago, the story of this 2025 reissue, and the chapter that is yours — where you were, why you got it, what it means. Non-transferable. Permanent. Yours."
+    }
+  },
+  {
+    id: "supreme-box-logo-fw24",
+    brand: "Supreme",
+    brandSlug: "supreme",
+    name: "Box Logo Crewneck FW24",
+    edition: "Fall/Winter 2024 — 200 units globally via Rebl India allocation",
+    price: 24500,
+    units: 200,
+    unitsSold: 187,
+    status: "live",
+    category: "streetwear",
+    sizes: ["S", "M", "L", "XL"],
+    sizesOOS: ["S", "M"],
+    dropDate: new Date(Date.now() - 1000*60*60*6).toISOString(),
+    endDate: new Date(Date.now() + 1000*60*60*4).toISOString(),
+    mainColor: "#CC0000",
+    accentColor: "#F0F4FF",
+    tags: ["Supreme", "Box Logo", "Streetwear", "FW24"],
+    story: {
+      origin: {
+        headline: "Thirty years of the most valuable rectangle in fashion.",
+        body: [
+          "James Jebbia opened Supreme on Lafayette Street in downtown Manhattan in 1994. The store was built around a skater's logic: the racks were along the walls, the center was empty, so skaters could ride through. The Box Logo — Futura Heavy Oblique font inside a red rectangle — was borrowed from Barbara Kruger, the conceptual artist who used the same visual language to critique consumerism. Supreme used it to create the most coveted brand identity in streetwear history.",
+          "The Box Logo Crewneck is Supreme's purest object. No graphics, no collaboration, no seasonal narrative. Just the box. The fact that it sells out within seconds of every release — for three decades — is not a marketing trick. It is a genuine cultural phenomenon that no business school has adequately explained.",
+          "Owning a Box Logo means something. It signals that you were there, that you knew, that you moved fast enough. It is simultaneously the most earnest and most ironic object in fashion."
+        ],
+        pullQuote: "Barbara Kruger made art to critique consumerism. Supreme made a brand from the critique."
+      },
+      thisEdition: {
+        headline: "FW24. Heavy fleece. India allocation: 200 units.",
+        body: [
+          "The Fall/Winter 2024 Box Logo Crewneck is produced in Supreme's standard 14oz heavyweight fleece — the same weight specification maintained since the mid-2000s. The colorway for this season is ecru (off-white) with the classic red box logo embroidered at chest.",
+          "India receives 200 units of the global allocation through Rebl exclusively. This is the first time Supreme product has been officially available for purchase in India through any channel. The pricing reflects the import duty and Rebl's zero-markup policy on Supreme product — what you see is what it costs to get it here legitimately."
+        ]
+      },
+      reblElement: "The Box Logo in your vault is different from a Box Logo in a resale listing. Here, it comes with full documentation: purchase date, batch number, and an AI-generated cultural analysis of why the Box Logo became what it became. Other collectors can verify your ownership. The community of FW24 Box Logo owners on Rebl is a verified group — not just people who claim to have it."
+    }
+  },
+  {
+    id: "new-balance-1906r-protection-pack",
+    brand: "New Balance",
+    brandSlug: "new-balance",
+    name: "1906R Protection Pack — Silver",
+    edition: "Global Limited Release — 1500 pairs, 75 via Rebl",
+    price: 16995,
+    units: 75,
+    unitsSold: 31,
+    status: "live",
+    category: "sneakers",
+    sizes: ["UK 6", "UK 7", "UK 8", "UK 9", "UK 10", "UK 11", "UK 12"],
+    sizesOOS: [],
+    dropDate: new Date(Date.now() + 1000*60*60*24).toISOString(),
+    endDate: new Date(Date.now() + 1000*60*60*48).toISOString(),
+    status: "upcoming",
+    mainColor: "#A8B2C4",
+    accentColor: "#050508",
+    tags: ["New Balance", "1906R", "Running", "Protection Pack"],
+    story: {
+      origin: {
+        headline: "The running shoe that became the quiet alternative.",
+        body: [
+          "New Balance has been making running shoes in Massachusetts since 1906. They didn't have a celebrity endorser until 2018 — three decades after Nike had built its entire identity around them. This was not oversight. It was conviction. The shoes would speak.",
+          "The 1906 silhouette is built around ABZORB cushioning and a NDURANCE rubber outsole — technology developed for serious runners, not runways. When the 1906R emerged as a lifestyle shoe, it carried all that engineering into a context it was never designed for. The result was something genuine: a shoe that performs, that doesn't need to announce itself.",
+          "In an era when every sneaker release is a media event, New Balance's restraint has become its own kind of flex. The people who know, know."
+        ],
+        pullQuote: "No celebrity endorsers. No campaigns. The shoe speaks."
+      },
+      thisEdition: {
+        headline: "Protection Pack. Silver. 75 pairs through Rebl.",
+        body: [
+          "The Protection Pack colorway applies a metallic silver treatment to the 1906R's mesh upper with tonal suede overlays. The ENCAP midsole is done in a matching grey. The result is monochromatic in a way that feels intentional rather than minimal — a difference you notice over time.",
+          "1500 pairs exist globally. 75 are allocated to Rebl India. This will not be restocked. The Protection Pack is a one-time release."
+        ]
+      },
+      reblElement: "New Balance's quiet confidence translates directly to how we think about the vault. Your 1906R doesn't need to shout. Its provenance — serial number, allocation number, the full story of the Protection Pack — is documented permanently. The people who check your vault will know exactly what they're looking at."
+    }
+  },
+  {
+    id: "palace-tri-ferg-hoodie-ss25",
+    brand: "Palace",
+    brandSlug: "palace",
+    name: "Tri-Ferg Hoodie SS25",
+    edition: "Spring/Summer 2025 — 300 units, 30 via Rebl",
+    price: 18500,
+    units: 30,
+    unitsSold: 28,
+    status: "live",
+    category: "streetwear",
+    sizes: ["S", "M", "L", "XL"],
+    sizesOOS: ["S"],
+    mainColor: "#FFB703",
+    accentColor: "#050508",
+    tags: ["Palace", "Tri-Ferg", "Skateboarding", "London"],
+    story: {
+      origin: {
+        headline: "London skateboarding culture in a triangle.",
+        body: [
+          "Palace was founded by Lev Tanju in London in 2009. The Tri-Ferg logo — three interlocking 'P's forming a triangle — was designed by Fergus Purcell, who also designed the Maharishi logo. It is one of the most recognizable marks in contemporary streetwear, worn by skaters in Southbank and by people who have never touched a board in equal measure.",
+          "What Palace understood before most brands was that skating is not a sport — it is a sensibility. A way of looking at the built environment as material. A relationship with failure that most people find alien. The clothes encode that sensibility. When you wear Palace, you are, in some small way, claiming that sensibility as yours.",
+          "The Tri-Ferg Hoodie is the brand's purest expression. Heavy cotton, dropped shoulders, the triangle at chest. Nothing else needed."
+        ],
+        pullQuote: "A skateboarding brand from Southbank that dressed a generation."
+      },
+      thisEdition: {
+        headline: "SS25. 30 units for India. The yellow one.",
+        body: [
+          "The Spring/Summer 2025 Tri-Ferg Hoodie comes in a pale yellow that photographs almost white and reads warm in person. 400gsm cotton fleece, the heavier weight Palace uses for their premium seasonal pieces. 30 units reach India through Rebl — the smallest allocation we've facilitated for any brand.",
+          "Palace does not do restocks. If you miss this, you wait until the SS26 season, which will be a different colorway."
+        ]
+      },
+      reblElement: "30 verified owners in India. That's the entire community for this piece. When you join the Palace SS25 Tri-Ferg Owner Room on Rebl, you know exactly who you're talking to: the other 29 people who moved fast enough. That's a different kind of community than 30,000 Instagram followers of the brand account."
+    }
+  },
+  {
+    id: "tame-impala-the-slow-rush-tour-2025",
+    brand: "Tame Impala",
+    brandSlug: "tame-impala",
+    name: "The Slow Rush World Tour — Mumbai",
+    edition: "VIP Floor Experience — June 28, 2025 | Jio World Garden",
+    price: 8500,
+    units: 150,
+    unitsSold: 122,
+    status: "live",
+    category: "concert_tickets",
+    sizes: null,
+    ticketTiers: [
+      { name: "General Admission", price: 4500, remaining: 0, sold: true },
+      { name: "Floor Experience", price: 8500, remaining: 28, sold: false },
+      { name: "VIP Soundcheck", price: 18000, remaining: 4, sold: false }
+    ],
+    mainColor: "#6B3FA0",
+    accentColor: "#FFB703",
+    eventDate: "June 28, 2025",
+    eventVenue: "Jio World Garden, Mumbai",
+    tags: ["Tame Impala", "Concert", "Psychedelic", "Mumbai", "Kevin Parker"],
+    story: {
+      origin: {
+        headline: "The one-man band that sounds like an orchestra.",
+        body: [
+          "Tame Impala is Kevin Parker. The guitars, the drums, the bass, the production — Parker plays and records everything himself in a studio in Fremantle, Western Australia. What emerges is psychedelic rock that sounds somehow simultaneously like 1971 and the present moment: warm, layered, unhurried.",
+          "The Slow Rush, released in 2020, was recorded over four years and completed just before the world shut down. Its themes — time passing, decisions postponed, the rush and inertia of modern life — landed with a precision Parker could not have predicted. The album arrived the week that many people's lives went on hold. It became the soundtrack for waiting.",
+          "Parker rarely tours. When he does, the live show expands the studio recordings into something visceral — laser grids, liquid projections, the songs built back up into something that fills a venue. To see Tame Impala live is to understand why the studio recordings, as complete as they are, are only part of what Parker is doing."
+        ],
+        pullQuote: "One person. Every instrument. The sound of a generation waiting."
+      },
+      thisEdition: {
+        headline: "The first India show. Ever.",
+        body: [
+          "Tame Impala has never performed in India. This is not an oversight — Parker is selective about routing. The Mumbai show at Jio World Garden on June 28th is the only India date on the 2025 world tour.",
+          "VIP Floor Experience includes: front-of-stage access zone, early entry at 6PM, an official tour programme signed by the production team, and access to the Rebl post-show collector's lounge where you can meet other verified ticket holders.",
+          "General Admission is sold out. Floor Experience has 28 remaining. VIP Soundcheck — access to the afternoon soundcheck plus a meet and greet with crew — has 4 remaining."
+        ]
+      },
+      reblElement: "A concert ticket is the most perishable collectible. You attend, you experience, and then the proof of what you were part of disappears. On Rebl, your Tame Impala VIP ticket stays in your vault permanently — with the full story of the show, the setlist (added after the event), and connection to the other 121 verified attendees. The night ends. The record doesn't."
+    }
+  }
+];
+
+export const getDemoProduct = (id) => demoProducts.find(p => p.id === id);
+export const getLiveDrops = () => demoProducts.filter(p => p.status === 'live');
+export const getUpcomingDrops = () => demoProducts.filter(p => p.status === 'upcoming');
+
+===========================================================
+CHANGE 4: PRODUCT PAGE — FULL EDITORIAL IMPLEMENTATION
+===========================================================
+
+Build ProductPage at src/pages/drops/ProductPage.jsx using the demoProducts data.
+Route: /drops/product/:productId
+
+Fetch: const product = getDemoProduct(params.productId)
+If not found: show "Drop not found" with back to drops link.
+
+FULL PAGE STRUCTURE:
+
+SECTION 1 — PRODUCT HERO (2-col):
+LEFT COL (60%):
+  Main image: full aspect-ratio-square div. Background: linear-gradient using product.mainColor at 20% opacity on void. Centered product brand name in huge watermark text (opacity 0.05, font-mono, 200px).
+  Gallery dots below: 4 dots (one per "image"), clicking changes active state.
+  "Limited Run" badge top-left: font-mono 9px silver border.
+
+RIGHT COL (40%):
+  Brand label: font-mono 10px silver tracking-[0.3em] uppercase → links to /brands/{brandSlug}
+  Product name: font-mono 38px cream bold tracking-tight
+  Edition: font-mono 11px orbit text → product.edition
+  
+  Price section: 
+    Font-mono 44px cream bold → formatINR(product.price)
+    "Includes AI Vault Story" text-xs silver below
+  
+  Stock meter:
+    "[unitsSold] of [units] claimed" font-mono 11px dim
+    Thin progress bar (product.unitsSold/product.units * 100)%
+    Color: if >80% sold → red. if >50% → silver. else → orbit
+  
+  Countdown (if status=live and endDate exists):
+    "Ends in:" font-mono 11px dim
+    Timer: HH:MM:SS updating every second in font-mono 24px cream
+  
+  SIZE SELECTOR (for shoes/apparel):
+    "SELECT SIZE" label font-mono 10px silver
+    Grid of size buttons. OOS = opacity 0.3 + line-through. Selected = silver border + silver bg + void text.
+    State: selectedSize
+  
+  TICKET TIER SELECTOR (for concert_tickets):
+    Show product.ticketTiers as radio card options.
+    Each: tier name + price + remaining. Sold out = dim + "SOLD OUT" badge.
+    State: selectedTier
+  
+  ADD TO CART BUTTON:
+    If no size selected (shoes) → "Select a size" disabled dim button
+    If valid selection → "Add to Cart →" silver filled font-mono uppercase tracking-widest
+    On click: addToCart(product, selectedSize/Tier) then show cart drawer
+  
+  TRUST ROW below button:
+    3 items with → markers: "Rebl Verified" | "AI Vault Story on Delivery" | "Permanent Ownership Record"
+
+SECTION 2 — THE STORY (full-width editorial):
+Background: #050508. Padding: 96px desktop, 48px mobile.
+
+ORIGIN BLOCK:
+  Left: "01" font-mono 120px color #1C1C2E (decorative)
+  Right:
+    "/ THE ORIGIN" font-mono 10px silver tracking-widest
+    Headline: product.story.origin.headline → font-mono 36px cream
+    Paragraphs: product.story.origin.body.map(p → paragraph tag)
+    Pull quote: large italic cream centered, bordered top+bottom with thin silver lines
+
+THIS DROP BLOCK:
+  Same layout. "02 / THIS DROP" label.
+  product.story.thisEdition.headline + body
+
+REBL ELEMENT BLOCK:
+  Background: #0A0A12. Border-top border-bottom border-[#1C1C2E].
+  "03 / THE REBL ELEMENT" label silver
+  Body: product.story.reblElement
+  CTA: "Learn how the vault works →" → /demo
+
+SECTION 3 — OWNER COMMUNITY:
+  "[unitsSold] people already own this on Rebl"
+  6 avatar circles (use random initials: "AK", "RV", "PM", "SK", "JD", "MN")
+  "Join their owner room after purchase →"
+
+SECTION 4 — RELATED DROPS:
+  Heading: "You might also want"
+  3 related drop cards (from demoProducts, exclude current)
+
+===========================================================
+CHANGE 5: SHOPPING CART — GLOBAL STATE + DRAWER
+===========================================================
+
+Create: src/context/CartContext.jsx
+
+import React, { createContext, useContext, useState } from 'react';
+const CartContext = createContext();
+export const useCart = () => useContext(CartContext);
+
+export const CartProvider = ({ children }) => {
+  const [items, setItems] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const addToCart = (product, variant) => {
+    setItems(prev => {
+      const existing = prev.find(i => i.product.id === product.id && i.variant === variant);
+      if (existing) return prev.map(i => i.product.id === product.id && i.variant === variant ? {...i, qty: i.qty+1} : i);
+      return [...prev, { product, variant, qty: 1, id: Date.now() }];
+    });
+    setIsOpen(true);
+  };
+  const removeFromCart = (id) => setItems(prev => prev.filter(i => i.id !== id));
+  const clearCart = () => setItems([]);
+  const total = items.reduce((sum, i) => sum + i.product.price * i.qty, 0);
+  const count = items.reduce((sum, i) => sum + i.qty, 0);
+
+  return (
+    <CartContext.Provider value={{items, addToCart, removeFromCart, clearCart, total, count, isOpen, setIsOpen}}>
+      {children}
+    </CartContext.Provider>
+  );
+};
+
+Wrap App.jsx with <CartProvider>.
+
+Create: src/components/CartDrawer.jsx
+
+A slide-out drawer from the right side. Fixed position, z-index 200.
+Overlay: semi-transparent void bg behind drawer. Click overlay to close.
+Drawer: 400px wide, full height, bg #0A0A12 border-l #1C1C2E.
+
+HEADER: "YOUR CART" font-mono + item count + X close button
+ITEMS LIST: each item shows:
+  Product name (font-mono bold) + variant + brand
+  Price per item
+  Qty +/- controls (small buttons, font-mono)
+  Remove link (dim text, small)
+TOTAL ROW: thick top border. "TOTAL" font-mono + total amount
+CHECKOUT BUTTON: full width silver filled "Proceed to Checkout →" → /checkout
+CONTINUE SHOPPING: ghost button → closes drawer
+
+Add CartDrawer to App.jsx (renders at root level always).
+Show CartDrawer when isOpen=true from CartContext.
+
+CART ICON in Drops navbar: shopping bag icon from lucide-react. Show count badge.
+
+===========================================================
+CHANGE 6: CHECKOUT FLOW — 3 STEPS
+===========================================================
+
+Create: src/pages/drops/Checkout.jsx
+Route: /checkout
+
+3-step checkout. Progress bar at top.
+
+STEP 1 — DETAILS:
+Heading: "01 / YOUR DETAILS"
+Fields (all required):
+  Full Name | Email | Phone | Address Line 1 | Address Line 2 | City | PIN Code | State
+Billing same as delivery checkbox.
+Order summary sidebar (right col on desktop):
+  Each item: name + variant + qty + price
+  Subtotal | Shipping (free over ₹5000, else ₹299) | Total
+
+"Continue to Payment →" silver button → validates fields → moves to Step 2
+
+STEP 2 — PAYMENT:
+Heading: "02 / PAYMENT"
+DEMO PAYMENT SECTION:
+  Show 3 payment method cards:
+  [UPI] [Net Banking] [Card]
+  
+  UPI selected by default:
+  Input: "Enter UPI ID" with format hint "name@upi"
+  "Pay ₹[total]" silver button
+  
+  Card option:
+  Card number (masked input) | Expiry | CVV | Name on card
+  
+  IMPORTANT: This is a DEMO. Show a note: "This is a demo checkout. No real payment is processed."
+  The "Pay" button shows a loading spinner for 2 seconds then proceeds to Step 3.
+  
+  Order summary sidebar same as Step 1.
+
+STEP 3 — CONFIRMATION:
+This is the magic moment. Full screen. No sidebar.
+
+Confetti animation (canvas-confetti) fires immediately.
+Large: "Order Confirmed." font-mono 64px cream
+Sub: "Your drop is on its way. Once delivered, add it to your vault."
+Order number: "ORDER #RBL-[random 6 digits]" font-mono silver
+
+WHAT HAPPENS NEXT — 3 steps shown as a visual timeline:
+  Step 1: "Order Processing" → green checkmark (done)
+  Step 2: "Dispatch — 2-3 business days" → in progress (silver spinner)
+  Step 3: "Delivery + Add to Vault" → pending (dim)
+
+ORDER SUMMARY card: items + total
+
+BIG CTA BUTTON — silver filled, full width:
+"Pre-Add to Your Vault →"
+This should navigate to /post-purchase/[productId] where the user can start building their vault entry before the item arrives.
+Sub text below button: "You can also do this after delivery. We'll remind you."
+
+EMAIL CONFIRMATION text: "A confirmation has been sent to [email]" (just UI, no real email)
+"Continue Shopping" ghost → /drops
+
+===========================================================
+CHANGE 7: POST-PURCHASE → VAULT ONBOARDING
+===========================================================
+
+Update existing PostPurchase.jsx (or create new if needed):
+Route: /post-purchase/:productId
+
+This is the "add to vault" flow triggered after checkout or delivery.
+
+STEP 1 — "YOUR DROP IS CONFIRMED":
+Product name large. Brand small. Price paid.
+"Now let's build your vault entry."
+Continue button.
+
+STEP 2 — AI STORY GENERATION:
+Show the demo product's pre-written story from demoProducts.story as the "brand story" (top section, labeled "BRAND STORY / [BRAND NAME]")
+Then generate the personal story using Gemini API (same prompt as before).
+Show both: brand story (silver border left) + personal story (cream, editable).
+"Make it yours" textarea.
+"Save to Vault" button.
+
+STEP 3 — COMMUNITY:
+"You're now part of [X] verified owners."
+Show the Owner Room concept.
+If logged in: "Join Owner Room" → Discord placeholder.
+If not logged in: "Create your vault account first" → /signup then return.
+
+STEP 4 — VAULT PREVIEW:
+Show a static preview of what their vault entry will look like.
+Profile card: their name (from checkout) + the item card + verified badge + story preview.
+"Your vault is live at rebl.in/vault/[username]" (or link to signup if no account)
+"View Full Vault" button.
+
+===========================================================
+CHANGE 8: BRANDS LANDING PAGE
+===========================================================
+
+Create: src/pages/brands/BrandsLanding.jsx
+Route: /brands
+
+This is the brands.rebl.in equivalent. The entry point for brands.
+
+LAYOUT: Dark, editorial.
+Top label: "BRANDS.REBL.IN"
+Headline: "The infrastructure for limited editions."
+Sub: "Drop tools. Community analytics. Verified ownership. The things brands need to make scarcity matter."
+
+4 feature blocks:
+  DROP INFRASTRUCTURE — "Launch drops with access controls, countdown timers, and real-time inventory. Integrated with the Rebl collector community."
+  COMMUNITY ANALYTICS — "Know who your buyers are after the sale. Story completion rates. Community join rates. Tier progression. Data that doesn't exist anywhere else."
+  VERIFIED OWNER COMMUNITY — "Every buyer gets a vault entry. Every vault entry is a verified community member. Brand-specific Owner Rooms, auto-created per drop."
+  BRAND SUBDOMAIN — "yourbrand.rebl.in. Your drop page, powered by Rebl. Full theme control. Zero engineering required."
+
+Case studies section — 3 cards with demo data:
+  "Nike x Rebl India — 500 pair AJ1 Chicago. 94% story completion. 78% Owner Room join rate."
+  "Supreme x Rebl — 200 unit Box Logo FW24. 0 counterfeit reports. 100% verified sales."
+  "Tame Impala — 150 VIP tickets. All 150 in verified vaults post-show."
+
+Pricing cards (same as landing page pricing section).
+CTA: "Launch Your Brand" → /brand/signup
+
+===========================================================
+CHANGE 9: DROPS HOME — FULL IMPLEMENTATION WITH DEMO DATA
+===========================================================
+
+Update DropsHome.jsx to use demoProducts data:
+
+FEATURED BANNER: Show nike-aj1-chicago-2025 as the hero drop.
+Background: radial gradient using product.mainColor at 15% opacity.
+Product name massive font-mono. Brand label small. Price. Units remaining. Countdown.
+"Shop Now →" → /drops/product/nike-aj1-chicago-2025
+
+LIVE DROPS GRID: Filter demoProducts where status=live. Show 4 cards.
+UPCOMING: Filter status=upcoming. Show with countdown to drop.
+EVENTS: Filter category=concert_tickets. Show tame-impala card with event styling.
+  Concert card is different: shows event date, venue, "LIVE EVENT" badge in gold.
+
+FILTER TABS at top: "All" | "Sneakers" | "Streetwear" | "Events"
+Clicking a tab filters the grid client-side.
+
+===========================================================
+CHANGE 10: UPDATE APP.jsx ROUTING
+===========================================================
+
+Add these new routes to App.jsx:
+
+/drops                            → DropsHome
+/drops/product/:productId         → ProductPage
+/checkout                         → Checkout
+/post-purchase/:productId         → PostPurchase (updated version)
+/brands                           → BrandsLanding
+/blog                             → Blog (already created in previous update)
+/blog/:slug                       → BlogPost (already created)
+/about                            → About (already created)
+
+Wrap entire App with CartProvider from CartContext.
+Add CartDrawer component just inside the Router but outside Routes (so it renders on all pages).
+
+===========================================================
+CHANGE 11: DROPS NAVBAR — CONTEXT-AWARE
+===========================================================
+
+Create: src/components/DropsNav.jsx
+
+This navbar shows only on /drops/* and /checkout routes.
+
+Left: "Rēbl / DROPS" with back arrow → "← Back to Rebl" ghost link
+Center: All | Sneakers | Streetwear | Events — filter links
+Right: Cart icon (ShoppingBag from lucide) with count badge from useCart() + opens setIsOpen(true)
+
+In LandingPage, MainNav: add a "Drops →" link that goes to /drops.
+In DropsNav: add a small "For Brands →" link going to /brands.
+
+===========================================================
+CHANGE 12: FORMAT HELPERS
+===========================================================
+
+Create: src/lib/utils.js
+
+export const formatINR = (amount) => new Intl.NumberFormat('en-IN', {style:'currency', currency:'INR', maximumFractionDigits:0}).format(amount);
+
+export const formatCountdown = (endDate) => {
+  const diff = new Date(endDate) - new Date();
+  if (diff <= 0) return "ENDED";
+  const h = Math.floor(diff/3600000);
+  const m = Math.floor((diff%3600000)/60000);
+  const s = Math.floor((diff%60000)/1000);
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+};
+
+export const useCountdown = (endDate) => {
+  const [time, setTime] = React.useState(formatCountdown(endDate));
+  React.useEffect(() => {
+    const interval = setInterval(() => setTime(formatCountdown(endDate)), 1000);
+    return () => clearInterval(interval);
+  }, [endDate]);
+  return time;
+};
+
+===========================================================
+BUILD ORDER
+===========================================================
+
+Build in this exact order:
+1. src/data/demoProducts.js (seed data)
+2. src/lib/utils.js (helpers)
+3. src/context/CartContext.jsx (global cart state)
+4. src/components/CartDrawer.jsx (slide-out cart)
+5. src/components/DropsNav.jsx (drops-specific navbar)
+6. src/pages/drops/DropsHome.jsx (drops storefront)
+7. src/pages/drops/ProductPage.jsx (editorial product page — most important)
+8. src/pages/drops/Checkout.jsx (3-step checkout)
+9. Update PostPurchase.jsx (vault onboarding flow)
+10. src/pages/brands/BrandsLanding.jsx
+11. Update App.jsx: add CartProvider, CartDrawer, all new routes
+12. Update LandingPage.jsx: add 2-portal section (Drops vs Vault)
+13. Test all routes navigate correctly
+
+Design system: keep existing space/cosmos theme already set up. Use same colors, same fonts, same component patterns. No new design decisions needed — just extend what exists.
+
+Do not break any existing pages (auth, vault, brand dashboard, profile etc). Only add new files and update App.jsx routing and LandingPage portal section."""
+
+html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rebl — Full Customer Journey Prompt</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;700&display=swap');
+*{{margin:0;padding:0;box-sizing:border-box;}}
+body{{background:#050508;color:#F0F4FF;font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.7;}}
+.header{{background:#0A0A12;border-bottom:1px solid #1C1C2E;padding:40px 56px;}}
+.header h1{{font-family:'Space Mono',monospace;font-size:34px;font-weight:700;letter-spacing:-1px;color:#F0F4FF;}}
+.header h1 span{{color:#A8B2C4;}}
+.header p{{color:#5A6380;margin-top:8px;font-size:14px;}}
+.pills{{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}}
+.pill{{padding:4px 14px;font-size:10px;font-family:'Space Mono',monospace;letter-spacing:2px;text-transform:uppercase;}}
+.pill-s{{background:transparent;border:1px solid #A8B2C4;color:#A8B2C4;}}
+.pill-d{{background:transparent;border:1px solid #2A2A3E;color:#5A6380;}}
+.arch{{margin:32px 56px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:#1C1C2E;border:1px solid #1C1C2E;}}
+.arch-card{{background:#050508;padding:24px;}}
+.arch-card .ac-label{{font-family:'Space Mono',monospace;font-size:9px;color:#A8B2C4;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}}
+.arch-card .ac-title{{font-family:'Space Mono',monospace;font-size:14px;color:#F0F4FF;margin-bottom:6px;}}
+.arch-card .ac-desc{{font-size:12px;color:#5A6380;line-height:1.5;}}
+.arch-card .ac-url{{font-family:'Space Mono',monospace;font-size:10px;color:#2A2A3E;margin-top:8px;}}
+.changes{{margin:0 56px 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}}
+.change-card{{background:#0A0A12;border:1px solid #1C1C2E;padding:16px;}}
+.change-card .num{{font-family:'Space Mono',monospace;font-size:9px;color:#2A2A3E;margin-bottom:6px;}}
+.change-card .title{{font-family:'Space Mono',monospace;font-size:11px;color:#A8B2C4;letter-spacing:1px;text-transform:uppercase;}}
+.change-card .desc{{font-size:12px;color:#5A6380;margin-top:4px;line-height:1.4;}}
+.instructions{{background:#0A0A12;border:1px solid #1C1C2E;border-left:2px solid #A8B2C4;margin:0 56px 24px;padding:24px 28px;}}
+.instructions h2{{font-family:'Space Mono',monospace;font-size:10px;color:#A8B2C4;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;}}
+.instructions ol{{padding-left:20px;}}
+.instructions li{{color:#5A6380;margin-bottom:6px;font-size:13px;}}
+.instructions li strong{{color:#F0F4FF;}}
+.copy-section{{margin:0 56px 56px;}}
+.copy-header{{display:flex;justify-content:space-between;align-items:center;background:#0A0A12;border:1px solid #1C1C2E;border-bottom:none;padding:16px 24px;}}
+.copy-header span{{font-family:'Space Mono',monospace;font-size:10px;color:#5A6380;letter-spacing:3px;text-transform:uppercase;}}
+.copy-btn{{background:#A8B2C4;color:#050508;border:none;padding:10px 28px;font-family:'Space Mono',monospace;font-size:11px;cursor:pointer;font-weight:700;letter-spacing:2px;text-transform:uppercase;transition:background 0.2s;}}
+.copy-btn:hover{{background:#C8D4E8;}}
+.copy-btn.copied{{background:#2EC4B6;color:#050508;}}
+.prompt-box{{background:#020205;border:1px solid #1C1C2E;border-top:2px solid #A8B2C4;padding:40px;overflow-x:auto;max-height:60vh;overflow-y:auto;}}
+.prompt-box pre{{font-family:'Space Mono',monospace;font-size:11.5px;line-height:2;color:#7B8FA8;white-space:pre-wrap;word-break:break-word;}}
+.char-count{{text-align:right;font-family:'Space Mono',monospace;font-size:10px;color:#2A2A3E;margin-top:8px;letter-spacing:1px;}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div style="font-family:'Space Mono',monospace;font-size:9px;color:#A8B2C4;letter-spacing:4px;text-transform:uppercase;margin-bottom:14px;">REBL / PROMPT V4 / FULL CUSTOMER JOURNEY</div>
+  <h1>Drops <span>/</span> Cart <span>/</span> Checkout <span>/</span> Vault Onboarding</h1>
+  <p>Complete customer journey — two interfaces, 5 demo products, editorial product pages, full cart + checkout flow.</p>
+  <div class="pills">
+    <span class="pill pill-s">5 Demo Products</span>
+    <span class="pill pill-s">Tame Impala Ticket</span>
+    <span class="pill pill-s">Cart + Checkout</span>
+    <span class="pill pill-s">Post-Purchase Vault Flow</span>
+    <span class="pill pill-d">Extends existing codebase</span>
+    <span class="pill pill-d">No rebuild</span>
+  </div>
+</div>
+
+<div class="arch">
+  <div class="arch-card">
+    <div class="ac-label">Interface 01</div>
+    <div class="ac-title">DROPS</div>
+    <div class="ac-desc">The storefront. Browse drops, buy, checkout, add to vault. Editorial product pages with full brand stories.</div>
+    <div class="ac-url">drops.rebl.in → /drops/*</div>
+  </div>
+  <div class="arch-card">
+    <div class="ac-label">Interface 02</div>
+    <div class="ac-title">THE VAULT</div>
+    <div class="ac-desc">Your collector identity. Add what you own anywhere, get AI stories, find your tribe. Permanent record.</div>
+    <div class="ac-url">vault.rebl.in → /dashboard, /profile/*</div>
+  </div>
+  <div class="arch-card">
+    <div class="ac-label">Interface 03</div>
+    <div class="ac-title">BRANDS</div>
+    <div class="ac-desc">Brand portal. Drop tools, community analytics, subdomain engine. The infrastructure layer.</div>
+    <div class="ac-url">brands.rebl.in → /brands, /brand-dashboard</div>
+  </div>
+</div>
+
+<div class="changes">
+  <div class="change-card"><div class="num">CHANGE 01</div><div class="title">Demo Products</div><div class="desc">5 products with full editorial stories: AJ1 Chicago, Supreme Box Logo, NB 1906R, Palace Tri-Ferg, Tame Impala VIP ticket</div></div>
+  <div class="change-card"><div class="num">CHANGE 02</div><div class="title">Product Pages</div><div class="desc">World-class editorial layout. 3-part story: Origin / This Drop / The Rebl Element. Size selector. Stock meter. Countdown.</div></div>
+  <div class="change-card"><div class="num">CHANGE 03</div><div class="title">Cart System</div><div class="desc">Global cart context. Slide-out drawer. Add/remove/qty. Persists across pages.</div></div>
+  <div class="change-card"><div class="num">CHANGE 04</div><div class="title">Checkout (3 steps)</div><div class="desc">Details → Demo payment → Confirmation. Confetti on success. "Pre-Add to Vault" CTA after checkout.</div></div>
+  <div class="change-card"><div class="num">CHANGE 05</div><div class="title">Vault Onboarding</div><div class="desc">Post-checkout: brand story + personal AI story + community join + vault preview. Full 4-step flow.</div></div>
+  <div class="change-card"><div class="num">CHANGE 06</div><div class="title">Drops Storefront</div><div class="desc">Full DropsHome with live/upcoming/event sections. Filter tabs. Featured hero banner.</div></div>
+  <div class="change-card"><div class="num">CHANGE 07</div><div class="title">Brands Landing</div><div class="desc">/brands page with features, case studies, pricing. Entry point for brand signup.</div></div>
+  <div class="change-card"><div class="num">CHANGE 08</div><div class="title">Landing Portals</div><div class="desc">Two portal cards on hero: Drops vs Vault. Clear entry points for both user types.</div></div>
+  <div class="change-card"><div class="num">CHANGE 09</div><div class="title">Context Nav</div><div class="desc">Drops navbar shows on /drops/*. Main navbar on all other pages. Cart icon in drops nav.</div></div>
+</div>
+
+<div class="instructions">
+  <h2>How to use</h2>
+  <ol>
+    <li><strong>Open your existing Rebl project</strong> — the one already running on Replit</li>
+    <li><strong>Click COPY ALL</strong> — copies the full prompt</li>
+    <li><strong>Paste once into Replit AI</strong> — say "update my existing project with this"</li>
+    <li><strong>If Replit AI says "I don't know where X is"</strong> — say "check the existing src/ folder and add it there"</li>
+    <li><strong>After build:</strong> test the full flow — Landing → /drops → product page → add to cart → /checkout → /post-purchase/[id]</li>
+  </ol>
+</div>
+
+<div class="copy-section">
+  <div class="copy-header">
+    <span>Full Customer Journey Prompt — Paste Into Replit AI</span>
+    <button class="copy-btn" onclick="copyPrompt()" id="copyBtn">COPY ALL</button>
+  </div>
+  <div class="prompt-box"><pre id="promptText">{prompt}</pre></div>
+  <div class="char-count" id="charCount"></div>
+</div>
+
+<script>
+const t = document.getElementById('promptText').textContent;
+document.getElementById('charCount').textContent = t.length.toLocaleString() + ' CHARS  //  ' + t.split(/\\s+/).length.toLocaleString() + ' WORDS';
+function copyPrompt() {{
+  navigator.clipboard.writeText(t).then(() => {{
+    const b = document.getElementById('copyBtn');
+    b.textContent = 'COPIED //';
+    b.classList.add('copied');
+    setTimeout(() => {{ b.textContent = 'COPY ALL'; b.classList.remove('copied'); }}, 3000);
+  }});
+}}
+</script>
+</body>
+</html>"""
+
+with open('/mnt/user-data/outputs/Rebl_CustomerJourney_Prompt.html', 'w', encoding='utf-8') as f:
+    f.write(html)
+print(f"Done — {len(prompt)} chars, {len(prompt.split())} words")
