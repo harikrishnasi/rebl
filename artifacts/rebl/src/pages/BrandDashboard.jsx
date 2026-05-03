@@ -131,6 +131,18 @@ export default function BrandDashboard() {
           {TABS.map(tab => (
             <SidebarTab key={tab.id} tab={tab} active={activeTab === tab.id} onClick={() => setActiveTab(tab.id)} />
           ))}
+          <div style={{ flex: 1 }} />
+          <div style={{ borderTop: `1px solid ${C.border}`, padding: '12px 0 4px' }}>
+            <button
+              onClick={() => navigate('/')}
+              style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 20px', border: 'none', background: 'none', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.15s' }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'none'}
+            >
+              <span style={{ fontFamily: '"Space Mono", monospace', fontSize: 13, color: C.muted, opacity: 0.6 }}>◎</span>
+              <span style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', fontSize: 13, fontWeight: 400, color: C.muted, letterSpacing: '0.02em' }}>Rebl Home</span>
+            </button>
+          </div>
         </aside>
 
         {/* Main content */}
