@@ -481,8 +481,9 @@ Each field: 2-3 sentences max. Tone: collector-grade editorial.`
 
   return (
     <div style={{ maxWidth: 680 }}>
-      <h1 style={{ fontSize: 24, fontWeight: 900, marginBottom: 4 }}>Story Builder</h1>
-      <p style={{ color: C.muted, fontSize: 14, marginBottom: 28 }}>
+      <div style={{ fontFamily: '"Space Mono", monospace', fontSize: 9, color: C.muted, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 8 }}>BRAND.STORY</div>
+      <h1 style={{ fontFamily: '"Cinzel", Georgia, serif', fontSize: 22, fontWeight: 700, marginBottom: 4, letterSpacing: '0.03em', textTransform: 'uppercase' }}>Story Builder</h1>
+      <p style={{ fontFamily: '"Satoshi", "Plus Jakarta Sans", Inter, sans-serif', color: C.muted, fontSize: 13, marginBottom: 28 }}>
         Craft the product story that lives on every collector's item card.
       </p>
 
