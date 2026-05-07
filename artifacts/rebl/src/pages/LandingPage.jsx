@@ -155,7 +155,7 @@ function Hero() {
           <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(40px,9vw,90px)', fontWeight: 700, color: T.gray, letterSpacing: '-1px', textTransform: 'uppercase' }}>Tell its story.</div>
           {/* <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(40px,9vw,90px)', fontWeight: 700, color: T.grayDark, letterSpacing: '-1px', textTransform: 'uppercase' }}>Find your orbit.</div> */}
         </h1>
-        <p style={{ marginTop: 28, fontFamily: BODY, fontSize: isMobile ? 19 : 21, color: T.grayMid, maxWidth: 480, lineHeight: 1.7 }}>
+        <p style={{ marginTop: 28, fontFamily: BODY, fontSize: isMobile ? 17 : 19, color: T.grayMid, maxWidth: 480, lineHeight: 1.7 }}>
           Rebl is the vault for collectors who refuse to blend in.
         </p>
         <div style={{ marginTop: isMobile ? 32 : 48, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
