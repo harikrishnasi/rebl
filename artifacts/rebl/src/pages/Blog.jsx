@@ -99,7 +99,7 @@ export default function Blog() {
         <div style={{ marginTop: 80 }}>
           <GreekBorder color={T.borderVis} opacity={0.5} />
           <div style={{ textAlign: 'center', marginTop: 48 }}>
-            <div style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.2em' }}>FROM ANCIENT ROOTS, TO INFINITE FUTURES.</div>
+
           </div>
         </div>
       </div>

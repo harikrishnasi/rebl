@@ -156,7 +156,7 @@ function Hero() {
           {/* <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(40px,9vw,90px)', fontWeight: 700, color: T.grayDark, letterSpacing: '-1px', textTransform: 'uppercase' }}>Find your orbit.</div> */}
         </h1>
         <p style={{ marginTop: 28, fontFamily: BODY, fontSize: isMobile ? 19 : 21, color: T.grayMid, maxWidth: 480, lineHeight: 1.7 }}>
-          From ancient roots, to infinite futures. Rebl is the vault for collectors who refuse to blend in.
+          Rebl is the vault for collectors who refuse to blend in.
         </p>
         <div style={{ marginTop: isMobile ? 32 : 48, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <Link to="/signup" style={{ fontFamily: BODY, fontSize: 13, fontWeight: 600, color: T.bg, textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase', padding: isMobile ? '14px 28px' : '16px 48px', backgroundColor: T.white, transition: 'all 0.2s', display: 'inline-block' }}
@@ -575,7 +575,7 @@ function Footer() {
             <div style={{ gridColumn: isMobile ? 'span 2' : 'auto' }}>
               <div style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 32, color: T.white, letterSpacing: '-0.5px', marginBottom: 4 }}>Rēbl</div>
               <div style={{ fontFamily: DISPLAY, fontSize: 13, color: T.gray, letterSpacing: '0.28em', textTransform: 'uppercase', marginBottom: 12 }}>Own the rare. Tell its story.</div>
-              <p style={{ fontFamily: BODY, fontSize: 21, color: T.grayMid, lineHeight: 1.7, margin: 0, maxWidth: 220 }}>From ancient roots, to infinite futures.</p>
+
             </div>
             {cols.map(col => (
               <div key={col.label}>
@@ -595,7 +595,7 @@ function Footer() {
       </div>
       <div style={{ borderTop: `1px solid ${T.border}` }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: `24px ${isMobile ? '20px' : 'max(8vw,32px)'}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 24 }}>
-          <span style={{ fontFamily: BODY, fontSize: 16, color: T.grayMid, letterSpacing: '0.04em' }}>From ancient roots, to infinite futures.</span>
+
           <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
             <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: MONO, fontSize: 15, color: T.gray, textDecoration: 'none', transition: 'color 0.2s', letterSpacing: '0.08em' }}
               onMouseEnter={e => e.target.style.color = T.white}

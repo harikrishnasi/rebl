@@ -67,7 +67,7 @@ export default function About() {
           <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.gray, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 16 }}>Team</div>
           <div style={{ fontFamily: DISPLAY, fontSize: 20, color: T.white, letterSpacing: '0.02em' }}>Team Rēbl — India, MMXXV</div>
           <p style={{ fontFamily: BODY, fontSize: 14, color: T.grayMid, margin: '12px 0 0', lineHeight: 1.7 }}>
-            A small, obsessive team building the collector OS India deserves. From ancient roots, to infinite futures.
+            A small, obsessive team building the collector OS India deserves.
           </p>
         </div>
       </div>
