@@ -69,11 +69,11 @@ function Navbar() {
         backgroundColor: scrolled || menuOpen ? 'rgba(0,0,0,0.97)' : 'transparent',
         backdropFilter: scrolled ? 'blur(16px)' : 'none',
         borderBottom: scrolled ? `1px solid ${T.border}` : 'none',
-        transition: 'all 0.3s ease', padding: isMobile ? '0 20px' : '0 32px',
+        transition: 'all 0.3s ease', padding: isMobile ? '0 20px' : '0 32px 0 max(8vw,32px)',
       }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: isMobile ? 60 : 68 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: isMobile ? 70 : 82 }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 3 }}>
-            <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: isMobile ? 22 : 26, color: T.white, letterSpacing: '-0.5px', lineHeight: 1 }}>Rēbl</span>
+            <span style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: isMobile ? 28 : 34, color: T.white, letterSpacing: '-0.5px', lineHeight: 1 }}>Rēbl</span>
             {!isMobile && <span style={{ fontFamily: DISPLAY, fontSize: 9, color: T.gray, letterSpacing: '0.28em', textTransform: 'uppercase' }}>Own the rare. Tell its story.</span>}
           </Link>
 
@@ -146,16 +146,16 @@ function Hero() {
       <img src={imgAstronaut} alt="" style={{ position: 'absolute', right: 0, top: 0, height: '100%', width: isMobile ? '100%' : '55%', objectFit: 'cover', objectPosition: 'center top', opacity: isMobile ? 0.07 : 0.18, pointerEvents: 'none', maskImage: 'linear-gradient(to right, transparent 0%, black 30%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%)' }} />
       <div style={{ maxWidth: 680, position: 'relative', zIndex: 1, width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: isMobile ? 28 : 40, flexWrap: 'wrap' }}>
-          <div style={{ width: 32, height: 1, backgroundColor: T.gray }}/>
+          <div style={{ width: 32, height: 1, backgroundColor: T.gray }} />
           <span style={{ fontFamily: MONO, fontSize: isMobile ? 8 : 10, color: T.gray, letterSpacing: '0.2em' }}>EST. MMXXV — WORLD'S FIRST</span>
-          <div style={{ width: 32, height: 1, backgroundColor: T.gray }}/>
+          <div style={{ width: 32, height: 1, backgroundColor: T.gray }} />
         </div>
         <h1 style={{ margin: 0, lineHeight: 1.0 }}>
-          <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(44px,9vw,92px)', fontWeight: 700, color: T.white, letterSpacing: '-1px', textTransform: 'uppercase' }}>Own it.</div>
-          <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(44px,9vw,92px)', fontWeight: 700, color: T.gray, letterSpacing: '-1px', textTransform: 'uppercase' }}>Tell its story.</div>
-          <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(44px,9vw,92px)', fontWeight: 700, color: T.grayDark, letterSpacing: '-1px', textTransform: 'uppercase' }}>Find your orbit.</div>
+          <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(40px,9vw,90px)', fontWeight: 700, color: T.white, letterSpacing: '-1px', textTransform: 'uppercase' }}>OWN WHAT DEFINES YOU</div>
+          <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(40px,9vw,90px)', fontWeight: 700, color: T.gray, letterSpacing: '-1px', textTransform: 'uppercase' }}>Tell its story.</div>
+          {/* <div style={{ fontFamily: DISPLAY, fontSize: 'clamp(40px,9vw,90px)', fontWeight: 700, color: T.grayDark, letterSpacing: '-1px', textTransform: 'uppercase' }}>Find your orbit.</div> */}
         </h1>
-        <p style={{ marginTop: 28, fontFamily: BODY, fontSize: isMobile ? 15 : 17, color: T.grayMid, maxWidth: 480, lineHeight: 1.7 }}>
+        <p style={{ marginTop: 28, fontFamily: BODY, fontSize: isMobile ? 19 : 21, color: T.grayMid, maxWidth: 480, lineHeight: 1.7 }}>
           From ancient roots, to infinite futures. Rebl is the vault for collectors who refuse to blend in.
         </p>
         <div style={{ marginTop: isMobile ? 32 : 48, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -179,7 +179,7 @@ function Hero() {
         </div>
       </div>
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
-        <GreekBorder color={T.borderVis} opacity={0.6}/>
+        <GreekBorder color={T.borderVis} opacity={0.6} />
       </div>
     </section>
   )
@@ -208,7 +208,7 @@ function Portals() {
           <h2 style={{ fontFamily: DISPLAY, fontSize: 'clamp(22px, 5vw, 36px)', color: T.white, fontWeight: 700, lineHeight: 1.2, marginBottom: 16, letterSpacing: '-0.5px' }}>
             Limited editions.<br />Right now.
           </h2>
-          <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.8, maxWidth: 400, marginBottom: 28 }}>
+          <p style={{ fontFamily: BODY, fontSize: 19, color: T.grayMid, lineHeight: 1.8, maxWidth: 400, marginBottom: 28 }}>
             Nike. Supreme. Concerts. The things that sell out. Find them, buy them, own them — with a story attached.
           </p>
           <div style={{ display: 'flex', gap: 32, marginBottom: 28 }}>
@@ -235,7 +235,7 @@ function Portals() {
           <h2 style={{ fontFamily: DISPLAY, fontSize: 'clamp(22px, 5vw, 36px)', color: T.white, fontWeight: 700, lineHeight: 1.2, marginBottom: 16, letterSpacing: '-0.5px' }}>
             Your collection.<br />Permanent.
           </h2>
-          <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.8, maxWidth: 400, marginBottom: 28 }}>
+          <p style={{ fontFamily: BODY, fontSize: 19, color: T.grayMid, lineHeight: 1.8, maxWidth: 400, marginBottom: 28 }}>
             Add what you own. Get an AI-generated story. Build a verified identity as a collector.
           </p>
           <div style={{ display: 'flex', gap: 32, marginBottom: 28 }}>
@@ -279,13 +279,13 @@ function Identity() {
               <div style={{ fontFamily: DISPLAY, fontSize: isMobile ? 36 : 56, fontWeight: 700, color: T.grayDark, lineHeight: 1 }}>{r.n}</div>
               <div>
                 <h3 style={{ fontFamily: DISPLAY, fontSize: 'clamp(16px,2.5vw,24px)', fontWeight: 600, color: T.white, margin: '0 0 16px', letterSpacing: '-0.5px', textTransform: 'uppercase', lineHeight: 1.2 }}>{r.title}</h3>
-                <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.8, margin: 0, maxWidth: 580 }}>{r.body}</p>
+                <p style={{ fontFamily: BODY, fontSize: 19, color: T.grayMid, lineHeight: 1.8, margin: 0, maxWidth: 580 }}>{r.body}</p>
               </div>
             </div>
           </div>
         ))}
       </div>
-      <GreekBorder color={T.borderVis} opacity={0.5}/>
+      <GreekBorder color={T.borderVis} opacity={0.5} />
     </section>
   )
 }
@@ -349,7 +349,7 @@ function Mission() {
               <div style={{ fontFamily: MONO, fontSize: 10, color: T.grayMid, letterSpacing: '0.28em', marginBottom: 40 }}>{c.n}</div>
               <div style={{ color: T.gray, marginBottom: 32 }}>{c.icon}</div>
               <h3 style={{ fontFamily: DISPLAY, fontSize: 'clamp(18px, 2vw, 24px)', fontWeight: 700, color: T.white, margin: '0 0 20px', textTransform: 'uppercase', letterSpacing: '0.1em', lineHeight: 1 }}>{c.label}</h3>
-              <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.9, margin: 0 }}>{c.body}</p>
+              <p style={{ fontFamily: BODY, fontSize: 19, color: T.grayMid, lineHeight: 1.9, margin: 0 }}>{c.body}</p>
             </div>
           ))}
         </div>
@@ -375,14 +375,14 @@ function TheVault() {
         <div style={{ marginBottom: 56 }}>
           <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.grayMid, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 16 }}>The Vault</div>
           <h2 style={{ fontFamily: DISPLAY, fontSize: 'clamp(30px,5.5vw,72px)', fontWeight: 700, color: T.white, margin: 0, letterSpacing: '-1px', textTransform: 'uppercase', lineHeight: 1 }}>Your permanent record.</h2>
-          <p style={{ fontFamily: BODY, fontSize: 16, color: T.grayMid, lineHeight: 1.7, margin: '16px 0 0', maxWidth: 500 }}>Not a profile. Not a portfolio. A permanent record of who you are as a collector — sealed in time.</p>
+          <p style={{ fontFamily: BODY, fontSize: 20, color: T.grayMid, lineHeight: 1.7, margin: '16px 0 0', maxWidth: 500 }}>Not a profile. Not a portfolio. A permanent record of who you are as a collector — sealed in time.</p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 1, backgroundColor: T.borderVis }}>
           {cards.map((c, i) => (
             <div key={i} style={{ backgroundColor: T.bg, padding: isMobile ? '32px 20px' : '44px 36px' }}>
               <div style={{ fontSize: 22, color: T.gray, marginBottom: 16 }}>{c.icon}</div>
               <div style={{ fontFamily: DISPLAY, fontSize: 12, color: T.gray, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 14 }}>{c.label}</div>
-              <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.8, margin: 0 }}>{c.body}</p>
+              <p style={{ fontFamily: BODY, fontSize: 19, color: T.grayMid, lineHeight: 1.8, margin: 0 }}>{c.body}</p>
             </div>
           ))}
         </div>
@@ -393,7 +393,7 @@ function TheVault() {
           >Build Your Vault →</Link>
         </div>
       </div>
-      <div style={{ marginTop: 64 }}><GreekBorder color={T.borderVis} opacity={0.5}/></div>
+      <div style={{ marginTop: 64 }}><GreekBorder color={T.borderVis} opacity={0.5} /></div>
     </section>
   )
 }
@@ -414,7 +414,7 @@ function BrandMission() {
         <div>
           <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.grayMid, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 20 }}>For Brands</div>
           <h2 style={{ fontFamily: DISPLAY, fontSize: 'clamp(20px,3.2vw,40px)', fontWeight: 700, color: T.white, margin: '0 0 20px', textTransform: 'uppercase', letterSpacing: '-0.5px', lineHeight: 1.1 }}>Limited editions done right.</h2>
-          <p style={{ fontFamily: BODY, fontSize: 15, color: T.grayMid, lineHeight: 1.8, margin: '0 0 36px' }}>Rebl gives brands the infrastructure to make scarcity meaningful — not just a marketing trick. Launch drops, build verified communities, and know your most passionate buyers by name.</p>
+          <p style={{ fontFamily: BODY, fontSize: 19, color: T.grayMid, lineHeight: 1.8, margin: '0 0 36px' }}>Rebl gives brands the infrastructure to make scarcity meaningful — not just a marketing trick. Launch drops, build verified communities, and know your most passionate buyers by name.</p>
           <Link to="/brand/signup" style={{ fontFamily: BODY, fontSize: 12, fontWeight: 500, color: T.gray, textDecoration: 'none', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '14px 36px', border: `1px solid ${T.borderVis}`, display: 'inline-block', transition: 'all 0.2s' }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = T.white; e.currentTarget.style.color = T.white }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = T.borderVis; e.currentTarget.style.color = T.gray }}
@@ -464,7 +464,7 @@ function UpcomingTech() {
             <h2 style={{ fontFamily: DISPLAY, fontSize: 'clamp(28px,5vw,64px)', fontWeight: 700, color: T.white, margin: 0, textTransform: 'uppercase', letterSpacing: '-1px', lineHeight: 1 }}>What's<br />being built.</h2>
           </div>
           {!isMobile && (
-            <div style={{ fontFamily: BODY, fontSize: 14, color: T.grayMid, maxWidth: 300, lineHeight: 1.8 }}>
+            <div style={{ fontFamily: BODY, fontSize: 18, color: T.grayMid, maxWidth: 300, lineHeight: 1.8 }}>
               The infrastructure that makes ownership permanent, physical, and provable — launching in phases.
             </div>
           )}
@@ -480,7 +480,7 @@ function UpcomingTech() {
                 <span style={{ fontFamily: MONO, fontSize: 9, color: T.grayMid, letterSpacing: '0.15em' }}>{item.n}</span>
               </div>
               <div style={{ fontFamily: DISPLAY, fontSize: 13, color: T.white, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 14, lineHeight: 1.3 }}>{item.label}</div>
-              <p style={{ fontFamily: BODY, fontSize: 14, color: T.grayMid, lineHeight: 1.9, margin: '0 0 28px', flex: 1 }}>{item.body}</p>
+              <p style={{ fontFamily: BODY, fontSize: 18, color: T.grayMid, lineHeight: 1.9, margin: '0 0 28px', flex: 1 }}>{item.body}</p>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <div style={{ width: 5, height: 5, border: `1px solid #CC0000` }} />
@@ -517,7 +517,7 @@ function Pricing() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 36 }}>
               {['Unlimited items in your vault', 'AI provenance story for every item', 'Owner Rooms for verified pieces', 'Collector DNA profile', 'Public vault URL'].map(f => (
                 <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                  <div style={{ width: 6, height: 6, border: `1px solid ${T.gray}`, flexShrink: 0 }}/>
+                  <div style={{ width: 6, height: 6, border: `1px solid ${T.gray}`, flexShrink: 0 }} />
                   <span style={{ fontFamily: BODY, fontSize: 14, color: T.grayMid }}>{f}</span>
                 </div>
               ))}
@@ -538,7 +538,7 @@ function Pricing() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 16 }}>
               {['Unlimited drops', 'Customer tier engine', 'Post-purchase contact center', 'Brand story builder', 'AI campaign tools', 'Analytics dashboard'].map(f => (
                 <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                  <div style={{ width: 6, height: 6, backgroundColor: T.white, flexShrink: 0 }}/>
+                  <div style={{ width: 6, height: 6, backgroundColor: T.white, flexShrink: 0 }} />
                   <span style={{ fontFamily: BODY, fontSize: 14, color: T.gray }}>{f}</span>
                 </div>
               ))}
@@ -568,21 +568,21 @@ function Footer() {
   ]
   return (
     <footer style={{ backgroundColor: T.bg, borderTop: `1px solid ${T.border}` }}>
-      <GreekBorder color={T.borderVis} opacity={0.4}/>
+      <GreekBorder color={T.borderVis} opacity={0.4} />
       <div style={{ padding: `clamp(48px,7vw,96px) ${isMobile ? '20px' : 'max(8vw,32px)'} 0` }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : '2fr repeat(4,1fr)', gap: isMobile ? '36px 24px' : 40, marginBottom: 64 }}>
             <div style={{ gridColumn: isMobile ? 'span 2' : 'auto' }}>
-              <div style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 28, color: T.white, letterSpacing: '-0.5px', marginBottom: 4 }}>Rēbl</div>
-              <div style={{ fontFamily: DISPLAY, fontSize: 9, color: T.gray, letterSpacing: '0.28em', textTransform: 'uppercase', marginBottom: 12 }}>Own the rare. Tell its story.</div>
-              <p style={{ fontFamily: BODY, fontSize: 13, color: T.grayMid, lineHeight: 1.7, margin: 0, maxWidth: 220 }}>From ancient roots, to infinite futures.</p>
+              <div style={{ fontFamily: '"Poppins", sans-serif', fontWeight: 800, fontSize: 32, color: T.white, letterSpacing: '-0.5px', marginBottom: 4 }}>Rēbl</div>
+              <div style={{ fontFamily: DISPLAY, fontSize: 13, color: T.gray, letterSpacing: '0.28em', textTransform: 'uppercase', marginBottom: 12 }}>Own the rare. Tell its story.</div>
+              <p style={{ fontFamily: BODY, fontSize: 21, color: T.grayMid, lineHeight: 1.7, margin: 0, maxWidth: 220 }}>From ancient roots, to infinite futures.</p>
             </div>
             {cols.map(col => (
               <div key={col.label}>
-                <div style={{ fontFamily: DISPLAY, fontSize: 10, color: T.gray, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 20 }}>{col.label}</div>
+                <div style={{ fontFamily: DISPLAY, fontSize: 14, color: T.gray, letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 20 }}>{col.label}</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {col.links.map(link => (
-                    <Link key={link.text} to={link.to} style={{ fontFamily: BODY, fontSize: 13, color: T.grayMid, textDecoration: 'none', transition: 'color 0.2s' }}
+                    <Link key={link.text} to={link.to} style={{ fontFamily: BODY, fontSize: 17, color: T.grayMid, textDecoration: 'none', transition: 'color 0.2s' }}
                       onMouseEnter={e => e.target.style.color = T.white}
                       onMouseLeave={e => e.target.style.color = T.grayMid}
                     >{link.text}</Link>
@@ -595,22 +595,22 @@ function Footer() {
       </div>
       <div style={{ borderTop: `1px solid ${T.border}` }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: `24px ${isMobile ? '20px' : 'max(8vw,32px)'}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 24 }}>
-          <span style={{ fontFamily: BODY, fontSize: 12, color: T.grayMid, letterSpacing: '0.04em' }}>From ancient roots, to infinite futures.</span>
+          <span style={{ fontFamily: BODY, fontSize: 16, color: T.grayMid, letterSpacing: '0.04em' }}>From ancient roots, to infinite futures.</span>
           <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: MONO, fontSize: 11, color: T.gray, textDecoration: 'none', transition: 'color 0.2s', letterSpacing: '0.08em' }}
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: MONO, fontSize: 15, color: T.gray, textDecoration: 'none', transition: 'color 0.2s', letterSpacing: '0.08em' }}
               onMouseEnter={e => e.target.style.color = T.white}
               onMouseLeave={e => e.target.style.color = T.gray}
             >X</a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: MONO, fontSize: 11, color: T.gray, textDecoration: 'none', transition: 'color 0.2s', letterSpacing: '0.08em' }}
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: MONO, fontSize: 15, color: T.gray, textDecoration: 'none', transition: 'color 0.2s', letterSpacing: '0.08em' }}
               onMouseEnter={e => e.target.style.color = T.white}
               onMouseLeave={e => e.target.style.color = T.gray}
             >Instagram</a>
-            <a href="https://discord.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: MONO, fontSize: 11, color: T.gray, textDecoration: 'none', transition: 'color 0.2s', letterSpacing: '0.08em' }}
+            <a href="https://discord.com" target="_blank" rel="noopener noreferrer" style={{ fontFamily: MONO, fontSize: 15, color: T.gray, textDecoration: 'none', transition: 'color 0.2s', letterSpacing: '0.08em' }}
               onMouseEnter={e => e.target.style.color = T.white}
               onMouseLeave={e => e.target.style.color = T.gray}
             >Discord</a>
           </div>
-          <span style={{ fontFamily: BODY, fontSize: 12, color: T.grayMid, letterSpacing: '0.04em' }}>Rebl.in · Global · MMXXVI</span>
+          <span style={{ fontFamily: BODY, fontSize: 16, color: T.grayMid, letterSpacing: '0.04em' }}>Rebl.in · Global · MMXXVI</span>
         </div>
       </div>
     </footer>
